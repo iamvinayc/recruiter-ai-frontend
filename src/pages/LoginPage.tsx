@@ -10,7 +10,7 @@ import { z } from "zod";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { Input } from "../components/common/Input";
-import { GoogleIcon, LoginPageIcon } from "../components/common/SvgIcons";
+import { LoginPageIcon } from "../components/common/SvgIcons";
 import { useLogin } from "../hooks/useLogin";
 import { ROUTES } from "../routes/routes";
 
@@ -107,10 +107,7 @@ export function LoginPage() {
             Sign In
           </Button>
         </div>
-        <Button className="dark:bg-meta-4  w-full justify-center space-x-2 border border-stroke bg-gray text-black hover:bg-opacity-50 dark:border-strokedark dark:hover:bg-opacity-50">
-          <GoogleIcon />
-          <span>Sign in with Google</span>
-        </Button>
+
         <div className="mt-6 text-center">
           Don’t have any account?
           <a className="text-primary" href="#">

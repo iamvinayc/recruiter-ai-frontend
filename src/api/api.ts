@@ -141,6 +141,91 @@ interface AllApiEndpoints {
     };
     response: SuccessResponse;
   };
+  "data-sourcing/job/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: JobListingResponse;
+  };
+  "data-sourcing/job": {
+    request: {
+      method: "POST";
+      params?: undefined;
+      data?: {
+        title: string;
+        description?: string;
+        expires_on: string;
+        employer: {
+          employer_label: string;
+          email: string;
+          phone1?: string;
+          phone2?: string;
+        };
+        departments: {
+          id?: number;
+          name: string;
+          description: string;
+        }[];
+        location: {
+          id?: number;
+          name: string;
+        };
+        handle: string;
+        platform: string;
+      };
+    };
+    response: {
+      data: {
+        id: number;
+      };
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
+  "data-sourcing/candidate/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: CandidateListResponse;
+  };
+  "data-sourcing/candidate": {
+    request: {
+      method: "POST";
+      params?: undefined;
+      data?: {
+        name: string;
+        email: string;
+        departments: {
+          name: string;
+          description?: string;
+          id?: number;
+        }[];
+        location: {
+          name: string;
+          id?: number;
+        };
+        description?: string;
+        phone?: string;
+        profile_url?: string;
+        resume_file?: string;
+        handle: string;
+        platform: string;
+      };
+    };
+    response: {
+      data: {
+        id: number;
+      };
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
 }
 
 interface SuccessLoginResponse {
@@ -194,7 +279,7 @@ interface DashboardOverviewResponse {
 interface ListLocationResponse {
   data: {
     id: number;
-    label: string;
+    name: string;
   }[];
   message: string;
   isSuccess: boolean;
@@ -226,7 +311,7 @@ interface RecruiterListResponseData {
 
 interface RecruiterListResponseDataLocation {
   id: number;
-  label: string;
+  name: string;
 }
 
 interface RecruiterListResponseDataDepartment {
@@ -266,4 +351,72 @@ interface SuccessResponse {
 }
 
 interface Data {}
+
+interface JobListingResponse {
+  data: JobListingResponseData[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+}
+
+interface JobListingResponseData {
+  id: number;
+  employer: Employer;
+  departments: Department[];
+  location: Location;
+  title: string;
+  description: string;
+  expires_on: string;
+}
+
+interface Department {
+  id: number;
+  name: string;
+  description: string;
+}
+
+interface Employer {
+  id: number;
+  location: Location;
+  employer_label: string;
+  email: string;
+  phone1: string;
+  phone2: string;
+}
+
+interface Location {
+  id: number;
+  name: string;
+}
+
+interface CandidateListResponse {
+  data: CandidateListResponseData[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+}
+
+interface CandidateListResponseData {
+  id: number;
+  departments: Department[];
+  location: Location;
+  name: string;
+  description?: string;
+  email: string;
+  phone: string;
+  profile_url: string;
+  resume_file: string;
+  handle: string;
+}
+
+interface Location {
+  id: number;
+  name: string;
+}
+
+interface Department {
+  id: number;
+  name: string;
+  description: string;
+}
 //#endregion

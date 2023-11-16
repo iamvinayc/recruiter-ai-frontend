@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import PlusIcon from "@heroicons/react/24/outline/PlusIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  Column,
+  ColumnFilter,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  Table,
   useReactTable,
 } from "@tanstack/react-table";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -15,7 +19,7 @@ import { z } from "zod";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
-import { Input } from "../components/common/Input";
+import { DebouncedInput, Input } from "../components/common/Input";
 import { SpinnerIcon } from "../components/common/SvgIcons";
 import { PopupDialog } from "../components/PopupDialog";
 import { cn } from "../utils";
@@ -29,24 +33,56 @@ export function AdminListRecruiterPage() {
   const [showAddingDepartmentUserId, setShowAddingDepartmentUserId] = useState<
     number | null
   >(null);
+  const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
 
   //#region query/mutation
   const departmentListQuery = useQuery({
     queryKey: ["AdminListDepartmentPage"],
-    queryFn: async () =>
-      axiosApi({
+    queryFn: async () => {
+      return axiosApi({
         url: "data-sourcing/department/",
         method: "GET",
         params: { type: 1 },
-      }).then((e) => e.data.data),
+      }).then((e) => e.data.data);
+    },
   });
   const recruiterListQuery = useQuery({
-    queryKey: ["AdminListRecruiterPage"],
-    queryFn: async () =>
-      axiosApi({
+    queryKey: ["AdminListRecruiterPage", columnFilters],
+    queryFn: async () => {
+      type PersonKeys = keyof Person;
+      const location = columnFilters.find(
+        (e) => (e.id as PersonKeys) === "location",
+      )?.value;
+      const department = columnFilters.find(
+        (e) => (e.id as PersonKeys) === "departments",
+      )?.value;
+      const name = columnFilters.find(
+        (e) =>
+          (e.id as PersonKeys) === "last_name" ||
+          (e.id as PersonKeys) === "first_name",
+      )?.value;
+      const email = columnFilters.find((e) => (e.id as PersonKeys) === "email")
+        ?.value;
+      const active = columnFilters.find(
+        (e) => (e.id as PersonKeys) === "is_active",
+      )?.value;
+
+      const params = {
+        location,
+        department,
+        name,
+        email,
+        active: active ? 1 : undefined,
+        // signedup: 0,
+      };
+      console.log("params", params);
+
+      return axiosApi({
         url: "user/recruiter/",
         method: "GET",
-      }).then((e) => e.data.data),
+        params: params as any,
+      }).then((e) => e.data.data);
+    },
   });
 
   const changeStatusMutation = useMutation({
@@ -135,6 +171,7 @@ export function AdminListRecruiterPage() {
     ],
     [onAddNewDepartment, onChangeStatus],
   );
+  console.log("recruiterListQuery.data", recruiterListQuery.data?.length);
 
   const recruiterList = useMemo(
     () =>
@@ -143,7 +180,7 @@ export function AdminListRecruiterPage() {
         user_id: e.user.id,
         id: e.id,
         departments: e.departments.map((e) => ({ id: e.id, name: e.name })),
-        location: e.location.map((e) => ({ id: e.id, name: e.label })),
+        location: e.location.map((e) => ({ id: e.id, name: e.name })),
       })) || defaultArr,
     [recruiterListQuery.data],
   );
@@ -164,8 +201,11 @@ export function AdminListRecruiterPage() {
   const table = useReactTable({
     columns: columns,
     data: recruiterList,
+    state: { columnFilters },
     getCoreRowModel: getCoreRowModel(),
+    onColumnFiltersChange: setColumnFilters,
   });
+  console.log("columnFilters", columnFilters);
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -201,6 +241,9 @@ export function AdminListRecruiterPage() {
                               header.column.columnDef.header,
                               header.getContext(),
                             )}
+                        {header.column.getCanFilter() ? (
+                          <Filter column={header.column} table={table} />
+                        ) : null}
                       </th>
                     ))}
                   </tr>
@@ -222,19 +265,61 @@ export function AdminListRecruiterPage() {
                     ))}
                   </tr>
                 ))}
+                <tr>
+                  <td colSpan={6}>
+                    <div
+                      className={cn(
+                        "absolute left-0 top-0 h-full w-full items-center justify-center bg-white bg-opacity-50",
+
+                        changeStatusMutation.isPending ||
+                          recruiterListQuery.isLoading ||
+                          recruiterListQuery.isRefetching
+                          ? "flex"
+                          : "hidden",
+                      )}
+                    >
+                      <SpinnerIcon className="h-6 w-6 text-black" />
+                    </div>
+                    {!recruiterListQuery.isLoading &&
+                      recruiterList?.length === 0 && (
+                        <div
+                          className={cn(
+                            "h-[20rem]",
+                            "flex w-full items-center justify-center",
+                          )}
+                        >
+                          No Data
+                        </div>
+                      )}
+                    {recruiterListQuery.isLoading &&
+                      recruiterList?.length === 0 && (
+                        <div
+                          className={cn(
+                            "h-[20rem]",
+                            "flex w-full items-center justify-center",
+                          )}
+                        >
+                          Loading ....
+                        </div>
+                      )}
+                  </td>
+                </tr>
               </tbody>
             </table>
-            <div
+
+            {/* <div
               className={cn(
                 "absolute left-0 top-0 h-full w-full items-center justify-center bg-white bg-opacity-50",
+
                 changeStatusMutation.isPending ||
+                  recruiterListQuery.isLoading ||
                   recruiterListQuery.isRefetching
                   ? "flex"
                   : "hidden",
               )}
             >
               <SpinnerIcon className="h-6 w-6 text-black" />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -484,3 +569,45 @@ const AddDepartmentDialog = ({
 };
 
 //#endregion
+
+//#region filter
+const Filter = ({
+  column,
+}: {
+  column: Column<any, unknown>;
+  table: Table<any>;
+}) => {
+  const { setFilterValue, id } = column;
+  const [value, setValue] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+  if (id == "is_active") {
+    return (
+      <div>
+        <input
+          type="checkbox"
+          checked={isChecked}
+          onChange={(e) => {
+            const val = e.currentTarget.checked;
+            setIsChecked(val);
+            setFilterValue(val);
+          }}
+        />
+      </div>
+    );
+  }
+  return (
+    <div>
+      <DebouncedInput
+        className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+        type="text"
+        placeholder={id}
+        value={value}
+        onChange={(val) => {
+          setValue("" + val);
+          setFilterValue("" + val);
+        }}
+      />
+    </div>
+  );
+};
+//#endregion filter

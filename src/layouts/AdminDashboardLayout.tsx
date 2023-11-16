@@ -30,5 +30,7 @@ const SideBarLinks = {
     { title: "List Department", link: ROUTES.ADMIN.LIST_DEPARTMENT.path },
     { title: "List Recruiter", link: ROUTES.ADMIN.LIST_RECRUITER.path },
     { title: "List Location", link: ROUTES.ADMIN.LIST_LOCATION.path },
+    { title: "List Jobs", link: ROUTES.ADMIN.LIST_JOBS.path },
+    { title: "List Candidate", link: ROUTES.ADMIN.LIST_CANDIDATE.path },
   ],
 };

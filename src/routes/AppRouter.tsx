@@ -6,7 +6,9 @@ import { ProtectPage } from "../components/common/ProtectPage";
 import { AdminDashboardLayout } from "../layouts/AdminDashboardLayout";
 import { RecruiterDashboardLayout } from "../layouts/RecruiterDashboardLayout";
 import { AdminDashboardPage } from "../pages/AdminDashboardPage";
+import { AdminListCandidatePage } from "../pages/AdminListCandidatePage";
 import { AdminListDepartmentPage } from "../pages/AdminListDepartmentPage";
+import { AdminListJobPage } from "../pages/AdminListJobPage";
 import { AdminListLocationPage } from "../pages/AdminListLocationPage";
 import { AdminListRecruiterPage } from "../pages/AdminListRecruiterPage";
 import { ChangePasswordPage } from "../pages/ChangePasswordPage";
@@ -43,6 +45,14 @@ export function AppRouter() {
               path={ROUTES.ADMIN.LIST_LOCATION.path}
               element={<AdminListLocationPage />}
             />
+            <Route
+              path={ROUTES.ADMIN.LIST_JOBS.path}
+              element={<AdminListJobPage />}
+            />
+            <Route
+              path={ROUTES.ADMIN.LIST_CANDIDATE.path}
+              element={<AdminListCandidatePage />}
+            />
           </Route>
 
           <Route
@@ -60,6 +70,14 @@ export function AppRouter() {
             <Route
               path={ROUTES.RECRUITER.CHANGE_PASSWORD.path}
               element={<ChangePasswordPage />}
+            />
+            <Route
+              path={ROUTES.RECRUITER.LIST_JOBS.path}
+              element={<AdminListJobPage />}
+            />
+            <Route
+              path={ROUTES.RECRUITER.LIST_CANDIDATE.path}
+              element={<AdminListCandidatePage />}
             />
           </Route>
           <Route

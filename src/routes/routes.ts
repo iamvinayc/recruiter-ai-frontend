@@ -13,6 +13,8 @@ export const ROUTES = {
       LIST_DEPARTMENT: route("list-department"),
       LIST_RECRUITER: route("list-recruiter"),
       LIST_LOCATION: route("list-location"),
+      LIST_JOBS: route("list-jobs"),
+      LIST_CANDIDATE: route("list-candidate"),
     },
   ),
   //
@@ -23,6 +25,8 @@ export const ROUTES = {
       LOGIN: route("login"),
       DASHBOARD: route("dashboard"),
       CHANGE_PASSWORD: route("change-password"),
+      LIST_JOBS: route("list-jobs"),
+      LIST_CANDIDATE: route("list-candidate"),
     },
   ),
   //

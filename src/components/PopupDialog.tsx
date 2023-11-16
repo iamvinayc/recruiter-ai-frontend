@@ -1,17 +1,21 @@
 import { Dialog, Transition } from "@headlessui/react";
 import React, { Fragment, ReactNode } from "react";
 
+import { cn } from "../utils";
+
 interface PopupDialogProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
   children: ReactNode;
 }
+
 export function PopupDialog({
   isOpen,
   title,
   setIsOpen,
   children,
+  containerClassName = "",
 }: PopupDialogProps) {
   function closeModal() {
     setIsOpen(false);
@@ -42,7 +46,12 @@ export function PopupDialog({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel
+                className={cn(
+                  "w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all",
+                  containerClassName,
+                )}
+              >
                 <Dialog.Title
                   as="h3"
                   className="text-gray-900 text-lg font-medium leading-6"
@@ -64,4 +73,5 @@ interface PopupDialogProps {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
   children: ReactNode;
+  containerClassName?: string;
 }

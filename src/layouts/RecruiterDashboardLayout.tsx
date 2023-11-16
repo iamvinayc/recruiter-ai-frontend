@@ -25,5 +25,9 @@ export function RecruiterDashboardLayout() {
 }
 
 const SideBarLinks = {
-  Dashboard: [{ title: "Home", link: ROUTES.RECRUITER.DASHBOARD.path }],
+  Dashboard: [
+    { title: "Home", link: ROUTES.RECRUITER.DASHBOARD.path },
+    { title: "List Jobs", link: ROUTES.RECRUITER.LIST_JOBS.path },
+    { title: "List Candidate", link: ROUTES.RECRUITER.LIST_CANDIDATE.path },
+  ],
 };
