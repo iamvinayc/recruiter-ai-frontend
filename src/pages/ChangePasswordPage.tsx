@@ -2,37 +2,36 @@ import EnvelopeIcon from "@heroicons/react/24/outline/EnvelopeIcon";
 import LockClosedIcon from "@heroicons/react/24/outline/LockClosedIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { Input } from "../components/common/Input";
-import { GoogleIcon, LoginPageIcon } from "../components/common/SvgIcons";
+import { LoginPageIcon } from "../components/common/SvgIcons";
 import { useLogin } from "../hooks/useLogin";
 import { ROUTES } from "../routes/routes";
 
-export function LoginPage() {
+export function ChangePasswordPage() {
   const {
     handleSubmit,
     formState: { errors },
     register,
-  } = useForm<z.TypeOf<typeof loginFromSchema>>({
-    resolver: zodResolver(loginFromSchema),
+  } = useForm<z.TypeOf<typeof changePasswordFromSchema>>({
+    resolver: zodResolver(changePasswordFromSchema),
   });
   const login = useLogin();
+  const navigate = useNavigate();
   const loginApi = useMutation({
-    mutationKey: ["loginApi"],
-    mutationFn: async (params: z.TypeOf<typeof loginFromSchema>) => {
+    mutationKey: ["change_password"],
+    mutationFn: async (data: z.TypeOf<typeof changePasswordFromSchema>) => {
       const resp = axiosApi({
-        url: "user/login/",
+        url: "user/change_password/",
         method: "POST",
-        data: {
-          email: params.email,
-          password: params.password,
-        },
+        data: data,
       }).then((e) => {
         if (e.data.isSuccess) return e.data.data;
         else throw new Error(e.data.message);
@@ -41,26 +40,17 @@ export function LoginPage() {
     },
   });
 
-  const onSubmit = (data: z.TypeOf<typeof loginFromSchema>) => {
+  const onSubmit = (data: z.TypeOf<typeof changePasswordFromSchema>) => {
     loginApi
-      .mutateAsync({
-        email: data.email,
-        password: data.password,
-      })
-      .then((data) => {
-        login.setUser({
-          role: data.user.role,
-          token: data.token,
-          email: data.user.email,
-          first_name: data.user.first_name,
-          last_name: data.user.last_name,
-          id: data.user.id,
-          change_password: data.user.change_password,
-        });
-        toast.success("Logged in succesfully");
+      .mutateAsync(data)
+      .then(() => {
+        toast.success("Password changed succesfully");
+        toast.success("Please login with new password");
+        login.logout();
+        navigate(ROUTES.LOGIN.path);
       })
       .catch((e) => {
-        const msg = e?.message?.toLowerCase().includes("login failed")
+        const msg = e?.message?.toLowerCase().includes("incorrect")
           ? e?.message
           : "Some error ocurred";
         console.log("err");
@@ -68,6 +58,10 @@ export function LoginPage() {
         toast.error(msg);
       });
   };
+  useEffect(() => {
+    if (!login.user) navigate(ROUTES.LOGIN.path);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [login.user]);
 
   return (
     <FromLayout className="w-full p-4 sm:p-12.5 xl:p-17.5">
@@ -75,47 +69,35 @@ export function LoginPage() {
         <Input
           disabled={loginApi.isPending}
           containerClassName="mb-4"
-          label="Email"
-          // type="email"
-          icon={<EnvelopeIcon className="h-6 w-6 opacity-50" />}
-          placeholder="Enter your email"
-          error={errors.email?.message}
-          name="email"
+          label="Old Password"
+          placeholder="Enter your old password"
+          error={errors.old_password?.message}
+          name="old_password"
+          type="password"
           register={register}
+          icon={<EnvelopeIcon className="h-6 w-6 opacity-50" />}
         />
 
         <Input
           disabled={loginApi.isPending}
           containerClassName="mb-4"
-          label="Password"
+          label="New Password"
           type="password"
           icon={<LockClosedIcon className="h-6 w-6 opacity-50" />}
-          placeholder="Enter your Password"
-          error={errors.password?.message}
+          placeholder="Enter your new password"
+          error={errors.new_password?.message}
           register={register}
-          name="password"
+          name="new_password"
         />
-        <Link to={ROUTES.FORGOT_PASSWORD.path}>
-          <div className="mb-4 text-sm text-primary">Forgot password ?</div>
-        </Link>
+
         <div className="mb-5">
           <Button
             isLoading={loginApi.isPending}
             type="submit"
             className="w-full justify-center"
           >
-            Sign In
+            Change Password
           </Button>
-        </div>
-        <Button className="dark:bg-meta-4  w-full justify-center space-x-2 border border-stroke bg-gray text-black hover:bg-opacity-50 dark:border-strokedark dark:hover:bg-opacity-50">
-          <GoogleIcon />
-          <span>Sign in with Google</span>
-        </Button>
-        <div className="mt-6 text-center">
-          Don’t have any account?
-          <a className="text-primary" href="#">
-            Sign Up
-          </a>
         </div>
       </form>
     </FromLayout>
@@ -127,7 +109,7 @@ const FromLayout = ({ children }: React.ComponentProps<"div">) => (
     <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-          Sign In
+          Change Password
         </h2>
       </div>
       <div className="dark:bg-boxdark rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark">
@@ -149,7 +131,7 @@ const FromLayout = ({ children }: React.ComponentProps<"div">) => (
   </main>
 );
 
-const loginFromSchema = z.object({
-  email: z.string(), //.email().min(1, "Please enter a valid email"),
-  password: z.string().min(1, "Please enter a password"),
+const changePasswordFromSchema = z.object({
+  old_password: z.string().min(1, "Please enter old password"),
+  new_password: z.string().min(1, "Please enter new password"),
 });

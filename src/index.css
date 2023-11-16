@@ -8,4 +8,17 @@ body,
 #app {
   height: 100%;
   width: 100%;
+  background-color: rgb(241 245 249);
+  color: rgb(100 116 139);
+}
+
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
