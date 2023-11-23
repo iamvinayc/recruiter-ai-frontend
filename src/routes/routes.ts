@@ -1,4 +1,4 @@
-import { route } from "react-router-typesafe-routes/dom";
+import { route, string } from "react-router-typesafe-routes/dom";
 
 export const ROUTES = {
   LOGIN: route(""),
@@ -13,7 +13,13 @@ export const ROUTES = {
       LIST_DEPARTMENT: route("list-department"),
       LIST_RECRUITER: route("list-recruiter"),
       LIST_LOCATION: route("list-location"),
-      LIST_JOBS: route("list-jobs"),
+      LIST_JOBS: route("list-jobs", {
+        searchParams: {
+          department: string().default(""),
+          location: string().default(""),
+          scrape_from: string().default(""),
+        },
+      }),
       LIST_CANDIDATE: route("list-candidate"),
     },
   ),

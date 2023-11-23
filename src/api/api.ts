@@ -144,7 +144,11 @@ interface AllApiEndpoints {
   "data-sourcing/job/": {
     request: {
       method: "GET";
-      params?: undefined;
+      params: {
+        department?: string;
+        location?: string;
+        scrape_from?: string;
+      };
       data?: undefined;
     };
     response: JobListingResponse;
@@ -188,7 +192,11 @@ interface AllApiEndpoints {
   "data-sourcing/candidate/": {
     request: {
       method: "GET";
-      params?: undefined;
+      params: {
+        department?: string;
+        location?: string;
+        scrape_from?: string;
+      };
       data?: undefined;
     };
     response: CandidateListResponse;

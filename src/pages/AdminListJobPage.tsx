@@ -10,6 +10,7 @@ import {
 import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { z } from "zod";
 
 import { axiosApi } from "../api/api";
@@ -20,7 +21,9 @@ import { SpinnerIcon } from "../components/common/SvgIcons";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { LocationSelector } from "../components/LocationSelector";
 import { PopupDialog } from "../components/PopupDialog";
+import { ROUTES } from "../routes/routes";
 import { cn } from "../utils";
+import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 
 const defaultArr: [] = [];
 
@@ -28,15 +31,23 @@ const columnHelper = createColumnHelper<Person>();
 
 export function AdminListJobPage() {
   const [showAddJobPopup, _setShowAddJobPopup] = useState(false);
+  const [{ department, location, scrape_from }] = useTypedSearchParams(
+    ROUTES.ADMIN.LIST_JOBS,
+  );
 
   //#region query/mutation
 
   const jobListQuery = useQuery({
-    queryKey: ["jobListQuery"],
+    queryKey: ["jobListQuery", department, location, scrape_from],
     queryFn: async () =>
       axiosApi({
         url: "data-sourcing/job/",
         method: "GET",
+        params: {
+          department: department || undefined,
+          location: location || undefined,
+          scrape_from: scrape_from || undefined,
+        },
       }).then((e) => e.data.data),
   });
 
@@ -128,6 +139,12 @@ export function AdminListJobPage() {
             Add Job
           </button>
         </div>
+        <DepartmentLocationScrapeFromSearch
+          onSearch={() => {
+            jobListQuery.refetch();
+          }}
+        />
+
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div
             className={cn(
