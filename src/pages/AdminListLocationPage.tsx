@@ -111,13 +111,13 @@ export function AdminListLocationPage() {
   );
 }
 
-const columns: TableColumn<{ id: number; label: string }>[] = [
+const columns: TableColumn<{ id: number; name: string }>[] = [
   {
     name: "id",
     selector: (row) => row.id,
   },
   {
     name: "Location",
-    selector: (row) => row.label,
+    selector: (row) => row.name,
   },
 ];
