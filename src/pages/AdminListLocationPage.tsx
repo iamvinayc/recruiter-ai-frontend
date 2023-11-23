@@ -55,7 +55,7 @@ export function AdminListLocationPage() {
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            List Department
+            List Location
           </h2>
           <div>
             <button
@@ -69,7 +69,7 @@ export function AdminListLocationPage() {
           </div>
         </div>
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
-          <div className="dark:bg-boxdark rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark">
+          <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white shadow-default">
             <DataTable
               columns={columns}
               data={locationListQuery.data || []}
