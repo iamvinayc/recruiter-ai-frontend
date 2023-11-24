@@ -145,13 +145,17 @@ export function AdminListRecruiterPage() {
       }),
       columnHelper.accessor("email", {
         header: "Email",
-        cell: (info) => info.renderValue(),
+        cell: (info) => (
+          <div className=" max-w-[200px] overflow-hidden truncate ">
+            {info.renderValue()}
+          </div>
+        ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("is_active", {
         header: "Active",
         cell: (info) => (
-          <div>
+          <div className="w-auto text-center">
             <input
               type="checkbox"
               onChange={(e) => {
@@ -197,6 +201,7 @@ export function AdminListRecruiterPage() {
     () =>
       recruiterListQuery.data?.map<Person>((e) => ({
         ...e.user,
+        email: e.user.email,
         user_id: e.user.id,
         id: e.id,
         departments: e.departments.map((e) => ({ id: e.id, name: e.name })),
@@ -248,14 +253,14 @@ export function AdminListRecruiterPage() {
         </div>
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div className="dark:bg-boxdark dark:border-strokedark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default">
-            <table className="w-full   table-fixed overflow-scroll">
+            <table className="divide-gray-200 dark:divide-gray-700 min-w-full table-fixed divide-y">
               <thead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
-                        className="border-b border-slate-200 p-4 pb-3 pl-8  text-left font-medium text-slate-600 dark:border-slate-600 dark:text-slate-200"
-                        key={header.id}
+                        scope="col"
+                        className="text-gray-500 px-6 py-3 text-start align-baseline text-xs  font-medium"
                       >
                         {header.isPlaceholder
                           ? null
@@ -271,13 +276,13 @@ export function AdminListRecruiterPage() {
                   </tr>
                 ))}
               </thead>
-              <tbody className="relative">
+              <tbody className="divide-gray-200 dark:divide-gray-700 divide-y">
                 {table.getRowModel().rows.map((row) => (
                   <tr key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <td
-                        className="border-b border-slate-200 p-4 pl-8 text-slate-500 dark:border-slate-600 dark:text-slate-400"
-                        key={cell.id}
+                        className="text-gray-800 dark:text-gray-200 whitespace-nowrap px-6 py-4 text-sm font-medium"
+                        key={row.id}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -723,9 +728,10 @@ const Filter = ({
   const [isChecked, setIsChecked] = useState(false);
   if (id == "is_active") {
     return (
-      <div>
+      <div className="w-auto text-center">
         <input
           type="checkbox"
+          className="mt-2"
           checked={isChecked}
           onChange={(e) => {
             const val = e.currentTarget.checked;

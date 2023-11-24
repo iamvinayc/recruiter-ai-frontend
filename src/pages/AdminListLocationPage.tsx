@@ -2,7 +2,10 @@ import MapPinIcon from "@heroicons/react/24/outline/MapPinIcon";
 import PlusIcon from "@heroicons/react/24/outline/PlusIcon";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import DataTable, { TableColumn } from "react-data-table-component";
+import DataTable, {
+  defaultThemes,
+  TableColumn,
+} from "react-data-table-component";
 import toast from "react-hot-toast";
 
 import { axiosApi } from "../api/api";
@@ -74,6 +77,7 @@ export function AdminListLocationPage() {
               columns={columns}
               data={locationListQuery.data || []}
               progressPending={locationListQuery.isLoading}
+              customStyles={customStyles}
             />
           </div>
         </div>
@@ -115,9 +119,43 @@ const columns: TableColumn<{ id: number; name: string }>[] = [
   {
     name: "id",
     selector: (row) => row.id,
+    grow: 0,
   },
   {
     name: "Location",
     selector: (row) => row.name,
+    grow: 1,
   },
 ];
+const customStyles = {
+  header: {
+    style: {
+      minHeight: "56px",
+    },
+  },
+  headRow: {
+    style: {
+      borderTopStyle: "solid",
+      borderTopWidth: "1px",
+      borderTopColor: defaultThemes.default.divider.default,
+    },
+  },
+  headCells: {
+    style: {
+      "&:not(:last-of-type)": {
+        borderRightStyle: "solid",
+        borderRightWidth: "1px",
+        borderRightColor: defaultThemes.default.divider.default,
+      },
+    },
+  },
+  cells: {
+    style: {
+      "&:not(:last-of-type)": {
+        borderRightStyle: "solid",
+        borderRightWidth: "1px",
+        borderRightColor: defaultThemes.default.divider.default,
+      },
+    },
+  },
+} as const;
