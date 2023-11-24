@@ -16,14 +16,14 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
-import { LocationSelector } from "@/components/LocationSelector";
+import { LocationSelectorMultiple } from "@/components/LocationSelector";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { DebouncedInput, Input } from "../components/common/Input";
 import { SpinnerIcon } from "../components/common/SvgIcons";
 import { PopupDialog } from "../components/PopupDialog";
-import { cn } from "../utils";
+import { cn, emptyArray } from "../utils";
 
 const defaultArr: [] = [];
 
@@ -184,7 +184,6 @@ export function AdminListRecruiterPage() {
             <ChipGroup
               items={info.getValue()}
               onAdd={() => onAddLocation(info.row.original.id)}
-              addLabel={info.getValue().length === 0 ? "+ Add" : "Change"}
             />
           );
         },
@@ -207,15 +206,16 @@ export function AdminListRecruiterPage() {
   );
 
   const departments = useMemo(
-    () =>
-      departmentListQuery.data?.filter(
-        (e) =>
-          !recruiterList
-            .find((e) => e.id == showAddingDepartmentUserId)
-            ?.departments?.map((e) => e.id)
-            ?.includes(e.id),
-      ) || defaultArr,
-    [departmentListQuery.data, recruiterList, showAddingDepartmentUserId],
+    () => departmentListQuery.data || defaultArr,
+    // ?.filter(
+    //   (e) =>
+    //     !recruiterList
+    //       .find((e) => e.id == showAddingDepartmentUserId)
+    //       ?.departments?.map((e) => e.id)
+    //       ?.includes(e.id),
+    // )
+
+    [departmentListQuery.data],
   );
   //#endregion
 
@@ -375,10 +375,10 @@ export function AdminListRecruiterPage() {
           setShowAddingLocationUserId(null);
           recruiterListQuery.refetch();
         }}
-        location={
+        locations={
           recruiterList.find(
             (e) => String(e.id) === String(showAddingLocationUserId),
-          )?.location?.[0]
+          )?.location || emptyArray
         }
         selectedUserId={showAddingLocationUserId}
       />
@@ -623,27 +623,26 @@ const AddLocationDialog = ({
   onSuccess,
   isOpen,
   setIsOpen,
-  location,
+  locations,
   selectedUserId,
 }: {
   onSuccess: VoidFunction;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  location?: { id: number; name: string };
+  locations: { id: number; name: string }[];
   selectedUserId: number | null;
 }) => {
-  const [selectedLocation, setSelectedLocation] = useState<{
-    name: string;
-    id?: number | undefined;
-  }>({
-    name: "",
-    id: undefined,
-  });
+  const [selectedLocation, setSelectedLocation] = useState<
+    {
+      name: string;
+      id?: number | undefined;
+    }[]
+  >([]);
   useEffect(() => {
-    if (location) {
-      setSelectedLocation(location);
+    if (locations) {
+      setSelectedLocation(locations);
     }
-  }, [location]);
+  }, [locations]);
 
   const addDepartmentMutation = useMutation({
     mutationFn: ({ id, locations }: { id: number; locations: number[] }) =>
@@ -655,13 +654,16 @@ const AddLocationDialog = ({
   });
   const onAddLocation = () => {
     if (!selectedUserId) return console.log("no user id", selectedUserId);
-    if (!selectedLocation.id)
+    const ids = selectedLocation
+      .map((e) => e.id)
+      .filter((e): e is number => Boolean(e));
+    if (ids.length == 0)
       return console.log("no selected location", selectedLocation);
     addDepartmentMutation
-      .mutateAsync({ id: selectedUserId, locations: [selectedLocation.id] })
+      .mutateAsync({ id: selectedUserId, locations: ids })
       .then((success) => {
         if (success) {
-          setSelectedLocation({ name: "" });
+          setSelectedLocation([]);
           toast.success("Added new department successfully");
           onSuccess();
           return;
@@ -675,7 +677,7 @@ const AddLocationDialog = ({
   };
   useEffect(() => {
     return () => {
-      setSelectedLocation({ name: "" });
+      setSelectedLocation([]);
     };
   }, [isOpen]);
 
@@ -684,16 +686,18 @@ const AddLocationDialog = ({
       <div>
         <div className="mb-4 space-y-2 py-4">
           <div className="flex flex-col gap-2">
-            <LocationSelector
-              selected={selectedLocation}
-              setSelected={setSelectedLocation}
+            <LocationSelectorMultiple
+              selectedItems={selectedLocation}
+              setSelectedItems={setSelectedLocation}
             />
           </div>
         </div>
         <div className="flex justify-end">
           <Button
             isLoading={addDepartmentMutation.isPending}
-            disabled={addDepartmentMutation.isPending || !selectedLocation?.id}
+            disabled={
+              addDepartmentMutation.isPending || selectedLocation?.length === 0
+            }
             onClick={onAddLocation}
             className="py-2 disabled:border-slate-600 disabled:bg-slate-500"
           >
