@@ -73,11 +73,11 @@ export function AppRouter() {
             />
             <Route
               path={ROUTES.RECRUITER.LIST_JOBS.path}
-              element={<AdminListJobPage />}
+              element={<AdminListJobPage hideAddBtn />}
             />
             <Route
               path={ROUTES.RECRUITER.LIST_CANDIDATE.path}
-              element={<AdminListCandidatePage />}
+              element={<AdminListCandidatePage hideAddBtn />}
             />
           </Route>
           <Route

@@ -29,7 +29,11 @@ const defaultArr: [] = [];
 
 const columnHelper = createColumnHelper<Person>();
 
-export function AdminListJobPage() {
+export function AdminListJobPage({
+  hideAddBtn = false,
+}: {
+  hideAddBtn?: boolean;
+}) {
   const [showAddJobPopup, _setShowAddJobPopup] = useState(false);
   const [{ department, location, scrape_from }] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_JOBS,
@@ -130,14 +134,16 @@ export function AdminListJobPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Jobs
           </h2>
-          <button
-            type="button"
-            onClick={() => setShowAddJobPopup(true)}
-            className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
-          >
-            <PlusIcon className="h-6 w-6 stroke-2" />
-            Add Job
-          </button>
+          {hideAddBtn ? null : (
+            <button
+              type="button"
+              onClick={() => setShowAddJobPopup(true)}
+              className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
+            >
+              <PlusIcon className="h-6 w-6 stroke-2" />
+              Add Job
+            </button>
+          )}
         </div>
         <DepartmentLocationScrapeFromSearch
           onSearch={() => {
@@ -148,7 +154,7 @@ export function AdminListJobPage() {
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div
             className={cn(
-              "dark:bg-boxdark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark",
+              "dark:bg-boxdark dark:border-strokedark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default",
               jobListQuery.isLoading && "min-h-[20rem]",
             )}
           >
