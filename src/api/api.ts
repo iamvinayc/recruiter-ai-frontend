@@ -81,7 +81,7 @@ interface AllApiEndpoints {
     request: {
       method: "POST";
       params?: undefined;
-      data?: { label: string };
+      data?: { name: string };
     };
     response: AddLocationResponse;
   };
@@ -109,9 +109,9 @@ interface AllApiEndpoints {
     };
     response: SuccessResponse;
   };
-  "user/recruiter": {
+  "user/recruiter_department": {
     request: {
-      method: "PATCH";
+      method: "PUT";
       params?: undefined;
       data?: { departments: number[] };
     };
@@ -138,6 +138,16 @@ interface AllApiEndpoints {
       method: "POST";
       params?: undefined;
       data?: { token: string; password: string };
+    };
+    response: SuccessResponse;
+  };
+  "user/recruiter_location/": {
+    request: {
+      method: "PUT";
+      params?: undefined;
+      data?: {
+        locations: number[];
+      };
     };
     response: SuccessResponse;
   };
@@ -296,7 +306,7 @@ interface ListLocationResponse {
 interface AddLocationResponse {
   data: {
     id: number;
-    label: string;
+    name: string;
   };
   message: string;
   isSuccess: boolean;

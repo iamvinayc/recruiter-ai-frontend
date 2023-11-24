@@ -3,9 +3,11 @@ import { useState } from "react";
 export function ChipGroup({
   items,
   onAdd,
+  addLabel = "+ Add",
 }: {
   items: { id: number; name: string }[];
   onAdd?: VoidFunction;
+  addLabel?: string;
 }) {
   const [showMore, setShowMore] = useState(false);
   return (
@@ -34,7 +36,7 @@ export function ChipGroup({
           type="button"
           className="inline-flex rounded border border-primary px-2 py-1  font-medium text-primary hover:opacity-80"
         >
-          + Add
+          {addLabel}
         </button>
       ) : null}
     </div>

@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
+import { LocationSelector } from "@/components/LocationSelector";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
@@ -27,10 +28,20 @@ import { cn } from "../utils";
 const defaultArr: [] = [];
 
 const columnHelper = createColumnHelper<Person>();
-
+const nameMap = {
+  first_name: "First Name",
+  last_name: "Last Name",
+  email: "Email",
+  is_active: "Is Active",
+  departments: "Departments",
+  location: "Location",
+};
 export function AdminListRecruiterPage() {
   const [showAddRecruiterDialog, setShowAddRecruiterDialog] = useState(false);
   const [showAddingDepartmentUserId, setShowAddingDepartmentUserId] = useState<
+    number | null
+  >(null);
+  const [showAddingLocationUserId, setShowAddingLocationUserId] = useState<
     number | null
   >(null);
   const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
@@ -110,6 +121,10 @@ export function AdminListRecruiterPage() {
     setShowAddingDepartmentUserId(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const onAddLocation = useCallback((id: number) => {
+    setShowAddingLocationUserId(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   //#endregion
 
   console.log("re-render");
@@ -165,11 +180,17 @@ export function AdminListRecruiterPage() {
       columnHelper.accessor("location", {
         header: "Location",
         cell: (info) => {
-          return <ChipGroup items={info.getValue()} />;
+          return (
+            <ChipGroup
+              items={info.getValue()}
+              onAdd={() => onAddLocation(info.row.original.id)}
+              addLabel={info.getValue().length === 0 ? "+ Add" : "Change"}
+            />
+          );
         },
       }),
     ],
-    [onAddNewDepartment, onChangeStatus],
+    [onAddLocation, onAddNewDepartment, onChangeStatus],
   );
   console.log("recruiterListQuery.data", recruiterListQuery.data?.length);
 
@@ -206,6 +227,7 @@ export function AdminListRecruiterPage() {
     onColumnFiltersChange: setColumnFilters,
   });
   console.log("columnFilters", columnFilters);
+
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -225,7 +247,7 @@ export function AdminListRecruiterPage() {
           </div>
         </div>
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
-          <div className="dark:bg-boxdark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark">
+          <div className="dark:bg-boxdark dark:border-strokedark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default">
             <table className="w-full   table-fixed overflow-scroll">
               <thead>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -338,8 +360,27 @@ export function AdminListRecruiterPage() {
           setShowAddingDepartmentUserId(null);
           recruiterListQuery.refetch();
         }}
+        prevSelectedDepartmentIds={
+          recruiterList
+            .find((e) => String(e.id) === String(showAddingDepartmentUserId))
+            ?.departments?.map((e) => e.id) || []
+        }
         departments={departments}
         selectedUserId={showAddingDepartmentUserId}
+      />
+      <AddLocationDialog
+        isOpen={showAddingLocationUserId !== null}
+        setIsOpen={() => setShowAddingLocationUserId(null)}
+        onSuccess={() => {
+          setShowAddingLocationUserId(null);
+          recruiterListQuery.refetch();
+        }}
+        location={
+          recruiterList.find(
+            (e) => String(e.id) === String(showAddingLocationUserId),
+          )?.location?.[0]
+        }
+        selectedUserId={showAddingLocationUserId}
       />
     </main>
   );
@@ -470,21 +511,32 @@ const AddDepartmentDialog = ({
   setIsOpen,
   departments,
   selectedUserId,
+  prevSelectedDepartmentIds = [],
 }: {
   onSuccess: VoidFunction;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  departments: { id: number; name: string; description: string }[];
+  departments: { id: number; name: string; description?: string }[];
+  prevSelectedDepartmentIds: number[];
   selectedUserId: number | null;
 }) => {
   const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<number[]>(
     [],
   );
+  useEffect(() => {
+    if (prevSelectedDepartmentIds && prevSelectedDepartmentIds.length > 0) {
+      setSelectedDepartmentIds(prevSelectedDepartmentIds);
+      console.log("prevSelectedDepartmentIds", prevSelectedDepartmentIds);
+    }
+  }, [prevSelectedDepartmentIds]);
+  console.log("selectedDepartmentIds", selectedDepartmentIds);
+
   const addDepartmentMutation = useMutation({
+    mutationKey: ["addDepartmentMutation"],
     mutationFn: ({ id, departments }: { id: number; departments: number[] }) =>
       axiosApi({
-        url: `user/recruiter/${id}/` as "user/recruiter",
-        method: "PATCH",
+        url: `user/recruiter_department/${id}/` as "user/recruiter_department",
+        method: "PUT",
         data: { departments },
       }).then((e) => e.data.isSuccess),
   });
@@ -520,7 +572,7 @@ const AddDepartmentDialog = ({
     >
       <div>
         <div className="mb-4 space-y-2 py-4">
-          <div className="flex flex-col gap-2">
+          <div className="flex max-h-[65vh] flex-col gap-2 overflow-y-scroll">
             {departments.map(({ id, description, name }) => (
               <label key={id}>
                 <div className="flex w-full items-start space-x-2">
@@ -567,6 +619,91 @@ const AddDepartmentDialog = ({
     </PopupDialog>
   );
 };
+const AddLocationDialog = ({
+  onSuccess,
+  isOpen,
+  setIsOpen,
+  location,
+  selectedUserId,
+}: {
+  onSuccess: VoidFunction;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  location?: { id: number; name: string };
+  selectedUserId: number | null;
+}) => {
+  const [selectedLocation, setSelectedLocation] = useState<{
+    name: string;
+    id?: number | undefined;
+  }>({
+    name: "",
+    id: undefined,
+  });
+  useEffect(() => {
+    if (location) {
+      setSelectedLocation(location);
+    }
+  }, [location]);
+
+  const addDepartmentMutation = useMutation({
+    mutationFn: ({ id, locations }: { id: number; locations: number[] }) =>
+      axiosApi({
+        url: `user/recruiter_location/${id}/` as "user/recruiter_location/",
+        method: "PUT",
+        data: { locations },
+      }).then((e) => e.data.isSuccess),
+  });
+  const onAddLocation = () => {
+    if (!selectedUserId) return console.log("no user id", selectedUserId);
+    if (!selectedLocation.id)
+      return console.log("no selected location", selectedLocation);
+    addDepartmentMutation
+      .mutateAsync({ id: selectedUserId, locations: [selectedLocation.id] })
+      .then((success) => {
+        if (success) {
+          setSelectedLocation({ name: "" });
+          toast.success("Added new department successfully");
+          onSuccess();
+          return;
+        } else {
+          throw new Error("Some error ocurred");
+        }
+      })
+      .catch(() => {
+        toast.error("Some error ocurred");
+      });
+  };
+  useEffect(() => {
+    return () => {
+      setSelectedLocation({ name: "" });
+    };
+  }, [isOpen]);
+
+  return (
+    <PopupDialog isOpen={isOpen} setIsOpen={setIsOpen} title="Add Location">
+      <div>
+        <div className="mb-4 space-y-2 py-4">
+          <div className="flex flex-col gap-2">
+            <LocationSelector
+              selected={selectedLocation}
+              setSelected={setSelectedLocation}
+            />
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <Button
+            isLoading={addDepartmentMutation.isPending}
+            disabled={addDepartmentMutation.isPending || !selectedLocation?.id}
+            onClick={onAddLocation}
+            className="py-2 disabled:border-slate-600 disabled:bg-slate-500"
+          >
+            Add Location
+          </Button>
+        </div>
+      </div>
+    </PopupDialog>
+  );
+};
 
 //#endregion
 
@@ -600,7 +737,7 @@ const Filter = ({
       <DebouncedInput
         className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
         type="text"
-        placeholder={id}
+        placeholder={(nameMap as any)[id as any] || id}
         value={value}
         onChange={(val) => {
           setValue("" + val);

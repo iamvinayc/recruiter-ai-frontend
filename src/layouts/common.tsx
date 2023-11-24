@@ -1,8 +1,6 @@
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Menu, Transition } from "@headlessui/react";
 import ArrowLeftIcon from "@heroicons/react/24/outline/ArrowLeftIcon";
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
-import ChevronUpIcon from "@heroicons/react/24/outline/ChevronUpIcon";
-import Squares2X2Icon from "@heroicons/react/24/outline/Squares2X2Icon";
 import ArrowLeftOnRectangleIcon from "@heroicons/react/24/solid/ArrowLeftOnRectangleIcon";
 import ChevronDownIcon from "@heroicons/react/24/solid/ChevronDownIcon";
 import Cog6ToothIcon from "@heroicons/react/24/solid/Cog6ToothIcon";
@@ -58,48 +56,15 @@ export const Header = ({
           <button
             aria-controls="sidebar"
             onClick={() => setSidebarOpen((b) => !b)}
-            className="dark:bg-boxdark z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark lg:hidden"
+            className="dark:bg-boxdark dark:border-strokedark z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm lg:hidden"
           >
-            <Bars3Icon className="relative block h-5.5 w-5.5 cursor-pointer" />
+            <Bars3Icon className="h-5.5 w-5.5 relative block cursor-pointer" />
           </button>
           <div className="block flex-shrink-0 lg:hidden">
             <div className="text-3xl text-black">AI-RECRUIT</div>
           </div>
         </div>
-        <div className="hidden sm:block">
-          <form action="https://formbold.com/s/unique_form_id" method="POST">
-            <div className="relative">
-              <button className="absolute left-0 top-1/2 -translate-y-1/2">
-                <svg
-                  className="dark:fill-bodydark fill-body hover:fill-primary dark:hover:fill-primary"
-                  width={20}
-                  height={20}
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M9.16666 3.33332C5.945 3.33332 3.33332 5.945 3.33332 9.16666C3.33332 12.3883 5.945 15 9.16666 15C12.3883 15 15 12.3883 15 9.16666C15 5.945 12.3883 3.33332 9.16666 3.33332ZM1.66666 9.16666C1.66666 5.02452 5.02452 1.66666 9.16666 1.66666C13.3088 1.66666 16.6667 5.02452 16.6667 9.16666C16.6667 13.3088 13.3088 16.6667 9.16666 16.6667C5.02452 16.6667 1.66666 13.3088 1.66666 9.16666Z"
-                    fill=""
-                  />
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M13.2857 13.2857C13.6112 12.9603 14.1388 12.9603 14.4642 13.2857L18.0892 16.9107C18.4147 17.2362 18.4147 17.7638 18.0892 18.0892C17.7638 18.4147 17.2362 18.4147 16.9107 18.0892L13.2857 14.4642C12.9603 14.1388 12.9603 13.6112 13.2857 13.2857Z"
-                    fill=""
-                  />
-                </svg>
-              </button>
-              <input
-                placeholder="Type to search..."
-                className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none xl:w-125"
-                type="text"
-              />
-            </div>
-          </form>
-        </div>
+        <div className="hidden sm:block"></div>
         <div className="2xsm:gap-7 flex items-center gap-3">
           <Menu>
             <div className="relative">
@@ -127,9 +92,9 @@ export const Header = ({
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="dark:bg-boxdark absolute right-0 mt-4 w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark">
+                <Menu.Items className="dark:bg-boxdark w-62.5 dark:border-strokedark absolute right-0 mt-4 flex-col rounded-sm border border-stroke bg-white shadow-default">
                   <div>
-                    <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
+                    <ul className="dark:border-strokedark flex flex-col gap-5 border-b border-stroke px-6 py-7.5">
                       {MenuItems.map(({ Icon, link, title }) => (
                         <Menu.Item key={title}>
                           {({ close }) => (
@@ -168,7 +133,7 @@ export const Header = ({
 };
 
 interface SideBarProps {
-  links: { title: string; link: string }[];
+  links: { title: string; link: string; icon: JSX.Element }[];
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
   sidebarOpen: boolean;
 }
@@ -183,7 +148,7 @@ export const SideBar = ({
   return (
     <aside
       className={cn(
-        "dark:bg-boxdark absolute left-0 top-0 z-9999 flex h-screen w-72.5 -translate-x-full flex-col overflow-y-hidden bg-black duration-300 ease-linear lg:static lg:translate-x-0 ",
+        "dark:bg-boxdark w-72.5 absolute left-0 top-0 z-9999 flex h-screen -translate-x-full flex-col overflow-y-hidden bg-black duration-300 ease-linear lg:static lg:translate-x-0 ",
         !sidebarOpen ? "-translate-x-full" : "translate-x-0",
       )}
     >
@@ -193,69 +158,29 @@ export const SideBar = ({
           onClick={() => setSidebarOpen(false)}
           className="block lg:hidden"
         >
-          <ArrowLeftIcon className="h-6 w-6" />
-          {/* <svg
-            className="fill-current"
-            width={20}
-            height={18}
-            viewBox="0 0 20 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M19 8.175H2.98748L9.36248 1.6875C9.69998 1.35 9.69998 0.825 9.36248 0.4875C9.02498 0.15 8.49998 0.15 8.16248 0.4875L0.399976 8.3625C0.0624756 8.7 0.0624756 9.225 0.399976 9.5625L8.16248 17.4375C8.31248 17.5875 8.53748 17.7 8.76248 17.7C8.98748 17.7 9.17498 17.625 9.36248 17.475C9.69998 17.1375 9.69998 16.6125 9.36248 16.275L3.02498 9.8625H19C19.45 9.8625 19.825 9.4875 19.825 9.0375C19.825 8.55 19.45 8.175 19 8.175Z"
-              fill=""
-            />
-          </svg> */}
+          <ArrowLeftIcon className="h-6 w-6 text-white" />
         </button>
       </div>
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
-          <div>
+          <div className="gap-y-2 ">
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
               MENU
             </h3>
 
-            <Disclosure defaultOpen>
-              {({ open }) => (
-                <ul className="mb-6 flex flex-col gap-1.5">
-                  <Disclosure.Button>
-                    <div className="dark:hover:bg-meta-4 dark:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm bg-graydark px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark">
-                      <Squares2X2Icon className="h-5 w-5" />
-                      Dashboard
-                      {open ? (
-                        <ChevronUpIcon className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 rotate-180   stroke-white" />
-                      ) : (
-                        <ChevronDownIcon className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 rotate-180   stroke-white" />
-                      )}
-                    </div>
-                  </Disclosure.Button>
-                  <Disclosure.Panel>
-                    <li>
-                      <div className="translate false transform overflow-hidden">
-                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          {links.map(({ link, title }) => (
-                            <li key={link}>
-                              <Link
-                                className={cn(
-                                  " group relative flex items-center gap-2.5 rounded-md px-4 font-medium  duration-300 ease-in-out hover:text-white",
-                                  pathname == link
-                                    ? "text-white"
-                                    : "text-bodydark2",
-                                )}
-                                to={link}
-                              >
-                                {title}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </li>
-                  </Disclosure.Panel>
-                </ul>
-              )}
-            </Disclosure>
+            {links.map(({ link, title, icon }) => (
+              <Link to={link} key={title}>
+                <div
+                  className={cn(
+                    "dark:hover:bg-meta-4 dark:bg-meta-4 group relative mb-3 flex items-center gap-2.5 rounded-sm  px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark",
+                    pathname == link ? "bg-graydark" : "",
+                  )}
+                >
+                  {icon}
+                  {title}
+                </div>
+              </Link>
+            ))}
           </div>
         </nav>
       </div>

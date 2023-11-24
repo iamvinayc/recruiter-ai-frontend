@@ -25,9 +25,9 @@ export function AdminListLocationPage() {
     mutationKey: ["AdminAddLocationPage"],
     mutationFn: async ({ label }: { label: string }) =>
       axiosApi({
-        url: "data-sourcing/location",
+        url: "data-sourcing/location/" as "data-sourcing/location",
         method: "POST",
-        data: { label },
+        data: { name: label },
       }).then((e) => e.data.isSuccess),
   });
 

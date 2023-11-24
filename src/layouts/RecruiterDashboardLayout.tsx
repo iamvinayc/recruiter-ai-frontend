@@ -1,3 +1,6 @@
+import BriefcaseIcon from "@heroicons/react/24/outline/BriefcaseIcon";
+import Squares2X2Icon from "@heroicons/react/24/outline/Squares2X2Icon";
+import UsersIcon from "@heroicons/react/24/outline/UsersIcon";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -26,8 +29,20 @@ export function RecruiterDashboardLayout() {
 
 const SideBarLinks = {
   Dashboard: [
-    { title: "Home", link: ROUTES.RECRUITER.DASHBOARD.path },
-    { title: "List Jobs", link: ROUTES.RECRUITER.LIST_JOBS.path },
-    { title: "List Candidate", link: ROUTES.RECRUITER.LIST_CANDIDATE.path },
+    {
+      title: "Dashboard",
+      link: ROUTES.RECRUITER.DASHBOARD.path,
+      icon: <Squares2X2Icon className="h-5 w-5" />,
+    },
+    {
+      title: "Jobs",
+      link: ROUTES.RECRUITER.LIST_JOBS.path,
+      icon: <BriefcaseIcon className="h-5 w-5" />,
+    },
+    {
+      title: "Candidate",
+      link: ROUTES.RECRUITER.LIST_CANDIDATE.path,
+      icon: <UsersIcon className="h-5 w-5" />,
+    },
   ],
 };

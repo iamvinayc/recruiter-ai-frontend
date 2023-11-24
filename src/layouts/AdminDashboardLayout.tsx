@@ -1,3 +1,9 @@
+import BriefcaseIcon from "@heroicons/react/24/outline/BriefcaseIcon";
+import BuildingOfficeIcon from "@heroicons/react/24/outline/BuildingOfficeIcon";
+import MapPinIcon from "@heroicons/react/24/outline/MapPinIcon";
+import Squares2X2Icon from "@heroicons/react/24/outline/Squares2X2Icon";
+import UserIcon from "@heroicons/react/24/outline/UserIcon";
+import UsersIcon from "@heroicons/react/24/outline/UsersIcon";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -26,11 +32,35 @@ export function AdminDashboardLayout() {
 
 const SideBarLinks = {
   Dashboard: [
-    { title: "Home", link: ROUTES.ADMIN.DASHBOARD.path },
-    { title: "List Department", link: ROUTES.ADMIN.LIST_DEPARTMENT.path },
-    { title: "List Recruiter", link: ROUTES.ADMIN.LIST_RECRUITER.path },
-    { title: "List Location", link: ROUTES.ADMIN.LIST_LOCATION.path },
-    { title: "List Jobs", link: ROUTES.ADMIN.LIST_JOBS.path },
-    { title: "List Candidate", link: ROUTES.ADMIN.LIST_CANDIDATE.path },
+    {
+      title: "Dashboard",
+      link: ROUTES.ADMIN.DASHBOARD.path,
+      icon: <Squares2X2Icon className="h-5 w-5" />,
+    },
+    {
+      title: "Department",
+      link: ROUTES.ADMIN.LIST_DEPARTMENT.path,
+      icon: <BuildingOfficeIcon className="h-5 w-5" />,
+    },
+    {
+      title: "Recruiter",
+      link: ROUTES.ADMIN.LIST_RECRUITER.path,
+      icon: <UserIcon className="h-5 w-5" />,
+    },
+    {
+      title: "Location",
+      link: ROUTES.ADMIN.LIST_LOCATION.path,
+      icon: <MapPinIcon className="h-5 w-5" />,
+    },
+    {
+      title: "Jobs",
+      link: ROUTES.ADMIN.LIST_JOBS.path,
+      icon: <BriefcaseIcon className="h-5 w-5" />,
+    },
+    {
+      title: "Candidate",
+      link: ROUTES.ADMIN.LIST_CANDIDATE.path,
+      icon: <UsersIcon className="h-5 w-5" />,
+    },
   ],
 };
