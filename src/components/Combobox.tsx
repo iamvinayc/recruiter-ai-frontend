@@ -49,12 +49,15 @@ export function Combobox({
             aria-expanded={open}
             className="w-full justify-between"
           >
-            {selectedValue
-              ? items.find(
-                  (item) =>
-                    item.value?.toLowerCase() === selectedValue?.toLowerCase(),
-                )?.label
-              : `Select ${label}...`}
+            <span className="text-ellipsis">
+              {selectedValue
+                ? items.find(
+                    (item) =>
+                      item.value?.toLowerCase() ===
+                      selectedValue?.toLowerCase(),
+                  )?.label
+                : `Select ${label}...`}
+            </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </div>

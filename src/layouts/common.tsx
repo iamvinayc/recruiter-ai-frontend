@@ -52,15 +52,15 @@ export const Header = ({
   return (
     <header className="dark:bg-boxdark sticky top-0 z-1 flex w-full bg-white drop-shadow-1 dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
-        <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
+        <div className="flex items-center gap-2 sm:gap-4 2xl:hidden">
           <button
             aria-controls="sidebar"
             onClick={() => setSidebarOpen((b) => !b)}
-            className="dark:bg-boxdark dark:border-strokedark z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm lg:hidden"
+            className="dark:bg-boxdark dark:border-strokedark z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm 2xl:hidden"
           >
-            <Bars3Icon className="h-5.5 w-5.5 relative block cursor-pointer" />
+            <Bars3Icon className="relative block h-5.5 w-5.5 cursor-pointer" />
           </button>
-          <div className="block flex-shrink-0 lg:hidden">
+          <div className="block flex-shrink-0 2xl:hidden">
             <div className="text-3xl text-black">AI-RECRUIT</div>
           </div>
         </div>
@@ -92,7 +92,7 @@ export const Header = ({
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="dark:bg-boxdark w-62.5 dark:border-strokedark absolute right-0 mt-4 flex-col rounded-sm border border-stroke bg-white shadow-default">
+                <Menu.Items className="dark:bg-boxdark dark:border-strokedark absolute right-0 mt-4 w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default">
                   <div>
                     <ul className="dark:border-strokedark flex flex-col gap-5 border-b border-stroke px-6 py-7.5">
                       {MenuItems.map(({ Icon, link, title }) => (
@@ -148,7 +148,7 @@ export const SideBar = ({
   return (
     <aside
       className={cn(
-        "dark:bg-boxdark w-72.5 absolute left-0 top-0 z-9999 flex h-screen -translate-x-full flex-col overflow-y-hidden bg-black duration-300 ease-linear lg:static lg:translate-x-0 ",
+        "dark:bg-boxdark absolute left-0 top-0 z-9999 flex h-screen w-72.5 -translate-x-full flex-col overflow-y-hidden bg-black duration-300 ease-linear 2xl:static 2xl:translate-x-0 ",
         !sidebarOpen ? "-translate-x-full" : "translate-x-0",
       )}
     >
@@ -156,7 +156,7 @@ export const SideBar = ({
         <div className="text-3xl text-white">AI-RECRUIT</div>
         <button
           onClick={() => setSidebarOpen(false)}
-          className="block lg:hidden"
+          className="block 2xl:hidden"
         >
           <ArrowLeftIcon className="h-6 w-6 text-white" />
         </button>

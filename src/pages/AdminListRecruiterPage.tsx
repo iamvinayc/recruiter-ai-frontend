@@ -253,14 +253,14 @@ export function AdminListRecruiterPage() {
         </div>
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div className="dark:bg-boxdark dark:border-strokedark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default">
-            <table className="divide-gray-200 dark:divide-gray-700 min-w-full table-fixed divide-y">
-              <thead>
+            <table className="divide-gray-200 min-w-full divide-y overflow-x-auto">
+              <thead className="bg-gray-50">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
                         scope="col"
-                        className="text-gray-500 px-6 py-3 text-start align-baseline text-xs  font-medium"
+                        className="text-gray-500 px-6 py-3 text-left text-xs font-medium tracking-wider"
                       >
                         {header.isPlaceholder
                           ? null
@@ -276,14 +276,11 @@ export function AdminListRecruiterPage() {
                   </tr>
                 ))}
               </thead>
-              <tbody className="divide-gray-200 dark:divide-gray-700 divide-y">
+              <tbody className="divide-gray-200 divide-y bg-white">
                 {table.getRowModel().rows.map((row) => (
                   <tr key={row.id}>
                     {row.getVisibleCells().map((cell) => (
-                      <td
-                        className="text-gray-800 dark:text-gray-200 whitespace-nowrap px-6 py-4 text-sm font-medium"
-                        key={row.id}
-                      >
+                      <td className="whitespace-nowrap px-6 py-4" key={row.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
@@ -292,7 +289,7 @@ export function AdminListRecruiterPage() {
                     ))}
                   </tr>
                 ))}
-                <tr>
+                <tr className={cn(recruiterList.length > 0 && "hidden")}>
                   <td colSpan={6}>
                     <div
                       className={cn(
@@ -333,20 +330,6 @@ export function AdminListRecruiterPage() {
                 </tr>
               </tbody>
             </table>
-
-            {/* <div
-              className={cn(
-                "absolute left-0 top-0 h-full w-full items-center justify-center bg-white bg-opacity-50",
-
-                changeStatusMutation.isPending ||
-                  recruiterListQuery.isLoading ||
-                  recruiterListQuery.isRefetching
-                  ? "flex"
-                  : "hidden",
-              )}
-            >
-              <SpinnerIcon className="h-6 w-6 text-black" />
-            </div> */}
           </div>
         </div>
       </div>

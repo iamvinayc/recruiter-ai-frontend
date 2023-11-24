@@ -385,6 +385,7 @@ interface JobListingResponseData {
   title: string;
   description: string;
   expires_on: string;
+  platform: string;
 }
 
 interface Department {
@@ -425,6 +426,7 @@ interface CandidateListResponseData {
   profile_url: string;
   resume_file: string;
   handle: string;
+  platform: string;
 }
 
 interface Location {

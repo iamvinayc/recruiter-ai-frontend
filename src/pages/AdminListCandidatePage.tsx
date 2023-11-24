@@ -1,4 +1,4 @@
-import { PlusIcon } from "@heroicons/react/20/solid";
+import { EyeIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { z } from "zod";
 
+import { LineClamp } from "@/components/LineClamp";
 import { ROUTES } from "@/routes/routes";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
@@ -22,7 +23,7 @@ import { SpinnerIcon } from "../components/common/SvgIcons";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { LocationSelector } from "../components/LocationSelector";
 import { PopupDialog } from "../components/PopupDialog";
-import { cn } from "../utils";
+import { cn, emptyArray } from "../utils";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 
 const defaultArr: [] = [];
@@ -36,6 +37,9 @@ export function AdminListCandidatePage({
 }) {
   const [{ department, location, scrape_from }] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_JOBS,
+  );
+  const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
+    null,
   );
   const [showAddCandidatePopup, _setShowAddCandidatePopup] = useState(false);
 
@@ -71,7 +75,7 @@ export function AdminListCandidatePage({
       columnHelper.accessor("description", {
         header: "Description",
         cell: (info) => (
-          <div className="truncate" title={info.getValue()}>
+          <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -90,6 +94,28 @@ export function AdminListCandidatePage({
           return <ChipGroup items={info.getValue()} />;
         },
       }),
+      columnHelper.accessor("platform", {
+        header: "Platform",
+        cell: (info) => {
+          return <div className="w-auto">{info.getValue()}</div>;
+        },
+      }),
+      columnHelper.display({
+        header: "Action",
+        id: "action",
+        cell: (info) => {
+          return (
+            <div className="">
+              <button
+                onClick={() => setShowUserDetailsId(info.row.original.id)}
+                className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
+              >
+                <EyeIcon className="h-5 w-5 " />
+              </button>
+            </div>
+          );
+        },
+      }),
     ],
     [],
   );
@@ -102,10 +128,13 @@ export function AdminListCandidatePage({
         description: e.description || "",
         location: [{ id: e.location.id, name: e.location.name }],
         departments: e.departments.map((e) => ({ id: e.id, name: e.name })),
+        platform: e.platform,
       })) || defaultArr,
     [candidateListQuery.data],
   );
-
+  const selectedUser = candidateListQuery.data?.find(
+    (e) => e.id === showUserDetailsId,
+  );
   //#endregion
 
   const table = useReactTable({
@@ -149,13 +178,17 @@ export function AdminListCandidatePage({
               candidateListQuery.isLoading && "min-h-[20rem]",
             )}
           >
-            <table className={cn("w-full   table-fixed overflow-scroll")}>
+            <table className={cn("min-w-full   table-fixed overflow-scroll")}>
               <thead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
-                        className="border-b border-slate-200 p-4 pb-3 pl-8  text-left font-medium text-slate-600 dark:border-slate-600 dark:text-slate-200"
+                        className={cn(
+                          "border-b border-slate-200 p-4 pb-3 pl-8  text-left font-medium text-slate-600 dark:border-slate-600 dark:text-slate-200",
+                          header.id === "platform" && "w-[140px]",
+                          header.id === "action" && "w-[140px]",
+                        )}
                         key={header.id}
                       >
                         {header.isPlaceholder
@@ -215,6 +248,84 @@ export function AdminListCandidatePage({
         isOpen={showAddCandidatePopup}
         setIsOpen={setShowAddCandidatePopup}
       />
+      <PopupDialog
+        isOpen={showUserDetailsId !== null}
+        setIsOpen={() => setShowUserDetailsId(null)}
+        title="Candidate Details"
+        containerClassName="max-w-[95%] md:max-w-[70%] "
+      >
+        <div>
+          <button
+            className="absolute right-0 top-0 p-4"
+            onClick={() => setShowUserDetailsId(null)}
+          >
+            <XMarkIcon className="h-6 w-6" />
+          </button>
+          <div className="mt-4 grid grid-cols-1 gap-x-12 gap-y-4 lg:grid-cols-2">
+            <div>
+              <div className="rounded-md border">
+                <div className="flex items-center space-x-2 border-b p-4 py-3 text-lg font-medium">
+                  {/* icon */}
+                  <span>User Info</span>
+                </div>
+                <div className="divide-y">
+                  {[
+                    ["Name", selectedUser?.name],
+                    ["Email", selectedUser?.email],
+                    ["Phone", selectedUser?.phone],
+                    ["Profile url", selectedUser?.profile_url],
+                    ["Resume file", selectedUser?.resume_file],
+                  ].map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex flex-col justify-between px-4 py-2 text-sm md:flex-row"
+                    >
+                      <div className="font-medium">{key}</div>
+                      {value?.startsWith("https://") ? (
+                        <a
+                          href={value}
+                          target="_blank"
+                          referrerPolicy="no-referrer"
+                          className="truncate text-blue-500"
+                        >
+                          {value}
+                        </a>
+                      ) : (
+                        <div className="truncate ">{value}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              {([["Location", selectedUser?.location?.name]] as const).map(
+                ([key, value]) => (
+                  <div key={key} className="space-y-1">
+                    <div className="font-medium">{key}</div>
+                    <div className="text-sm text-slate-700">{value}</div>
+                  </div>
+                ),
+              )}
+              <div className="space-y-1">
+                <div className="font-medium">Departments</div>
+                <div className="text-sm ">
+                  <ChipGroup
+                    items={selectedUser?.departments || emptyArray}
+                    showAll
+                  />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="font-medium">Description</div>
+                <div className="text-sm text-slate-700">
+                  <LineClamp text={selectedUser?.description || ""} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </PopupDialog>
     </main>
   );
 }
@@ -228,6 +339,7 @@ interface Person {
 
   departments: { id: number; name: string }[];
   location: { id: number; name: string }[];
+  platform: string;
 }
 
 //#endregion

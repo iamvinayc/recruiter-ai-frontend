@@ -4,14 +4,20 @@ import MapPinIcon from "@heroicons/react/24/outline/MapPinIcon";
 import Squares2X2Icon from "@heroicons/react/24/outline/Squares2X2Icon";
 import UserIcon from "@heroicons/react/24/outline/UserIcon";
 import UsersIcon from "@heroicons/react/24/outline/UsersIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+import { useIsClient } from "usehooks-ts";
 
 import { ROUTES } from "../routes/routes";
 import { Header, SideBar } from "./common";
 
 export function AdminDashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isClient = useIsClient();
+  useEffect(() => {
+    if (!isClient) return;
+    if (window.innerWidth > 1024) setSidebarOpen(true);
+  }, [isClient]);
 
   return (
     <div className="dark:bg-boxdark-2 dark:text-bodydark flex h-screen overflow-hidden">

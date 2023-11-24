@@ -1,3 +1,4 @@
+import { EyeIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import PlusIcon from "@heroicons/react/24/outline/PlusIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -19,10 +20,11 @@ import { ChipGroup } from "../components/common/ChipGroup";
 import { Input } from "../components/common/Input";
 import { SpinnerIcon } from "../components/common/SvgIcons";
 import { DepartmentSelector } from "../components/DepartmentSelector";
+import { LineClamp } from "../components/LineClamp";
 import { LocationSelector } from "../components/LocationSelector";
 import { PopupDialog } from "../components/PopupDialog";
 import { ROUTES } from "../routes/routes";
-import { cn } from "../utils";
+import { cn, emptyArray } from "../utils";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 
 const defaultArr: [] = [];
@@ -35,6 +37,9 @@ export function AdminListJobPage({
   hideAddBtn?: boolean;
 }) {
   const [showAddJobPopup, _setShowAddJobPopup] = useState(false);
+  const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
+    null,
+  );
   const [{ department, location, scrape_from }] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_JOBS,
   );
@@ -71,7 +76,7 @@ export function AdminListJobPage({
       columnHelper.accessor("description", {
         header: "Description",
         cell: (info) => (
-          <div className="truncate" title={info.getValue()}>
+          <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -98,6 +103,28 @@ export function AdminListJobPage({
           return <ChipGroup items={info.getValue()} />;
         },
       }),
+      columnHelper.accessor("platform", {
+        header: "Platform",
+        cell: (info) => {
+          return <div className="w-auto">{info.getValue()}</div>;
+        },
+      }),
+      columnHelper.display({
+        header: "Action",
+        id: "action",
+        cell: (info) => {
+          return (
+            <div className="">
+              <button
+                onClick={() => setShowUserDetailsId(info.row.original.id)}
+                className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
+              >
+                <EyeIcon className="h-5 w-5 " />
+              </button>
+            </div>
+          );
+        },
+      }),
     ],
     [],
   );
@@ -111,6 +138,7 @@ export function AdminListJobPage({
         location: [{ id: e.location.id, name: e.location.name }],
         departments: e.departments.map((e) => ({ id: e.id, name: e.name })),
         employer: e.employer.employer_label,
+        platform: e.platform,
       })) || defaultArr,
     [jobListQuery.data],
   );
@@ -127,6 +155,10 @@ export function AdminListJobPage({
     _setShowAddJobPopup(value);
     if (value === false) jobListQuery.refetch();
   };
+
+  const selectedUser = jobListQuery.data?.find(
+    (e) => e.id === showUserDetailsId,
+  );
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -158,13 +190,17 @@ export function AdminListJobPage({
               jobListQuery.isLoading && "min-h-[20rem]",
             )}
           >
-            <table className={cn("w-full   table-fixed overflow-scroll")}>
+            <table className={cn("min-w-full   table-fixed overflow-scroll")}>
               <thead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
-                        className="border-b border-slate-200 p-4 pb-3 pl-8  text-left font-medium text-slate-600 dark:border-slate-600 dark:text-slate-200"
+                        className={cn(
+                          "border-b border-slate-200 p-4 pb-3 pl-8  text-left font-medium text-slate-600 dark:border-slate-600 dark:text-slate-200",
+                          header.id === "platform" && "w-[140px]",
+                          header.id === "action" && "w-[140px]",
+                        )}
                         key={header.id}
                       >
                         {header.isPlaceholder
@@ -221,6 +257,77 @@ export function AdminListJobPage({
         </div>
       </div>
       <AddJobPopup isOpen={showAddJobPopup} setIsOpen={setShowAddJobPopup} />
+      <PopupDialog
+        isOpen={showUserDetailsId !== null}
+        setIsOpen={() => setShowUserDetailsId(null)}
+        title="Job Details"
+        containerClassName="max-w-[95%] md:max-w-[70%] "
+      >
+        <div>
+          <button
+            className="absolute right-0 top-0 p-4"
+            onClick={() => setShowUserDetailsId(null)}
+          >
+            <XMarkIcon className="h-6 w-6" />
+          </button>
+          <div className="mt-4 grid grid-cols-1 gap-x-12 gap-y-4 lg:grid-cols-2">
+            <div className="space-y-4">
+              {(
+                [
+                  ["Job Title", selectedUser?.title],
+                  ["Location", selectedUser?.location?.name],
+                ] as const
+              ).map(([key, value]) => (
+                <div key={key} className="space-y-1">
+                  <div className="font-medium">{key}</div>
+                  <div className="text-sm text-slate-700">{value}</div>
+                </div>
+              ))}
+              <div className="space-y-1">
+                <div className="font-medium">Departments</div>
+                <div className="text-sm ">
+                  <ChipGroup
+                    items={selectedUser?.departments || emptyArray}
+                    showAll
+                  />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="font-medium">Description</div>
+                <div className="text-sm text-slate-700">
+                  <LineClamp text={selectedUser?.description || ""} />
+                </div>
+              </div>
+            </div>
+            <div className=" ">
+              <div>
+                <div className="rounded-md border">
+                  <div className="flex items-center space-x-2 border-b p-4 py-3 text-lg font-medium">
+                    {/* icon */}
+                    <span>Employer Info</span>
+                  </div>
+                  <div className="divide-y">
+                    {[
+                      ["Employee Name", selectedUser?.employer?.employer_label],
+                      ["Email", selectedUser?.employer?.email],
+                      ["Phone 1", selectedUser?.employer?.phone1],
+                      ["Phone 2", selectedUser?.employer?.phone2],
+                    ].map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex justify-between px-4 py-2 text-sm"
+                      >
+                        <div className="font-medium">{key}</div>
+                        <div>{value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </PopupDialog>
     </main>
   );
 }
@@ -234,6 +341,7 @@ interface Person {
   employer: string;
   departments: { id: number; name: string }[];
   location: { id: number; name: string }[];
+  platform: string;
 }
 
 //#endregion
