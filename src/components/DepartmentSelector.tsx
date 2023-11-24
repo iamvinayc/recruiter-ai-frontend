@@ -113,21 +113,23 @@ export function DepartmentSelector({
                   </span>
                 </Combobox.Option>
               ) : (
-                filteredItems.map((item) => (
-                  <Combobox.Option
-                    key={item.id}
-                    className={({ active }) =>
-                      `relative cursor-default select-none px-4 py-2 ${
-                        active ? "bg-teal-600 text-white" : "text-gray-900"
-                      }`
-                    }
-                    value={item}
-                  >
-                    <span className="block truncate  font-normal ">
-                      {item.name}
-                    </span>
-                  </Combobox.Option>
-                ))
+                filteredItems
+                  .filter((e) => !selectedItems.map((e) => e.id).includes(e.id))
+                  .map((item) => (
+                    <Combobox.Option
+                      key={item.id}
+                      className={({ active }) =>
+                        `relative cursor-default select-none px-4 py-2 ${
+                          active ? "bg-teal-600 text-white" : "text-gray-900"
+                        }`
+                      }
+                      value={item}
+                    >
+                      <span className="block truncate  font-normal ">
+                        {item.name}
+                      </span>
+                    </Combobox.Option>
+                  ))
               )}
             </Combobox.Options>
           </Transition>
