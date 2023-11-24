@@ -107,13 +107,6 @@ export function LoginPage() {
             Sign In
           </Button>
         </div>
-
-        <div className="mt-6 text-center">
-          Don’t have any account?
-          <a className="text-primary" href="#">
-            Sign Up
-          </a>
-        </div>
       </form>
     </FromLayout>
   );
@@ -127,7 +120,7 @@ const FromLayout = ({ children }: React.ComponentProps<"div">) => (
           Sign In
         </h2>
       </div>
-      <div className="dark:bg-boxdark rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark">
+      <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white shadow-default">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="px-26 py-17.5 text-center">
@@ -137,7 +130,7 @@ const FromLayout = ({ children }: React.ComponentProps<"div">) => (
               </span>
             </div>
           </div>
-          <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+          <div className="dark:border-strokedark w-full border-stroke xl:w-1/2 xl:border-l-2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">{children}</div>
           </div>
         </div>
