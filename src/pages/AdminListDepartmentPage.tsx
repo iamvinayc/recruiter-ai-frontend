@@ -66,7 +66,7 @@ export function AdminListDepartmentPage() {
             className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
           >
             <PlusIcon className="h-6 w-6 stroke-2" />
-            Add Job
+            Add Department
           </button>
         </div>
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
