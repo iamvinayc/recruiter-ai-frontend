@@ -1,5 +1,9 @@
 import { route, string } from "react-router-typesafe-routes/dom";
 
+export enum SortBy {
+  Alphabetical = "alphabetical",
+  Latest = "latest",
+}
 export const ROUTES = {
   LOGIN: route(""),
   FORGOT_PASSWORD: route("forgot-password"),
@@ -18,6 +22,7 @@ export const ROUTES = {
           department: string().default(""),
           location: string().default(""),
           scrape_from: string().default(""),
+          sort_by: string().default(SortBy.Latest),
         },
       }),
       LIST_CANDIDATE: route("list-candidate"),

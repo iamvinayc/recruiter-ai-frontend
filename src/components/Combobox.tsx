@@ -24,12 +24,14 @@ interface Item {
 }
 interface ComboboxProps {
   label: string;
+  placeholder?: string;
   items: Item[];
   selectedValue: string;
   setSelectedValue: React.Dispatch<React.SetStateAction<string>>;
 }
 export function Combobox({
   label = "",
+  placeholder = "",
   items = [],
   selectedValue,
   setSelectedValue,
@@ -40,9 +42,11 @@ export function Combobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <div>
-          <label className="mb-2.5 block font-medium text-black dark:text-white">
-            {label}
-          </label>
+          {label ? (
+            <label className="mb-2.5 block font-medium text-black dark:text-white">
+              {label}
+            </label>
+          ) : null}
           <Button
             variant="outline"
             role="combobox"
@@ -56,7 +60,7 @@ export function Combobox({
                       item.value?.toLowerCase() ===
                       selectedValue?.toLowerCase(),
                   )?.label
-                : `Select ${label}...`}
+                : placeholder || `Select ${label}...`}
             </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>

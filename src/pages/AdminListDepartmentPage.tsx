@@ -1,11 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import DataTable from "react-data-table-component";
+import toast from "react-hot-toast";
 
+import { Button } from "@/components/common/Button";
+import { Input } from "@/components/common/Input";
+import { PopupDialog } from "@/components/PopupDialog";
 import { axiosApi } from "../api/api";
 
 export function AdminListDepartmentPage() {
+  const [showAddDepartmentPopup, setShowAddDepartmentPopup] = useState(false);
+  const [newDepartment, setNewDepartment] = useState("");
   const departmentListQuery = useQuery({
-    queryKey: ["AdminListDepartmentPage"],
+    queryKey: ["AdminListDepartmentPage", showAddDepartmentPopup],
     queryFn: async () =>
       axiosApi({
         url: "data-sourcing/department/",
@@ -13,6 +21,36 @@ export function AdminListDepartmentPage() {
         params: { type: 1 },
       }).then((e) => e.data.data),
   });
+
+  const addDepartmentMutation = useMutation({
+    mutationKey: ["addLocationMutation"],
+    mutationFn: async ({ name }: { name: string }) =>
+      axiosApi({
+        url: "data-sourcing/department/" as "data-sourcing/department",
+        method: "POST",
+        data: { name: name, description: name },
+      }).then((e) => e.data.isSuccess),
+  });
+
+  const onNewDepartmentAdd = () => {
+    addDepartmentMutation
+      .mutateAsync({ name: newDepartment })
+      .then((success) => {
+        if (success) {
+          toast.success("New department added successfully");
+          setShowAddDepartmentPopup(false);
+          setNewDepartment("");
+          departmentListQuery.refetch();
+          return;
+        } else {
+          throw new Error("Some error ocurred");
+        }
+      })
+      .catch(() => {
+        toast.error("Some error ocurred");
+      });
+  };
+
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -20,9 +58,19 @@ export function AdminListDepartmentPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Department
           </h2>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddDepartmentPopup(true);
+            }}
+            className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
+          >
+            <PlusIcon className="h-6 w-6 stroke-2" />
+            Add Job
+          </button>
         </div>
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
-          <div className="dark:bg-boxdark rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark">
+          <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white shadow-default">
             <DataTable
               columns={columns}
               data={departmentListQuery.data || emptyArr}
@@ -31,6 +79,34 @@ export function AdminListDepartmentPage() {
           </div>
         </div>
       </div>
+      <PopupDialog
+        isOpen={showAddDepartmentPopup}
+        setIsOpen={setShowAddDepartmentPopup}
+        title="Add new department"
+      >
+        <div className="mb-4 py-4">
+          <Input
+            label="Department"
+            placeholder="Department"
+            containerClassName=""
+            className="px-3 py-3"
+            disabled={addDepartmentMutation.isPending}
+            value={newDepartment}
+            onInput={(e) =>
+              setNewDepartment((e.target as HTMLInputElement).value)
+            }
+          />
+        </div>
+        <div className="flex justify-end">
+          <Button
+            onClick={onNewDepartmentAdd}
+            isLoading={addDepartmentMutation.isPending}
+            className="py-2"
+          >
+            Add Location
+          </Button>
+        </div>
+      </PopupDialog>
     </main>
   );
 }

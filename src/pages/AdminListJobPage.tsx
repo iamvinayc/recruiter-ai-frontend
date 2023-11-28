@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { z } from "zod";
 
+import { Combobox } from "@/components/Combobox";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
@@ -23,7 +24,7 @@ import { DepartmentSelector } from "../components/DepartmentSelector";
 import { LineClamp } from "../components/LineClamp";
 import { LocationSelector } from "../components/LocationSelector";
 import { PopupDialog } from "../components/PopupDialog";
-import { ROUTES } from "../routes/routes";
+import { ROUTES, SortBy } from "../routes/routes";
 import { cn, emptyArray } from "../utils";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 
@@ -36,14 +37,13 @@ export function AdminListJobPage() {
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
-  const [{ department, location, scrape_from }] = useTypedSearchParams(
-    ROUTES.ADMIN.LIST_JOBS,
-  );
+  const [{ department, location, scrape_from, sort_by }, setTypeSearch] =
+    useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
 
   //#region query/mutation
 
   const jobListQuery = useQuery({
-    queryKey: ["jobListQuery", department, location, scrape_from],
+    queryKey: ["jobListQuery", department, location, scrape_from, sort_by],
     queryFn: async () =>
       axiosApi({
         url: "data-sourcing/job/",
@@ -52,6 +52,7 @@ export function AdminListJobPage() {
           department: department || undefined,
           location: location || undefined,
           scrape_from: scrape_from || undefined,
+          sort: sort_by || undefined,
         },
       }).then((e) => e.data.data),
   });
@@ -162,15 +163,35 @@ export function AdminListJobPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Jobs
           </h2>
-
-          <button
-            type="button"
-            onClick={() => setShowAddJobPopup(true)}
-            className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
-          >
-            <PlusIcon className="h-6 w-6 stroke-2" />
-            Add Job
-          </button>
+          <div className="flex items-center space-x-2">
+            <Combobox
+              items={Object.entries(SortBy).map(([key, value]) => ({
+                label: key,
+                value,
+              }))}
+              label=""
+              placeholder={`Sort By: Alphabetical`}
+              selectedValue={sort_by}
+              setSelectedValue={(e) => {
+                if (typeof e === "function") {
+                  setTypeSearch((prev) => ({
+                    ...prev,
+                    sort_by: e(prev.sort_by),
+                  }));
+                } else {
+                  setTypeSearch((prev) => ({ ...prev, sort_by: e }));
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowAddJobPopup(true)}
+              className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
+            >
+              <PlusIcon className="h-6 w-6 stroke-2" />
+              Add Job
+            </button>
+          </div>
         </div>
         <DepartmentLocationScrapeFromSearch
           onSearch={() => {

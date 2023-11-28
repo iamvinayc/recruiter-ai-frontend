@@ -61,6 +61,14 @@ interface AllApiEndpoints {
     };
     response: DepartmentListingResponse;
   };
+  "data-sourcing/department": {
+    request: {
+      method: "POST";
+      params?: undefined;
+      data: { name: string; description: string };
+    };
+    response: SuccessResponse;
+  };
   "dashboard/overview/": {
     request: {
       method: "GET";
@@ -158,6 +166,7 @@ interface AllApiEndpoints {
         department?: string;
         location?: string;
         scrape_from?: string;
+        sort?: string;
       };
       data?: undefined;
     };
@@ -206,6 +215,7 @@ interface AllApiEndpoints {
         department?: string;
         location?: string;
         scrape_from?: string;
+        sort?: string;
       };
       data?: undefined;
     };

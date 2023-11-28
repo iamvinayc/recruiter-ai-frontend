@@ -13,8 +13,9 @@ import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { z } from "zod";
 
+import { Combobox } from "@/components/Combobox";
 import { LineClamp } from "@/components/LineClamp";
-import { ROUTES } from "@/routes/routes";
+import { ROUTES, SortBy } from "@/routes/routes";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
@@ -31,9 +32,8 @@ const defaultArr: [] = [];
 const columnHelper = createColumnHelper<Person>();
 
 export function AdminListCandidatePage() {
-  const [{ department, location, scrape_from }] = useTypedSearchParams(
-    ROUTES.ADMIN.LIST_JOBS,
-  );
+  const [{ department, location, scrape_from, sort_by }, setTypeSearch] =
+    useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
@@ -42,7 +42,13 @@ export function AdminListCandidatePage() {
   //#region query/mutation
 
   const candidateListQuery = useQuery({
-    queryKey: ["candidateListQuery", department, location, scrape_from],
+    queryKey: [
+      "candidateListQuery",
+      department,
+      location,
+      scrape_from,
+      sort_by,
+    ],
     queryFn: async () =>
       axiosApi({
         url: "data-sourcing/candidate/",
@@ -51,6 +57,7 @@ export function AdminListCandidatePage() {
           department: department || undefined,
           location: location || undefined,
           scrape_from: scrape_from || undefined,
+          sort: sort_by || undefined,
         },
       }).then((e) => e.data.data),
   });
@@ -150,14 +157,35 @@ export function AdminListCandidatePage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Candidate
           </h2>
-          <button
-            type="button"
-            onClick={() => setShowAddCandidatePopup(true)}
-            className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
-          >
-            <PlusIcon className="h-6 w-6 stroke-2" />
-            Add Candidate
-          </button>
+          <div className="flex items-center space-x-2">
+            <Combobox
+              items={Object.entries(SortBy).map(([key, value]) => ({
+                label: key,
+                value,
+              }))}
+              label=""
+              placeholder={`Sort By: Alphabetical`}
+              selectedValue={sort_by}
+              setSelectedValue={(e) => {
+                if (typeof e === "function") {
+                  setTypeSearch((prev) => ({
+                    ...prev,
+                    sort_by: e(prev.sort_by),
+                  }));
+                } else {
+                  setTypeSearch((prev) => ({ ...prev, sort_by: e }));
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowAddCandidatePopup(true)}
+              className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
+            >
+              <PlusIcon className="h-6 w-6 stroke-2" />
+              Add Candidate
+            </button>
+          </div>
         </div>
         <DepartmentLocationScrapeFromSearch
           onSearch={() => {
