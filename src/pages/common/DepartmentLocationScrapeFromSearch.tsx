@@ -12,7 +12,7 @@ export function DepartmentLocationScrapeFromSearch({
 }: {
   onSearch: VoidFunction;
 }) {
-  const [{ department, location, scrape_from }, setTypedParams] =
+  const [{ skill: department, location, scrape_from }, setTypedParams] =
     useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
@@ -57,7 +57,7 @@ export function DepartmentLocationScrapeFromSearch({
         <h2 className="text-xl font-bold text-stone-700">Apply filters</h2>
         <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Combobox
-            label="Department"
+            label="Skill"
             items={departmentListQuery.data || []}
             selectedValue={selectedDepartment}
             setSelectedValue={setSelectedDepartment}
@@ -83,7 +83,7 @@ export function DepartmentLocationScrapeFromSearch({
           <button
             onClick={() => {
               setTypedParams({
-                department: "",
+                skill: "",
                 location: "",
                 scrape_from: "",
               });
@@ -101,7 +101,7 @@ export function DepartmentLocationScrapeFromSearch({
                 onSearch();
               }
               setTypedParams({
-                department: selectedDepartment,
+                skill: selectedDepartment,
                 location: selectedLocation,
                 scrape_from: selectedScrapeForm,
               });

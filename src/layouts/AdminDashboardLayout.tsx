@@ -44,14 +44,14 @@ const SideBarLinks = {
       icon: <Squares2X2Icon className="h-5 w-5" />,
     },
     {
-      title: "Department",
-      link: ROUTES.ADMIN.LIST_DEPARTMENT.path,
-      icon: <BuildingOfficeIcon className="h-5 w-5" />,
-    },
-    {
       title: "Recruiter",
       link: ROUTES.ADMIN.LIST_RECRUITER.path,
       icon: <UserIcon className="h-5 w-5" />,
+    },
+    {
+      title: "Skill",
+      link: ROUTES.ADMIN.LIST_SKILL.path,
+      icon: <BuildingOfficeIcon className="h-5 w-5" />,
     },
     {
       title: "Location",

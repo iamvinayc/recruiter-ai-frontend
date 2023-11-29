@@ -33,7 +33,7 @@ const nameMap = {
   last_name: "Last Name",
   email: "Email",
   is_active: "Is Active",
-  departments: "Departments",
+  departments: "Skills",
   location: "Location",
 };
 export function AdminListRecruiterPage() {
@@ -585,7 +585,7 @@ const AddDepartmentDialog = ({
             ))}
             {departments.length == 0 ? (
               <div className="flex min-h-[8rem] items-center justify-center">
-                No Departments
+                No Skills
               </div>
             ) : null}
           </div>
@@ -600,7 +600,7 @@ const AddDepartmentDialog = ({
             onClick={onNewRecruiterAdd}
             className="py-2 disabled:border-slate-600 disabled:bg-slate-500"
           >
-            Add Department
+            Add Skill
           </Button>
         </div>
       </div>
@@ -652,7 +652,7 @@ const AddLocationDialog = ({
       .then((success) => {
         if (success) {
           setSelectedLocation([]);
-          toast.success("Added new department successfully");
+          toast.success("Added new skill successfully");
           onSuccess();
           return;
         } else {

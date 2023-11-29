@@ -1,10 +1,10 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import DataTable from "react-data-table-component";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components/common/Button";
+import { ChipGroup } from "@/components/common/ChipGroup";
 import { Input } from "@/components/common/Input";
 import { PopupDialog } from "@/components/PopupDialog";
 import { axiosApi } from "../api/api";
@@ -56,7 +56,7 @@ export function AdminListDepartmentPage() {
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            List Department
+            List Skill
           </h2>
           <button
             type="button"
@@ -66,28 +66,43 @@ export function AdminListDepartmentPage() {
             className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
           >
             <PlusIcon className="h-6 w-6 stroke-2" />
-            Add Department
+            Add Skill
           </button>
         </div>
-        <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
+        {departmentListQuery.isLoading ? (
+          <div className="flex h-[30vh] items-center justify-center text-2xl font-bold">
+            Loading....
+          </div>
+        ) : null}
+        <ChipGroup
+          items={
+            departmentListQuery.data?.map((e) => ({
+              id: e.id,
+              name: e.name,
+            })) || []
+          }
+          showAll
+        />
+        {/* <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white shadow-default">
             <DataTable
               columns={columns}
               data={departmentListQuery.data || emptyArr}
+
               progressPending={departmentListQuery.isLoading}
             />
           </div>
-        </div>
+        </div> */}
       </div>
       <PopupDialog
         isOpen={showAddDepartmentPopup}
         setIsOpen={setShowAddDepartmentPopup}
-        title="Add new department"
+        title="Add new skill"
       >
         <div className="mb-4 py-4">
           <Input
-            label="Department"
-            placeholder="Department"
+            label="Skill"
+            placeholder="Skill"
             containerClassName=""
             className="px-3 py-3"
             disabled={addDepartmentMutation.isPending}
@@ -103,26 +118,26 @@ export function AdminListDepartmentPage() {
             isLoading={addDepartmentMutation.isPending}
             className="py-2"
           >
-            Add Location
+            Add Skill
           </Button>
         </div>
       </PopupDialog>
     </main>
   );
 }
-interface DepartmentListingResponseData {
-  id: number;
-  name: string;
-  description: string;
-}
-const columns = [
-  {
-    name: "Name",
-    selector: (row: DepartmentListingResponseData) => row.name,
-  },
-  {
-    name: "Description",
-    selector: (row: DepartmentListingResponseData) => row.description,
-  },
-];
-const emptyArr: [] = [];
+// interface DepartmentListingResponseData {
+//   id: number;
+//   name: string;
+//   description: string;
+// }
+// const columns = [
+//   {
+//     name: "Name",
+//     selector: (row: DepartmentListingResponseData) => row.name,
+//   },
+//   {
+//     name: "Description",
+//     selector: (row: DepartmentListingResponseData) => row.description,
+//   },
+// ];
+// const emptyArr: [] = [];

@@ -32,7 +32,7 @@ const defaultArr: [] = [];
 const columnHelper = createColumnHelper<Person>();
 
 export function AdminListCandidatePage() {
-  const [{ department, location, scrape_from, sort_by }, setTypeSearch] =
+  const [{ skill: department, location, scrape_from, sort_by }, setTypeSearch] =
     useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
@@ -86,7 +86,7 @@ export function AdminListCandidatePage() {
       }),
 
       columnHelper.accessor("departments", {
-        header: "Departments",
+        header: "Skills",
         cell: (info) => {
           return <ChipGroup items={info.getValue()} />;
         },
@@ -330,7 +330,7 @@ export function AdminListCandidatePage() {
                 ),
               )}
               <div className="space-y-1">
-                <div className="font-medium">Departments</div>
+                <div className="font-medium">Skills</div>
                 <div className="text-sm ">
                   <ChipGroup
                     items={selectedUser?.departments || emptyArray}
@@ -574,7 +574,7 @@ const formSchema = z.object({
         name: z.string().min(1),
       }),
     )
-    .min(1, "Please Select at-least one department"),
+    .min(1, "Please Select at-least one skills"),
   location: z.object({
     id: z.number().optional(),
     name: z.string().min(1, "Please select location"),

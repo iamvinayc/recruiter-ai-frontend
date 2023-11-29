@@ -34,7 +34,7 @@ export function AppRouter() {
               element={<AdminDashboardPage />}
             />
             <Route
-              path={ROUTES.ADMIN.LIST_DEPARTMENT.path}
+              path={ROUTES.ADMIN.LIST_SKILL.path}
               element={<AdminListDepartmentPage />}
             />
             <Route

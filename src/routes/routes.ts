@@ -14,12 +14,12 @@ export const ROUTES = {
     {
       LOGIN: route("login"),
       DASHBOARD: route("dashboard"),
-      LIST_DEPARTMENT: route("list-department"),
+      LIST_SKILL: route("list-skill"),
       LIST_RECRUITER: route("list-recruiter"),
       LIST_LOCATION: route("list-location"),
       LIST_JOBS: route("list-jobs", {
         searchParams: {
-          department: string().default(""),
+          skill: string().default(""),
           location: string().default(""),
           scrape_from: string().default(""),
           sort_by: string().default(SortBy.Latest),

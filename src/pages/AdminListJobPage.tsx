@@ -37,7 +37,7 @@ export function AdminListJobPage() {
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
-  const [{ department, location, scrape_from, sort_by }, setTypeSearch] =
+  const [{ skill: department, location, scrape_from, sort_by }, setTypeSearch] =
     useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
 
   //#region query/mutation
@@ -89,7 +89,7 @@ export function AdminListJobPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("departments", {
-        header: "Departments",
+        header: "Skills",
         cell: (info) => {
           return <ChipGroup items={info.getValue()} />;
         },
@@ -300,7 +300,7 @@ export function AdminListJobPage() {
                 </div>
               ))}
               <div className="space-y-1">
-                <div className="font-medium">Departments</div>
+                <div className="font-medium">Skills</div>
                 <div className="text-sm ">
                   <ChipGroup
                     items={selectedUser?.departments || emptyArray}
@@ -574,7 +574,7 @@ const formSchema = z.object({
         name: z.string().min(1),
       }),
     )
-    .min(1, "Please Select at-least one department"),
+    .min(1, "Please Select at-least one skill"),
   location: z.object({
     id: z.number().optional(),
     name: z.string().min(1, "Please select location"),
