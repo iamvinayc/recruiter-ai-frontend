@@ -4,7 +4,6 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components/common/Button";
-import { ChipGroup } from "@/components/common/ChipGroup";
 import { Input } from "@/components/common/Input";
 import { PopupDialog } from "@/components/PopupDialog";
 import { axiosApi } from "../api/api";
@@ -74,15 +73,16 @@ export function AdminListDepartmentPage() {
             Loading....
           </div>
         ) : null}
-        <ChipGroup
-          items={
-            departmentListQuery.data?.map((e) => ({
-              id: e.id,
-              name: e.name,
-            })) || []
-          }
-          showAll
-        />
+        <div className="flex flex-wrap items-center gap-2 text-xs sm:gap-2">
+          {departmentListQuery.data?.map(({ id, name }) => (
+            <span
+              key={id}
+              className=" inline-flex  text-ellipsis  rounded  bg-[#3BA2B8]  px-2 py-1 text-lg font-medium text-white hover:bg-opacity-90"
+            >
+              {name}
+            </span>
+          ))}
+        </div>
         {/* <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white shadow-default">
             <DataTable

@@ -191,10 +191,8 @@ interface AllApiEndpoints {
           name: string;
           description: string;
         }[];
-        location: {
-          id?: number;
-          name: string;
-        };
+        city: string;
+
         handle: string;
         platform: string;
       };
@@ -233,10 +231,7 @@ interface AllApiEndpoints {
           description?: string;
           id?: number;
         }[];
-        location: {
-          name: string;
-          id?: number;
-        };
+        city: string;
         description?: string;
         phone?: string;
         profile_url?: string;

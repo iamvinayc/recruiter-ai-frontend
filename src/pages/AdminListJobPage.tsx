@@ -404,7 +404,7 @@ const AddJobPopup = ({
           },
           expires_on: "2023-10-10",
           handle: `${Math.random()}`,
-          location: data.location,
+          city: data.location?.name,
           platform: "SYSTEM",
         },
       }).then((e) => e.data.isSuccess),

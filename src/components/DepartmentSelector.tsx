@@ -31,11 +31,12 @@ export function DepartmentSelector({
   const filteredItems =
     query === ""
       ? items
-      : items.filter((person) =>
-          person.name
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(query.toLowerCase().replace(/\s+/g, "")),
+      : items.filter(
+          (person) =>
+            person?.name
+              ?.toLowerCase()
+              ?.replace(/\s+/g, "")
+              ?.includes(query.toLowerCase().replace(/\s+/g, "")),
         );
   return (
     <div className=" ">

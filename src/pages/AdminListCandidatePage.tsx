@@ -404,7 +404,7 @@ const AddCandidatePopup = ({
             description: e.name,
           })),
           handle: `${Math.random()}`,
-          location: data.location,
+          city: data.location.name,
           platform: "SYSTEM",
         },
       }).then((e) => e.data.isSuccess),
