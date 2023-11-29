@@ -423,7 +423,7 @@ const AddRecruiterDialog = ({
       .mutateAsync(data)
       .then((success) => {
         if (success) {
-          toast.success("New location added successfully");
+          toast.success("New recruiter added successfully");
           reset({ email: "", first_name: "", last_name: "" });
           onSuccess();
           return;
