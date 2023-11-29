@@ -100,6 +100,12 @@ export function AdminListJobPage() {
           return <ChipGroup items={info.getValue()} />;
         },
       }),
+      columnHelper.accessor("city", {
+        header: "city",
+        cell: (info) => {
+          return <div className="w-auto">{info.getValue()}</div>;
+        },
+      }),
       columnHelper.accessor("platform", {
         header: "Platform",
         cell: (info) => {
@@ -136,6 +142,7 @@ export function AdminListJobPage() {
         departments: e.departments.map((e) => ({ id: e.id, name: e.name })),
         employer: e.employer.employer_label,
         platform: e.platform,
+        city: e.city,
       })) || defaultArr,
     [jobListQuery.data],
   );
@@ -358,6 +365,7 @@ interface Person {
   departments: { id: number; name: string }[];
   location: { id: number; name: string }[];
   platform: string;
+  city: string;
 }
 
 //#endregion

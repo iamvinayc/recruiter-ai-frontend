@@ -97,6 +97,9 @@ export function AdminListCandidatePage() {
           return <ChipGroup items={info.getValue()} />;
         },
       }),
+      columnHelper.accessor("city", {
+        header: "City",
+      }),
       columnHelper.accessor("platform", {
         header: "Platform",
         cell: (info) => {
@@ -132,6 +135,7 @@ export function AdminListCandidatePage() {
         location: [{ id: e.location.id, name: e.location.name }],
         departments: e.departments.map((e) => ({ id: e.id, name: e.name })),
         platform: e.platform,
+        city: e.city,
       })) || defaultArr,
     [candidateListQuery.data],
   );
@@ -362,6 +366,7 @@ interface Person {
   departments: { id: number; name: string }[];
   location: { id: number; name: string }[];
   platform: string;
+  city: string;
 }
 
 //#endregion

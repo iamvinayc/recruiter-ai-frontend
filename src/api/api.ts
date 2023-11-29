@@ -327,6 +327,7 @@ interface RecruiterListResponse {
 
 interface RecruiterListResponseData {
   id: number;
+  city: string;
   user: User;
   departments: RecruiterListResponseDataDepartment[];
   location: RecruiterListResponseDataLocation[];
@@ -391,6 +392,7 @@ interface JobListingResponseData {
   description: string;
   expires_on: string;
   platform: string;
+  city: string;
 }
 
 interface Department {
@@ -432,6 +434,7 @@ interface CandidateListResponseData {
   resume_file: string;
   handle: string;
   platform: string;
+  city: string;
 }
 
 interface Location {
