@@ -261,6 +261,7 @@ export function AdminListRecruiterPage() {
                       <th
                         scope="col"
                         className="text-gray-500 px-6 py-3 text-left text-xs font-medium tracking-wider"
+                        key={header.column.id}
                       >
                         {header.isPlaceholder
                           ? null
@@ -280,7 +281,7 @@ export function AdminListRecruiterPage() {
                 {table.getRowModel().rows.map((row) => (
                   <tr key={row.id}>
                     {row.getVisibleCells().map((cell) => (
-                      <td className="whitespace-nowrap px-6 py-4" key={row.id}>
+                      <td className="whitespace-nowrap px-6 py-4" key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
@@ -561,8 +562,8 @@ const AddDepartmentDialog = ({
       <div>
         <div className="mb-4 space-y-2 py-4">
           <div className="flex max-h-[65vh] flex-col gap-2 overflow-y-scroll">
-            {departments.map(({ id, description, name }) => (
-              <label key={id}>
+            {departments.map(({ id, description, name }, i) => (
+              <label key={`department-${i}`}>
                 <div className="flex w-full items-start space-x-2">
                   <input
                     type="checkbox"
