@@ -22,7 +22,7 @@ export function AdminListDepartmentPage() {
   });
 
   const addDepartmentMutation = useMutation({
-    mutationKey: ["addLocationMutation"],
+    mutationKey: ["addDepartmentMutation"],
     mutationFn: async ({ name }: { name: string }) =>
       axiosApi({
         url: "data-sourcing/department/" as "data-sourcing/department",

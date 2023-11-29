@@ -22,7 +22,6 @@ import { Input } from "../components/common/Input";
 import { SpinnerIcon } from "../components/common/SvgIcons";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { LineClamp } from "../components/LineClamp";
-import { LocationSelector } from "../components/LocationSelector";
 import { PopupDialog } from "../components/PopupDialog";
 import { ROUTES, SortBy } from "../routes/routes";
 import { cn, emptyArray } from "../utils";
@@ -172,6 +171,7 @@ export function AdminListJobPage() {
           </h2>
           <div className="flex items-center space-x-2">
             <Combobox
+              className="w-[200px]"
               items={Object.entries(SortBy).map(([key, value]) => ({
                 label: key,
                 value,
@@ -388,7 +388,7 @@ const AddJobPopup = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       department: [],
-      location: { name: "" },
+      city: "",
     },
   });
   const addJobMutation = useMutation({
@@ -412,7 +412,7 @@ const AddJobPopup = ({
           },
           expires_on: "2023-10-10",
           handle: `${Math.random()}`,
-          city: data.location?.name,
+          city: data.city,
           platform: "SYSTEM",
         },
       }).then((e) => e.data.isSuccess),
@@ -426,7 +426,7 @@ const AddJobPopup = ({
           toast.success("Added Job");
           reset({
             department: [],
-            location: { name: "" },
+            city: "",
             description: "",
             email: "",
             employer_name: "",
@@ -530,22 +530,12 @@ const AddJobPopup = ({
               />
             </div>
             <div className="flex flex-1 flex-col">
-              <Controller
-                control={control}
-                name="location"
-                render={({ field: { onChange, value } }) => (
-                  <LocationSelector
-                    selected={value}
-                    setSelected={(valueFn) => {
-                      if (typeof valueFn === "function") {
-                        onChange(valueFn(value));
-                      } else {
-                        onChange(valueFn);
-                      }
-                    }}
-                    error={errors.location?.name?.message}
-                  />
-                )}
+              <Input
+                register={register}
+                name="city"
+                label="City"
+                placeholder="City"
+                error={errors.city?.message}
               />
             </div>
           </div>
@@ -583,8 +573,5 @@ const formSchema = z.object({
       }),
     )
     .min(1, "Please Select at-least one skill"),
-  location: z.object({
-    id: z.number().optional(),
-    name: z.string().min(1, "Please select location"),
-  }),
+  city: z.string().min(1, "Please enter a city"),
 });

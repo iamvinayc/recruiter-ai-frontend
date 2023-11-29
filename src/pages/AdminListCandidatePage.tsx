@@ -22,7 +22,6 @@ import { ChipGroup } from "../components/common/ChipGroup";
 import { Input } from "../components/common/Input";
 import { SpinnerIcon } from "../components/common/SvgIcons";
 import { DepartmentSelector } from "../components/DepartmentSelector";
-import { LocationSelector } from "../components/LocationSelector";
 import { PopupDialog } from "../components/PopupDialog";
 import { cn, emptyArray } from "../utils";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
@@ -163,6 +162,7 @@ export function AdminListCandidatePage() {
           </h2>
           <div className="flex items-center space-x-2">
             <Combobox
+              className="w-[200px]"
               items={Object.entries(SortBy).map(([key, value]) => ({
                 label: key,
                 value,
@@ -388,7 +388,7 @@ const AddCandidatePopup = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       department: [],
-      location: { name: "" },
+      city: "",
     },
   });
   const addJobMutation = useMutation({
@@ -409,7 +409,7 @@ const AddCandidatePopup = ({
             description: e.name,
           })),
           handle: `${Math.random()}`,
-          city: data.location.name,
+          city: data.city,
           platform: "SYSTEM",
         },
       }).then((e) => e.data.isSuccess),
@@ -423,7 +423,7 @@ const AddCandidatePopup = ({
           toast.success("Added Job");
           reset({
             department: [],
-            location: { name: "" },
+            city: "",
             name: "",
             description: "",
             email: "",
@@ -495,14 +495,16 @@ const AddCandidatePopup = ({
                 className="px-3 py-3"
                 register={register}
                 name="profile_url"
+                type="url"
                 error={errors.profile_url?.message}
               />
               <Input
-                label="Resume file"
-                placeholder="Resume file"
+                label="Resume url"
+                placeholder="Resume url"
                 className="px-3 py-3"
                 register={register}
                 name="resume_file"
+                type="url"
                 error={errors.resume_file?.message}
               />
             </div>
@@ -528,22 +530,12 @@ const AddCandidatePopup = ({
               />
             </div>
             <div className="flex flex-1 flex-col">
-              <Controller
-                control={control}
-                name="location"
-                render={({ field: { onChange, value } }) => (
-                  <LocationSelector
-                    selected={value}
-                    setSelected={(valueFn) => {
-                      if (typeof valueFn === "function") {
-                        onChange(valueFn(value));
-                      } else {
-                        onChange(valueFn);
-                      }
-                    }}
-                    error={errors.location?.name?.message}
-                  />
-                )}
+              <Input
+                register={register}
+                name="city"
+                label="City"
+                placeholder="City"
+                error={errors.city?.message}
               />
             </div>
           </div>
@@ -580,8 +572,5 @@ const formSchema = z.object({
       }),
     )
     .min(1, "Please Select at-least one skills"),
-  location: z.object({
-    id: z.number().optional(),
-    name: z.string().min(1, "Please select location"),
-  }),
+  city: z.string().min(1, "Please enter a city"),
 });

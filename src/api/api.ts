@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 import { API_BASE_URL } from "../utils/constants";
 
@@ -15,6 +15,17 @@ axios.interceptors.request.use((val) => {
 
   return val;
 });
+axios.interceptors.response.use(
+  (res) => {
+    return res;
+  },
+  (e: AxiosError) => {
+    if (e?.response?.status === 401) {
+      localStorage.setItem("user", JSON.stringify(null));
+      window.location.href = "/";
+    }
+  },
+);
 export const axiosApi = <
   Url extends keyof AllApiEndpoints,
   T extends AllApiEndpoints[Url]["request"],

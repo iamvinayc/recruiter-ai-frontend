@@ -28,6 +28,7 @@ interface ComboboxProps {
   items: Item[];
   selectedValue: string;
   setSelectedValue: React.Dispatch<React.SetStateAction<string>>;
+  className?: string;
 }
 export function Combobox({
   label = "",
@@ -35,6 +36,7 @@ export function Combobox({
   items = [],
   selectedValue,
   setSelectedValue,
+  className = "",
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -51,16 +53,16 @@ export function Combobox({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between"
+            className={cn("w-full justify-between", className)}
           >
-            <span className="text-ellipsis">
+            <span className="overflow-hidden text-ellipsis">
               {selectedValue
                 ? items.find(
                     (item) =>
                       item.value?.toLowerCase() ===
                       selectedValue?.toLowerCase(),
                   )?.label
-                : placeholder || `Select ${label}...`}
+                : placeholder || `Select ${label}...`}{" "}
             </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -71,9 +73,9 @@ export function Combobox({
           <CommandInput placeholder={`Search ${label}...`} />
           <CommandEmpty>No {label} found.</CommandEmpty>
           <CommandGroup>
-            {items.map((item) => (
+            {items.map((item, i) => (
               <CommandItem
-                key={item.value}
+                key={i}
                 value={item.value}
                 onSelect={(currentValue) => {
                   console.log("currentValue", currentValue, item);
