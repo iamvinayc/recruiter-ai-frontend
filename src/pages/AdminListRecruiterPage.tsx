@@ -535,7 +535,7 @@ const AddDepartmentDialog = ({
       .then((success) => {
         if (success) {
           setSelectedDepartmentIds([]);
-          toast.success("Added new department successfully");
+          toast.success("Added new skill successfully");
           onSuccess();
           return;
         } else {
@@ -632,7 +632,8 @@ const AddLocationDialog = ({
     }
   }, [locations]);
 
-  const addDepartmentMutation = useMutation({
+  const addLocationMutation = useMutation({
+    mutationKey: ["addLocationMutation"],
     mutationFn: ({ id, locations }: { id: number; locations: number[] }) =>
       axiosApi({
         url: `user/recruiter_location/${id}/` as "user/recruiter_location/",
@@ -647,12 +648,12 @@ const AddLocationDialog = ({
       .filter((e): e is number => Boolean(e));
     if (ids.length == 0)
       return console.log("no selected location", selectedLocation);
-    addDepartmentMutation
+    addLocationMutation
       .mutateAsync({ id: selectedUserId, locations: ids })
       .then((success) => {
         if (success) {
           setSelectedLocation([]);
-          toast.success("Added new skill successfully");
+          toast.success("Added new location successfully");
           onSuccess();
           return;
         } else {
@@ -682,9 +683,9 @@ const AddLocationDialog = ({
         </div>
         <div className="flex justify-end">
           <Button
-            isLoading={addDepartmentMutation.isPending}
+            isLoading={addLocationMutation.isPending}
             disabled={
-              addDepartmentMutation.isPending || selectedLocation?.length === 0
+              addLocationMutation.isPending || selectedLocation?.length === 0
             }
             onClick={onAddLocation}
             className="py-2 disabled:border-slate-600 disabled:bg-slate-500"
