@@ -15,6 +15,8 @@ import { z } from "zod";
 
 import { Combobox } from "@/components/Combobox";
 import { LineClamp } from "@/components/LineClamp";
+import { LocationSelector } from "@/components/LocationSelector";
+import { useLogin } from "@/hooks/useLogin";
 import { ROUTES, SortBy } from "@/routes/routes";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
@@ -381,6 +383,7 @@ const AddCandidatePopup = ({
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const { isRecruiter } = useLogin();
   const {
     register,
     formState: { errors },
@@ -533,13 +536,33 @@ const AddCandidatePopup = ({
               />
             </div>
             <div className="flex flex-1 flex-col">
-              <Input
-                register={register}
-                name="city"
-                label="City"
-                placeholder="City"
-                error={errors.city?.message}
-              />
+              {isRecruiter ? (
+                <Controller
+                  control={control}
+                  name="city"
+                  render={({ field: { onChange, value } }) => (
+                    <LocationSelector
+                      selected={{ name: value }}
+                      setSelected={(valueFn) => {
+                        if (typeof valueFn === "function") {
+                          onChange(valueFn({ name: value }).name);
+                        } else {
+                          onChange(valueFn.name);
+                        }
+                      }}
+                      error={errors.department?.message}
+                    />
+                  )}
+                />
+              ) : (
+                <Input
+                  register={register}
+                  name="city"
+                  label="City"
+                  placeholder="City"
+                  error={errors.city?.message}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -18,7 +18,7 @@ export function Input<
           {...rest}
           {...(register && rest.name ? register(rest.name) : {})}
           className={cn(
-            "dark:bg-form-input w-full rounded-lg border border-stroke bg-transparent py-2 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none disabled:bg-opacity-80 dark:border-form-strokedark dark:focus:border-primary",
+            "dark:bg-form-input dark:border-form-strokedark w-full rounded-lg border border-stroke bg-transparent py-2 pl-4 pr-10 outline-none focus:border-primary focus-visible:shadow-none disabled:bg-opacity-80 dark:focus:border-primary",
             rest.className,
           )}
         />

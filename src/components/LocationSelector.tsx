@@ -14,10 +14,12 @@ export function LocationSelector({
   selected,
   setSelected,
   error,
+  showCreateIfNotFound,
 }: {
   selected: Item;
   setSelected: React.Dispatch<React.SetStateAction<Item>>;
   error?: string;
+  showCreateIfNotFound?: boolean;
 }) {
   // const [selected, setSelected] = useState<Item>({ name: "" });
   const [query, setQuery] = useState("");
@@ -33,19 +35,24 @@ export function LocationSelector({
     },
   });
 
+  const locationList = locationListQuery.data || emptyArray;
+  const newLocal = locationList.find((e) => e.name == selected.name)
+    ? []
+    : (selected as unknown as []);
   const items =
     selected.name && !selected.id
-      ? [...(locationListQuery.data || emptyArray), selected]
-      : locationListQuery.data || emptyArray;
+      ? [...locationList].concat(newLocal)
+      : locationList;
 
   const filteredItems =
     query === ""
       ? items
-      : items.filter((person) =>
-          person.name
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(query.toLowerCase().replace(/\s+/g, "")),
+      : items.filter(
+          (item) =>
+            item?.name
+              ?.toLowerCase()
+              ?.replace(/\s+/g, "")
+              ?.includes(query?.toLowerCase()?.replace(/\s+/g, "")),
         );
   return (
     <div className=" ">
@@ -55,7 +62,9 @@ export function LocationSelector({
       <Combobox
         value={selected}
         onChange={(val) => {
-          setSelected(val);
+          if (val.name) {
+            setSelected(val);
+          }
         }}
       >
         <div className="relative  ">
@@ -92,10 +101,10 @@ export function LocationSelector({
                       active ? "bg-teal-600 text-white" : "text-gray-900"
                     }`
                   }
-                  value={{ name: query }}
+                  value={{ name: showCreateIfNotFound ? query : "" }}
                 >
                   <span className="block truncate  font-normal">
-                    Create "{query}"
+                    {showCreateIfNotFound ? `Create "${query}"` : "Not Found"}
                   </span>
                 </Combobox.Option>
               ) : (

@@ -15,6 +15,8 @@ import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { z } from "zod";
 
 import { Combobox } from "@/components/Combobox";
+import { LocationSelector } from "@/components/LocationSelector";
+import { useLogin } from "@/hooks/useLogin";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
@@ -392,6 +394,8 @@ const AddJobPopup = ({
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const { isRecruiter } = useLogin();
+
   const {
     register,
     formState: { errors },
@@ -544,13 +548,33 @@ const AddJobPopup = ({
               />
             </div>
             <div className="flex flex-1 flex-col">
-              <Input
-                register={register}
-                name="city"
-                label="City"
-                placeholder="City"
-                error={errors.city?.message}
-              />
+              {isRecruiter ? (
+                <Controller
+                  control={control}
+                  name="city"
+                  render={({ field: { onChange, value } }) => (
+                    <LocationSelector
+                      selected={{ name: value }}
+                      setSelected={(valueFn) => {
+                        if (typeof valueFn === "function") {
+                          onChange(valueFn({ name: value }).name);
+                        } else {
+                          onChange(valueFn.name);
+                        }
+                      }}
+                      error={errors.department?.message}
+                    />
+                  )}
+                />
+              ) : (
+                <Input
+                  register={register}
+                  name="city"
+                  label="City"
+                  placeholder="City"
+                  error={errors.city?.message}
+                />
+              )}
             </div>
           </div>
         </div>

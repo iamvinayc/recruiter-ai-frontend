@@ -36,7 +36,7 @@ export function AdminListDepartmentPage() {
       .mutateAsync({ name: newDepartment })
       .then((data) => {
         if (data.isSuccess) {
-          toast.success("New department added successfully");
+          toast.success("New skill added successfully");
           setShowAddDepartmentPopup(false);
           setNewDepartment("");
           departmentListQuery.refetch();
