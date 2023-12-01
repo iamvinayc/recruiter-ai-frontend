@@ -28,19 +28,21 @@ export function AdminListDepartmentPage() {
         url: "data-sourcing/department/" as "data-sourcing/department",
         method: "POST",
         data: { name: name, description: name },
-      }).then((e) => e.data.isSuccess),
+      }).then((e) => e.data),
   });
 
   const onNewDepartmentAdd = () => {
     addDepartmentMutation
       .mutateAsync({ name: newDepartment })
-      .then((success) => {
-        if (success) {
+      .then((data) => {
+        if (data.isSuccess) {
           toast.success("New department added successfully");
           setShowAddDepartmentPopup(false);
           setNewDepartment("");
           departmentListQuery.refetch();
           return;
+        } else if (data.message) {
+          return toast.error(data.message);
         } else {
           throw new Error("Some error ocurred");
         }

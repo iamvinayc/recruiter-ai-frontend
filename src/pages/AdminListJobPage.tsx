@@ -36,13 +36,22 @@ export function AdminListJobPage() {
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
-  const [{ skill: department, location, scrape_from, sort_by }, setTypeSearch] =
-    useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
+  const [
+    { skill: department, location, scrape_from, scrape_to, sort_by },
+    setTypeSearch,
+  ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
 
   //#region query/mutation
 
   const jobListQuery = useQuery({
-    queryKey: ["jobListQuery", department, location, scrape_from, sort_by],
+    queryKey: [
+      "jobListQuery",
+      department,
+      location,
+      scrape_from,
+      scrape_to,
+      sort_by,
+    ],
     queryFn: async () =>
       axiosApi({
         url: "data-sourcing/job/",
@@ -50,7 +59,8 @@ export function AdminListJobPage() {
         params: {
           department: department || undefined,
           location: location || undefined,
-          scrape_from: scrape_from || undefined,
+          from_date: scrape_from || undefined,
+          to_date: scrape_to || undefined,
           sort: sort_by || undefined,
         },
       }).then((e) => e.data.data),
@@ -66,13 +76,17 @@ export function AdminListJobPage() {
     () => [
       columnHelper.accessor("title", {
         header: "Title",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div className="max-w-[150px] truncate" title={info.getValue()}>
+            {info.getValue()}
+          </div>
+        ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("description", {
         header: "Description",
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
+          <div className="max-w-[150px] truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -81,7 +95,7 @@ export function AdminListJobPage() {
       columnHelper.accessor("employer", {
         header: "Employer",
         cell: (info) => (
-          <div className="truncate" title={info.getValue()}>
+          <div className="max-w-[150px] truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -100,7 +114,7 @@ export function AdminListJobPage() {
         },
       }),
       columnHelper.accessor("city", {
-        header: "city",
+        header: "City",
         cell: (info) => {
           return <div className="w-auto">{info.getValue()}</div>;
         },

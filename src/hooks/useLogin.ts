@@ -18,10 +18,11 @@ export function useLogin() {
   const [user, setUser] = useLocalStorage<LoggedInUserData | null>(KEY, null);
   const isLoggedIn = user !== null;
   const logout = () => setUser(null);
-
+  const isRecruiter = user?.role === "RECRUITER";
   return {
     user,
     isLoggedIn,
+    isRecruiter,
     logout,
     setUser: (user: LoggedInUserData | null) => {
       const { success } = UserSpec.safeParse(user);

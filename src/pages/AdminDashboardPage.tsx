@@ -1,11 +1,15 @@
 import BriefcaseIcon from "@heroicons/react/24/outline/BriefcaseIcon";
 import UserCircleIcon from "@heroicons/react/24/outline/UserCircleIcon";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 
+import { useLogin } from "@/hooks/useLogin";
+import { ROUTES } from "@/routes/routes";
 import { axiosApi } from "../api/api";
 import { cn } from "../utils";
 
 export function AdminDashboardPage() {
+  const { isRecruiter } = useLogin();
   const dashboardOverviewQuery = useQuery({
     queryKey: ["DashboardPage"],
     queryFn: async () => {
@@ -27,18 +31,36 @@ export function AdminDashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 2xl:gap-7.5">
-          <Card
-            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-            title="Total Candidates"
-            value={String(dashboardOverviewQuery.data?.total_candidates) || ""}
-            isLoading={dashboardOverviewQuery.isLoading}
-          />
-          <Card
-            icon={<BriefcaseIcon className="h-8 w-8 text-[#10B981]" />}
-            title="Total Jobs"
-            value={String(dashboardOverviewQuery.data?.total_jobs) || ""}
-            isLoading={dashboardOverviewQuery.isLoading}
-          />
+          <Link
+            to={
+              isRecruiter
+                ? ROUTES.RECRUITER.LIST_CANDIDATE.path
+                : ROUTES.ADMIN.LIST_CANDIDATE.path
+            }
+          >
+            <Card
+              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+              title="Total Candidates"
+              value={
+                String(dashboardOverviewQuery.data?.total_candidates) || ""
+              }
+              isLoading={dashboardOverviewQuery.isLoading}
+            />
+          </Link>
+          <Link
+            to={
+              isRecruiter
+                ? ROUTES.RECRUITER.LIST_JOBS.path
+                : ROUTES.ADMIN.LIST_JOBS.path
+            }
+          >
+            <Card
+              icon={<BriefcaseIcon className="h-8 w-8 text-[#10B981]" />}
+              title="Total Jobs"
+              value={String(dashboardOverviewQuery.data?.total_jobs) || ""}
+              isLoading={dashboardOverviewQuery.isLoading}
+            />
+          </Link>
         </div>
       </div>
     </main>
@@ -57,7 +79,7 @@ const Card = ({
   isLoading: boolean;
 }) => {
   return (
-    <div className="dark:bg-boxdark rounded-sm border border-stroke bg-white p-4 shadow-default dark:border-strokedark md:p-6 xl:p-7.5">
+    <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white p-4 shadow-default md:p-6 xl:p-7.5">
       {icon}
       <h4 className="mb-2 mt-5 font-medium">{title}</h4>
       <h3

@@ -22,6 +22,7 @@ export const ROUTES = {
           skill: string().default(""),
           location: string().default(""),
           scrape_from: string().default(""),
+          scrape_to: string().default(""),
           sort_by: string().default(SortBy.Latest),
         },
       }),

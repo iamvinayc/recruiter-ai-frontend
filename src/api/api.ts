@@ -176,7 +176,8 @@ interface AllApiEndpoints {
       params: {
         department?: string;
         location?: string;
-        scrape_from?: string;
+        from_date?: string;
+        to_date?: string;
         sort?: string;
       };
       data?: undefined;
@@ -223,7 +224,8 @@ interface AllApiEndpoints {
       params: {
         department?: string;
         location?: string;
-        scrape_from?: string;
+        from_date?: string;
+        to_date?: string;
         sort?: string;
       };
       data?: undefined;

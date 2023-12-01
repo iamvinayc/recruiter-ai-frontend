@@ -177,6 +177,7 @@ export function AdminListRecruiterPage() {
             <ChipGroup
               items={info.getValue()}
               onAdd={() => onAddNewDepartment(info.row.original.id)}
+              addLabel={info.getValue().length === 0 ? "+ Add" : "Edit"}
             />
           );
         },
@@ -188,6 +189,7 @@ export function AdminListRecruiterPage() {
             <ChipGroup
               items={info.getValue()}
               onAdd={() => onAddLocation(info.row.original.id)}
+              addLabel={info.getValue().length === 0 ? "+ Add" : "Edit"}
             />
           );
         },
@@ -233,6 +235,13 @@ export function AdminListRecruiterPage() {
   });
   console.log("columnFilters", columnFilters);
 
+  const selectedDepartmentIds =
+    recruiterList
+      .find((e) => String(e.id) === String(showAddingDepartmentUserId))
+      ?.departments?.map((e) => e.id) || [];
+  const selectedLocationIds =
+    recruiterList.find((e) => String(e.id) === String(showAddingLocationUserId))
+      ?.location || emptyArray;
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -343,32 +352,26 @@ export function AdminListRecruiterPage() {
         }}
       />
       <AddDepartmentDialog
+        isUpdate={selectedDepartmentIds.length > 0}
         isOpen={showAddingDepartmentUserId !== null}
         setIsOpen={() => setShowAddingDepartmentUserId(null)}
         onSuccess={() => {
           setShowAddingDepartmentUserId(null);
           recruiterListQuery.refetch();
         }}
-        prevSelectedDepartmentIds={
-          recruiterList
-            .find((e) => String(e.id) === String(showAddingDepartmentUserId))
-            ?.departments?.map((e) => e.id) || []
-        }
+        prevSelectedDepartmentIds={selectedDepartmentIds}
         departments={departments}
         selectedUserId={showAddingDepartmentUserId}
       />
       <AddLocationDialog
+        isUpdate={selectedLocationIds.length > 0}
         isOpen={showAddingLocationUserId !== null}
         setIsOpen={() => setShowAddingLocationUserId(null)}
         onSuccess={() => {
           setShowAddingLocationUserId(null);
           recruiterListQuery.refetch();
         }}
-        locations={
-          recruiterList.find(
-            (e) => String(e.id) === String(showAddingLocationUserId),
-          )?.location || emptyArray
-        }
+        locations={selectedLocationIds}
         selectedUserId={showAddingLocationUserId}
       />
     </main>
@@ -501,6 +504,7 @@ const AddDepartmentDialog = ({
   departments,
   selectedUserId,
   prevSelectedDepartmentIds = [],
+  isUpdate,
 }: {
   onSuccess: VoidFunction;
   isOpen: boolean;
@@ -508,6 +512,7 @@ const AddDepartmentDialog = ({
   departments: { id: number; name: string; description?: string }[];
   prevSelectedDepartmentIds: number[];
   selectedUserId: number | null;
+  isUpdate: boolean;
 }) => {
   const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<number[]>(
     [],
@@ -557,7 +562,7 @@ const AddDepartmentDialog = ({
     <PopupDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      title="Add new department"
+      title={isUpdate ? "Update skill" : "Add new skill"}
     >
       <div>
         <div className="mb-4 space-y-2 py-4">
@@ -601,7 +606,7 @@ const AddDepartmentDialog = ({
             onClick={onNewRecruiterAdd}
             className="py-2 disabled:border-slate-600 disabled:bg-slate-500"
           >
-            Add Skill
+            {isUpdate ? "Update skill" : "Add skill"}
           </Button>
         </div>
       </div>
@@ -614,12 +619,14 @@ const AddLocationDialog = ({
   setIsOpen,
   locations,
   selectedUserId,
+  isUpdate,
 }: {
   onSuccess: VoidFunction;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   locations: { id: number; name: string }[];
   selectedUserId: number | null;
+  isUpdate: boolean;
 }) => {
   const [selectedLocation, setSelectedLocation] = useState<
     {
@@ -672,7 +679,11 @@ const AddLocationDialog = ({
   }, [isOpen]);
 
   return (
-    <PopupDialog isOpen={isOpen} setIsOpen={setIsOpen} title="Add Location">
+    <PopupDialog
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      title={isUpdate ? "Update location" : "Add location"}
+    >
       <div>
         <div className="mb-4 space-y-2 py-4">
           <div className="flex flex-col gap-2">
@@ -691,7 +702,7 @@ const AddLocationDialog = ({
             onClick={onAddLocation}
             className="py-2 disabled:border-slate-600 disabled:bg-slate-500"
           >
-            Add Location
+            {isUpdate ? "Update location" : "Add location"}
           </Button>
         </div>
       </div>

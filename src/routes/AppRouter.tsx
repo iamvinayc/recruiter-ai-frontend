@@ -105,7 +105,7 @@ const WithProvider = ({ children }: { children: JSX.Element | string }) => {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <Toaster position="top-right" containerStyle={{ zIndex: 1000 }} />
+      <Toaster position="top-right" containerStyle={{ zIndex: 100000 }} />
     </QueryClientProvider>
   );
 };

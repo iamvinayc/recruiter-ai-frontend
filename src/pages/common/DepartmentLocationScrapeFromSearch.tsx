@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useEffect, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
@@ -7,16 +9,21 @@ import { Combobox } from "@/components/Combobox";
 import { Input } from "@/components/common/Input";
 import { ROUTES } from "@/routes/routes";
 
+dayjs.extend(customParseFormat);
+
 export function DepartmentLocationScrapeFromSearch({
   onSearch,
 }: {
   onSearch: VoidFunction;
 }) {
-  const [{ skill: department, location, scrape_from }, setTypedParams] =
-    useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
+  const [
+    { skill: department, location, scrape_from, scrape_to },
+    setTypedParams,
+  ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedScrapeForm, setSelectedScrapeForm] = useState("");
+  const [selectedScrapeTo, setSelectedScrapeTo] = useState("");
   console.log("department", department, location);
   useEffect(() => {
     setSelectedDepartment(department);
@@ -27,7 +34,9 @@ export function DepartmentLocationScrapeFromSearch({
   useEffect(() => {
     setSelectedScrapeForm(scrape_from);
   }, [scrape_from]);
-
+  useEffect(() => {
+    setSelectedScrapeTo(scrape_to);
+  }, [scrape_to]);
   const departmentListQuery = useQuery({
     queryKey: ["AdminListDepartmentPage"],
     queryFn: async () =>
@@ -72,9 +81,34 @@ export function DepartmentLocationScrapeFromSearch({
           <Input
             label="Scrapped From"
             type="date"
-            value={selectedScrapeForm}
+            value={
+              selectedScrapeForm
+                ? dayjs(selectedScrapeForm, "DD-MM-YYYY").format("YYYY-MM-DD")
+                : selectedScrapeForm
+            }
             onChange={(e) => {
-              setSelectedScrapeForm(e.currentTarget.value);
+              setSelectedScrapeForm(
+                dayjs(e.currentTarget.value).format("DD-MM-YYYY"),
+              );
+            }}
+          />
+          <Input
+            label="Scrapped To"
+            type="date"
+            min={
+              selectedScrapeForm
+                ? dayjs(selectedScrapeForm, "DD-MM-YYYY").format("YYYY-MM-DD")
+                : selectedScrapeForm
+            }
+            value={
+              selectedScrapeTo
+                ? dayjs(selectedScrapeTo, "DD-MM-YYYY").format("YYYY-MM-DD")
+                : selectedScrapeTo
+            }
+            onChange={(e) => {
+              setSelectedScrapeTo(
+                dayjs(e.currentTarget.value).format("DD-MM-YYYY"),
+              );
             }}
           />
         </div>
@@ -86,6 +120,7 @@ export function DepartmentLocationScrapeFromSearch({
                 skill: "",
                 location: "",
                 scrape_from: "",
+                scrape_to: "",
               });
             }}
             className="bg-gray-200 text-gray-600 rounded-lg px-8 py-2 font-medium outline-none hover:opacity-90 focus:ring active:scale-95"
@@ -104,6 +139,7 @@ export function DepartmentLocationScrapeFromSearch({
                 skill: selectedDepartment,
                 location: selectedLocation,
                 scrape_from: selectedScrapeForm,
+                scrape_to: selectedScrapeTo,
               });
             }}
             className="rounded-lg bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"

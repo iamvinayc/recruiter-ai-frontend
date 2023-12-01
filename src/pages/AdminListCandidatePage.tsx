@@ -31,8 +31,10 @@ const defaultArr: [] = [];
 const columnHelper = createColumnHelper<Person>();
 
 export function AdminListCandidatePage() {
-  const [{ skill: department, location, scrape_from, sort_by }, setTypeSearch] =
-    useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
+  const [
+    { skill: department, location, scrape_from, sort_by, scrape_to },
+    setTypeSearch,
+  ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
@@ -55,7 +57,8 @@ export function AdminListCandidatePage() {
         params: {
           department: department || undefined,
           location: location || undefined,
-          scrape_from: scrape_from || undefined,
+          from_date: scrape_from || undefined,
+          to_date: scrape_to || undefined,
           sort: sort_by || undefined,
         },
       }).then((e) => e.data.data),
@@ -391,8 +394,8 @@ const AddCandidatePopup = ({
       city: "",
     },
   });
-  const addJobMutation = useMutation({
-    mutationKey: ["addJob"],
+  const addCandidateMutation = useMutation({
+    mutationKey: ["addCandidateMutation"],
     mutationFn: (data: z.TypeOf<typeof formSchema>) =>
       axiosApi({
         url: "data-sourcing/candidate/" as "data-sourcing/candidate",
@@ -416,11 +419,11 @@ const AddCandidatePopup = ({
   });
   const onSubmit = (data: z.TypeOf<typeof formSchema>) => {
     //
-    addJobMutation
+    addCandidateMutation
       .mutateAsync(data)
       .then((success) => {
         if (success) {
-          toast.success("Added Job");
+          toast.success("Added candidate successfully");
           reset({
             department: [],
             city: "",
@@ -544,8 +547,8 @@ const AddCandidatePopup = ({
         <div className="flex justify-end">
           <Button
             type="submit"
-            isLoading={addJobMutation.isPending}
-            disabled={addJobMutation.isPending}
+            isLoading={addCandidateMutation.isPending}
+            disabled={addCandidateMutation.isPending}
             className="py-2"
           >
             Add Candidate
