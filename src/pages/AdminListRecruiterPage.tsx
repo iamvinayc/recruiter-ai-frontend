@@ -667,7 +667,7 @@ const AddLocationDialog = ({
           setSelectedLocation([]);
           toast.success(
             isUpdate
-              ? "Update location successfully"
+              ? "Updated location successfully"
               : "Added new location successfully",
           );
           onSuccess();
