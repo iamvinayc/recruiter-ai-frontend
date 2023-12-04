@@ -443,7 +443,7 @@ const AddRecruiterDialog = ({
     <PopupDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      title="Add new Recruiter"
+      title="Add new recruiter"
     >
       <form onSubmit={handleSubmit(onNewRecruiterAdd)}>
         <div className="mb-4 space-y-2 py-4">
@@ -541,7 +541,11 @@ const AddDepartmentDialog = ({
       .then((success) => {
         if (success) {
           setSelectedDepartmentIds([]);
-          toast.success("Added new skill successfully");
+          toast.success(
+            isUpdate
+              ? "Updated skill successfully"
+              : "Added new skill successfully",
+          );
           onSuccess();
           return;
         } else {
@@ -661,7 +665,11 @@ const AddLocationDialog = ({
       .then((success) => {
         if (success) {
           setSelectedLocation([]);
-          toast.success("Added new location successfully");
+          toast.success(
+            isUpdate
+              ? "Update location successfully"
+              : "Added new location successfully",
+          );
           onSuccess();
           return;
         } else {

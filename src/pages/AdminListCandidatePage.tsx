@@ -409,7 +409,7 @@ const AddCandidatePopup = ({
           email: data.email,
           phone: data.phone,
           profile_url: data.profile_url,
-          resume_file: data.resume_file,
+          resume_file: data.resume_file || null,
           departments: data.department.map((e) => ({
             ...e,
             description: e.name,
@@ -550,7 +550,7 @@ const AddCandidatePopup = ({
                           onChange(valueFn.name);
                         }
                       }}
-                      error={errors.department?.message}
+                      error={errors.city?.message}
                     />
                   )}
                 />
@@ -589,7 +589,7 @@ const formSchema = z.object({
   email: z.string().email(),
   phone: z.string().min(1, "Please enter phone"),
   profile_url: z.string().min(1, "Please enter profile url"),
-  resume_file: z.string().min(1, "Please enter resume file"),
+  resume_file: z.string(),
   department: z
     .array(
       z.object({

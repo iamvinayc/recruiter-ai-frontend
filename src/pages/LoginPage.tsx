@@ -90,7 +90,7 @@ export function LoginPage() {
           label="Password"
           type="password"
           icon={<LockClosedIcon className="h-6 w-6 opacity-50" />}
-          placeholder="Enter your Password"
+          placeholder="Enter your password"
           error={errors.password?.message}
           register={register}
           name="password"

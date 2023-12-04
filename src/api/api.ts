@@ -196,7 +196,7 @@ interface AllApiEndpoints {
           employer_label: string;
           email: string;
           phone1?: string;
-          phone2?: string;
+          phone2?: string | null;
         };
         departments: {
           id?: number;
@@ -248,7 +248,7 @@ interface AllApiEndpoints {
         description?: string;
         phone?: string;
         profile_url?: string;
-        resume_file?: string;
+        resume_file?: string | null;
         handle: string;
         platform: string;
       };

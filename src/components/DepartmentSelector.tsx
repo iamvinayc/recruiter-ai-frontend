@@ -19,7 +19,7 @@ export function DepartmentSelector({
   const [query, setQuery] = useState("");
 
   const departmentListQuery = useQuery({
-    queryKey: ["AdminListDepartmentPage"],
+    queryKey: ["departmentListQuery"],
     queryFn: async () =>
       axiosApi({
         url: "data-sourcing/department/",
@@ -38,6 +38,7 @@ export function DepartmentSelector({
               ?.replace(/\s+/g, "")
               ?.includes(query.toLowerCase().replace(/\s+/g, "")),
         );
+  console.log(items, selected, query, filteredItems);
   return (
     <div className=" ">
       <label className="mb-2.5 block font-medium text-black dark:text-white">
@@ -55,9 +56,9 @@ export function DepartmentSelector({
           <div className="relative w-full cursor-default space-y-2 divide-y divide-slate-200 overflow-hidden rounded-lg border border-slate-200 bg-white p-2 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
             {selectedItems.length === 0 ? null : (
               <div className={cn("flex flex-wrap gap-2")}>
-                {selectedItems.map(({ name, id }, i) => (
+                {selectedItems.map(({ name }, i) => (
                   <div
-                    key={id}
+                    key={i}
                     className="inline-flex space-x-1 rounded bg-[#3BA2B8] px-2 py-1 text-xs font-medium text-white hover:bg-opacity-90"
                   >
                     <span>{name}</span>

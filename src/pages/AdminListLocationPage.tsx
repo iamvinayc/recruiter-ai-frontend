@@ -1,12 +1,15 @@
 import MapPinIcon from "@heroicons/react/24/outline/MapPinIcon";
 import PlusIcon from "@heroicons/react/24/outline/PlusIcon";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import DataTable, {
   defaultThemes,
   TableColumn,
 } from "react-data-table-component";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { z } from "zod";
 
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
@@ -15,7 +18,16 @@ import { PopupDialog } from "../components/PopupDialog";
 
 export function AdminListLocationPage() {
   const [showAddLocationDialog, setShowAddLocationDialog] = useState(false);
-  const [newLocation, setNewLocation] = useState("");
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm<z.TypeOf<typeof fromState>>({
+    resolver: zodResolver(fromState),
+  });
+
   const locationListQuery = useQuery({
     queryKey: ["AdminListLocationPage"],
     queryFn: async () =>
@@ -31,19 +43,21 @@ export function AdminListLocationPage() {
         url: "data-sourcing/location/" as "data-sourcing/location",
         method: "POST",
         data: { name: label },
-      }).then((e) => e.data.isSuccess),
+      }).then((e) => e.data),
   });
 
-  const onNewLocationAdd = () => {
+  const onSubmit = (data: z.TypeOf<typeof fromState>) => {
     addLocationMutation
-      .mutateAsync({ label: newLocation })
-      .then((success) => {
-        if (success) {
+      .mutateAsync({ label: data.location })
+      .then((data) => {
+        if (data.isSuccess) {
           toast.success("New location added successfully");
           setShowAddLocationDialog(false);
-          setNewLocation("");
+          reset({ location: "" });
           locationListQuery.refetch();
           return;
+        } else if (data.message) {
+          toast.error(data.message);
         } else {
           throw new Error("Some error ocurred");
         }
@@ -87,29 +101,30 @@ export function AdminListLocationPage() {
         setIsOpen={setShowAddLocationDialog}
         title="Add new location"
       >
-        <div className="mb-4 py-4">
-          <Input
-            label="Location"
-            placeholder="Location"
-            icon={<MapPinIcon className="h-5 w-5" />}
-            containerClassName=""
-            className="px-3 py-3"
-            disabled={addLocationMutation.isPending}
-            value={newLocation}
-            onInput={(e) =>
-              setNewLocation((e.target as HTMLInputElement).value)
-            }
-          />
-        </div>
-        <div className="flex justify-end">
-          <Button
-            onClick={onNewLocationAdd}
-            isLoading={addLocationMutation.isPending}
-            className="py-2"
-          >
-            Add Location
-          </Button>
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mb-4 py-4">
+            <Input
+              label="Location"
+              placeholder="Location"
+              icon={<MapPinIcon className="h-5 w-5" />}
+              containerClassName=""
+              className="px-3 py-3"
+              disabled={addLocationMutation.isPending}
+              register={register}
+              name="location"
+              error={errors.location?.message}
+            />
+          </div>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              isLoading={addLocationMutation.isPending}
+              className="py-2"
+            >
+              Add Location
+            </Button>
+          </div>
+        </form>
       </PopupDialog>
     </main>
   );
@@ -159,3 +174,6 @@ const customStyles = {
     },
   },
 } as const;
+const fromState = z.object({
+  location: z.string().min(1, "Please enter a location"),
+});

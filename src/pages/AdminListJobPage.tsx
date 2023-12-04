@@ -426,7 +426,7 @@ const AddJobPopup = ({
             email: data.email,
             employer_label: data.employer_name,
             phone1: data.phone1,
-            phone2: data.phone2,
+            phone2: data.phone2 || null,
           },
           expires_on: "2023-10-10",
           handle: `${Math.random()}`,
@@ -562,7 +562,7 @@ const AddJobPopup = ({
                           onChange(valueFn.name);
                         }
                       }}
-                      error={errors.department?.message}
+                      error={errors.city?.message}
                     />
                   )}
                 />
@@ -602,7 +602,7 @@ const formSchema = z.object({
   employer_name: z.string().min(1, "Please enter employer name"),
   email: z.string().email(),
   phone1: z.string().min(1, "Please enter phone1"),
-  phone2: z.string().min(1, "Please enter phone2"),
+  phone2: z.string(),
   department: z
     .array(
       z.object({
