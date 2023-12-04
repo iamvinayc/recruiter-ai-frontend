@@ -1,7 +1,10 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { z } from "zod";
 
 import { Button } from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
@@ -10,7 +13,15 @@ import { axiosApi } from "../api/api";
 
 export function AdminListDepartmentPage() {
   const [showAddDepartmentPopup, setShowAddDepartmentPopup] = useState(false);
-  const [newDepartment, setNewDepartment] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<z.TypeOf<typeof formState>>({
+    resolver: zodResolver(formState),
+  });
   const departmentListQuery = useQuery({
     queryKey: ["AdminListDepartmentPage", showAddDepartmentPopup],
     queryFn: async () =>
@@ -31,14 +42,14 @@ export function AdminListDepartmentPage() {
       }).then((e) => e.data),
   });
 
-  const onNewDepartmentAdd = () => {
+  const onNewDepartmentAdd = (data: z.TypeOf<typeof formState>) => {
     addDepartmentMutation
-      .mutateAsync({ name: newDepartment })
+      .mutateAsync({ name: data.department })
       .then((data) => {
         if (data.isSuccess) {
           toast.success("New skill added successfully");
           setShowAddDepartmentPopup(false);
-          setNewDepartment("");
+          reset({ department: "" });
           departmentListQuery.refetch();
           return;
         } else if (data.message) {
@@ -101,28 +112,29 @@ export function AdminListDepartmentPage() {
         setIsOpen={setShowAddDepartmentPopup}
         title="Add new skill"
       >
-        <div className="mb-4 py-4">
-          <Input
-            label="Skill"
-            placeholder="Skill"
-            containerClassName=""
-            className="px-3 py-3"
-            disabled={addDepartmentMutation.isPending}
-            value={newDepartment}
-            onInput={(e) =>
-              setNewDepartment((e.target as HTMLInputElement).value)
-            }
-          />
-        </div>
-        <div className="flex justify-end">
-          <Button
-            onClick={onNewDepartmentAdd}
-            isLoading={addDepartmentMutation.isPending}
-            className="py-2"
-          >
-            Add Skill
-          </Button>
-        </div>
+        <form onSubmit={handleSubmit(onNewDepartmentAdd)}>
+          <div className="mb-4 py-4">
+            <Input
+              label="Skill"
+              placeholder="Skill"
+              containerClassName=""
+              className="px-3 py-3"
+              disabled={addDepartmentMutation.isPending}
+              register={register}
+              error={errors.department?.message}
+              name="department"
+            />
+          </div>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              isLoading={addDepartmentMutation.isPending}
+              className="py-2"
+            >
+              Add Skill
+            </Button>
+          </div>
+        </form>
       </PopupDialog>
     </main>
   );
@@ -143,3 +155,6 @@ export function AdminListDepartmentPage() {
 //   },
 // ];
 // const emptyArr: [] = [];
+const formState = z.object({
+  department: z.string().min(1, "Please enter a skill"),
+});
