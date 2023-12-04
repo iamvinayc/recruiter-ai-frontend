@@ -420,7 +420,7 @@ const AddCandidatePopup = ({
           description: data.description,
           email: data.email,
           phone: data.phone,
-          profile_url: data.profile_url,
+          profile_url: data.profile_url || null,
           resume_file: data.resume_file || null,
           departments: data.department.map((e) => ({
             ...e,

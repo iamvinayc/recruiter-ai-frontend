@@ -247,7 +247,7 @@ interface AllApiEndpoints {
         city: string;
         description?: string;
         phone?: string;
-        profile_url?: string;
+        profile_url?: string | null;
         resume_file?: string | null;
         handle: string;
         platform: string;
