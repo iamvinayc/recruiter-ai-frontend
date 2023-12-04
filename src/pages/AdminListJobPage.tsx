@@ -8,7 +8,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
@@ -409,6 +409,18 @@ const AddJobPopup = ({
       city: "",
     },
   });
+  const resetForm = () => {
+    reset({
+      city: "",
+      department: [],
+      description: "",
+      email: "",
+      employer_name: "",
+      phone1: "",
+      phone2: "",
+      title: "",
+    });
+  };
   const addJobMutation = useMutation({
     mutationKey: ["addJob"],
     mutationFn: (data: z.TypeOf<typeof formSchema>) =>
@@ -442,28 +454,31 @@ const AddJobPopup = ({
       .then((success) => {
         if (success) {
           toast.success("Added Job");
-          reset({
-            department: [],
-            city: "",
-            description: "",
-            email: "",
-            employer_name: "",
-            phone1: "",
-            phone2: "",
-            title: "",
-          });
+          resetForm();
           setIsOpen(false);
         } else throw new Error("Some error ocurred");
       })
       .catch(() => toast.error("Some error ocurred"));
   };
+
+  useEffect(() => {
+    resetForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
   return (
     <PopupDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       title="Add new job"
-      containerClassName="overflow-visible"
+      containerClassName="overflow-visible relative"
     >
+      <button
+        className="absolute right-0 top-0 p-4 outline-none ring-0"
+        onClick={() => setIsOpen(false)}
+      >
+        <XMarkIcon className="h-6 w-6" />
+      </button>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4 space-y-2 py-4">
           <div className="flex flex-col gap-6 md:flex-row">
@@ -579,7 +594,14 @@ const AddJobPopup = ({
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end space-x-2">
+          <Button
+            type="reset"
+            onClick={resetForm}
+            className="border-slate-400 bg-slate-400 p-4  py-2 outline-slate-500"
+          >
+            Reset
+          </Button>
           <Button
             type="submit"
             isLoading={addJobMutation.isPending}

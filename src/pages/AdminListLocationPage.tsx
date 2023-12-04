@@ -1,8 +1,9 @@
+import { XMarkIcon } from "@heroicons/react/20/solid";
 import MapPinIcon from "@heroicons/react/24/outline/MapPinIcon";
 import PlusIcon from "@heroicons/react/24/outline/PlusIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable, {
   defaultThemes,
   TableColumn,
@@ -66,6 +67,12 @@ export function AdminListLocationPage() {
         toast.error("Some error ocurred");
       });
   };
+  useEffect(() => {
+    reset({
+      location: "",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showAddLocationDialog]);
 
   return (
     <main>
@@ -100,7 +107,14 @@ export function AdminListLocationPage() {
         isOpen={showAddLocationDialog}
         setIsOpen={setShowAddLocationDialog}
         title="Add new location"
+        containerClassName="relative"
       >
+        <button
+          className="absolute right-0 top-0 p-4 outline-none ring-0"
+          onClick={() => setShowAddLocationDialog(false)}
+        >
+          <XMarkIcon className="h-6 w-6" />
+        </button>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4 py-4">
             <Input

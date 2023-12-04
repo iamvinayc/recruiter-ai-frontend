@@ -38,7 +38,7 @@ export function DepartmentSelector({
               ?.replace(/\s+/g, "")
               ?.includes(query.toLowerCase().replace(/\s+/g, "")),
         );
-  console.log(items, selected, query, filteredItems);
+
   return (
     <div className=" ">
       <label className="mb-2.5 block font-medium text-black dark:text-white">

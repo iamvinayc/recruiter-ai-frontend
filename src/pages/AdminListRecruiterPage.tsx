@@ -1,3 +1,4 @@
+import { XMarkIcon } from "@heroicons/react/20/solid";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import PlusIcon from "@heroicons/react/24/outline/PlusIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -411,6 +412,9 @@ const AddRecruiterDialog = ({
   } = useForm<z.TypeOf<typeof recruiterFromData>>({
     resolver: zodResolver(recruiterFromData),
   });
+  const resetForm = () => {
+    reset({ email: "", first_name: "", last_name: "" });
+  };
 
   const addRecruiterMutation = useMutation({
     mutationKey: ["addRecruiterMutation"],
@@ -439,12 +443,24 @@ const AddRecruiterDialog = ({
         toast.error("Some error ocurred");
       });
   };
+  useEffect(() => {
+    resetForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
   return (
     <PopupDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       title="Add new recruiter"
+      containerClassName="relative"
     >
+      <button
+        className="absolute right-0 top-0 p-4 outline-none ring-0"
+        onClick={() => setIsOpen(false)}
+      >
+        <XMarkIcon className="h-6 w-6" />
+      </button>
       <form onSubmit={handleSubmit(onNewRecruiterAdd)}>
         <div className="mb-4 space-y-2 py-4">
           <Input
@@ -476,7 +492,14 @@ const AddRecruiterDialog = ({
             error={errors.email?.message}
           />
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end space-x-2">
+          <Button
+            type="reset"
+            onClick={resetForm}
+            className="border-slate-400 bg-slate-400 p-4  py-2 outline-slate-500"
+          >
+            Reset
+          </Button>
           <Button
             type="submit"
             isLoading={addRecruiterMutation.isPending}
@@ -567,7 +590,14 @@ const AddDepartmentDialog = ({
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       title={isUpdate ? "Update skill" : "Add new skill"}
+      containerClassName="relative"
     >
+      <button
+        className="absolute right-0 top-0 p-4 outline-none ring-0"
+        onClick={() => setIsOpen(false)}
+      >
+        <XMarkIcon className="h-6 w-6" />
+      </button>
       <div>
         <div className="mb-4 space-y-2 py-4">
           <div className="flex max-h-[65vh] flex-col gap-2 overflow-y-scroll">
@@ -691,7 +721,14 @@ const AddLocationDialog = ({
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       title={isUpdate ? "Update location" : "Add location"}
+      containerClassName="relative"
     >
+      <button
+        className="absolute right-0 top-0 p-4 outline-none ring-0"
+        onClick={() => setIsOpen(false)}
+      >
+        <XMarkIcon className="h-6 w-6" />
+      </button>
       <div>
         <div className="mb-4 space-y-2 py-4">
           <div className="flex flex-col gap-2">

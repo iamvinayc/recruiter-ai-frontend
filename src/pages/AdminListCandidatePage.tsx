@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
@@ -397,6 +397,18 @@ const AddCandidatePopup = ({
       city: "",
     },
   });
+  const resetForm = () => {
+    reset({
+      department: [],
+      city: "",
+      name: "",
+      description: "",
+      email: "",
+      phone: "",
+      profile_url: "",
+      resume_file: "",
+    });
+  };
   const addCandidateMutation = useMutation({
     mutationKey: ["addCandidateMutation"],
     mutationFn: (data: z.TypeOf<typeof formSchema>) =>
@@ -427,29 +439,30 @@ const AddCandidatePopup = ({
       .then((success) => {
         if (success) {
           toast.success("Added candidate successfully");
-          reset({
-            department: [],
-            city: "",
-            name: "",
-            description: "",
-            email: "",
-            phone: "",
-            profile_url: "",
-            resume_file: "",
-          });
+          resetForm();
           setIsOpen(false);
         } else throw new Error("Some error ocurred");
       })
       .catch(() => toast.error("Some error ocurred"));
   };
 
+  useEffect(() => {
+    resetForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
   return (
     <PopupDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       title="Add new candidate"
-      containerClassName="overflow-visible"
+      containerClassName="overflow-visible relative"
     >
+      <button
+        className="absolute right-0 top-0 p-4 outline-none ring-0"
+        onClick={() => setIsOpen(false)}
+      >
+        <XMarkIcon className="h-6 w-6" />
+      </button>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4 space-y-2 py-4">
           <div className="flex flex-col gap-6 md:flex-row">
@@ -567,13 +580,15 @@ const AddCandidatePopup = ({
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end space-x-2">
           <Button
-            type="submit"
-            isLoading={addCandidateMutation.isPending}
-            disabled={addCandidateMutation.isPending}
-            className="py-2"
+            type="reset"
+            onClick={resetForm}
+            className="border-slate-400 bg-slate-400 p-4  py-2 outline-slate-500"
           >
+            Reset
+          </Button>
+          <Button type="submit" className="py-2">
             Add Candidate
           </Button>
         </div>
@@ -588,7 +603,7 @@ const formSchema = z.object({
   description: z.string().min(1, "Please enter description"),
   email: z.string().email(),
   phone: z.string().min(1, "Please enter phone"),
-  profile_url: z.string().min(1, "Please enter profile url"),
+  profile_url: z.string(),
   resume_file: z.string(),
   department: z
     .array(

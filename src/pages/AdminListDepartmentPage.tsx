@@ -1,7 +1,7 @@
-import { PlusIcon } from "@heroicons/react/20/solid";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -63,6 +63,13 @@ export function AdminListDepartmentPage() {
       });
   };
 
+  useEffect(() => {
+    reset({
+      department: "",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showAddDepartmentPopup]);
+
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -111,7 +118,14 @@ export function AdminListDepartmentPage() {
         isOpen={showAddDepartmentPopup}
         setIsOpen={setShowAddDepartmentPopup}
         title="Add new skill"
+        containerClassName="relative"
       >
+        <button
+          className="absolute right-0 top-0 p-4 outline-none ring-0"
+          onClick={() => setShowAddDepartmentPopup(false)}
+        >
+          <XMarkIcon className="h-6 w-6" />
+        </button>
         <form onSubmit={handleSubmit(onNewDepartmentAdd)}>
           <div className="mb-4 py-4">
             <Input
