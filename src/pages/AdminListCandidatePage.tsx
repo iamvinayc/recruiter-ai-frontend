@@ -7,6 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -26,6 +27,7 @@ import { SpinnerIcon } from "../components/common/SvgIcons";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { PopupDialog } from "../components/PopupDialog";
 import { cn, emptyArray } from "../utils";
+import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 
 const defaultArr: [] = [];
@@ -65,10 +67,35 @@ export function AdminListCandidatePage() {
         },
       }).then((e) => e.data.data),
   });
+  const [showUserDeleteId, setShowUserDeleteId] = useState<number | null>(null);
 
+  const candidateDeleteMutation = useMutation({
+    mutationKey: ["candidateDeleteMutation", showUserDeleteId],
+    mutationFn: async () => {
+      return axiosApi({
+        url: `data-sourcing/candidate/${showUserDeleteId}/` as `data-sourcing/candidate//`,
+        method: "DELETE",
+      }).then((e) => e.data);
+    },
+  });
+
+  const onUserDelete = () => {
+    if (!showUserDeleteId)
+      return console.log("No user to delete", showUserDeleteId);
+    candidateDeleteMutation
+      .mutateAsync()
+      .then((data) => {
+        if (data.isSuccess) {
+          toast.success("Candidate deleted successfully");
+          setShowUserDeleteId(null);
+          candidateListQuery.refetch();
+        } else if (data.message) {
+          toast.error(data.message);
+        } else throw new Error("Some error ocurred");
+      })
+      .catch(() => toast.error("Some error ocurred"));
+  };
   //#endregion
-
-  console.log("re-render");
 
   //#region memo states
 
@@ -115,13 +142,21 @@ export function AdminListCandidatePage() {
         id: "action",
         cell: (info) => {
           return (
-            <div className="">
+            <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowUserDetailsId(info.row.original.id)}
                 className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
               >
-                <EyeIcon className="h-5 w-5 " />
+                <EyeIcon className="h-4 w-4 " />
               </button>
+              {info.row.original.platform === "SYSTEM" ? (
+                <button
+                  onClick={() => setShowUserDeleteId(info.row.original.id)}
+                  className="rounded-md bg-red-500 p-3 text-white hover:bg-opacity-70"
+                >
+                  <TrashIcon className="h-4 w-4 " />
+                </button>
+              ) : null}
             </div>
           );
         },
@@ -279,6 +314,49 @@ export function AdminListCandidatePage() {
         isOpen={showAddCandidatePopup}
         setIsOpen={setShowAddCandidatePopup}
       />
+      <ConfirmationDialog
+        subtitle={
+          <>
+            Are you sure you wan to delete the candidate{" "}
+            <b>
+              "{candidateList.find((e) => e.id == showUserDeleteId)?.title}"
+            </b>{" "}
+            ?
+          </>
+        }
+        closeDialog={() => setShowUserDeleteId(null)}
+        isOpen={showUserDeleteId !== null}
+        onDelete={onUserDelete}
+        isDeleteLoading={candidateDeleteMutation.isPending}
+      />
+      {/* <PopupDialog
+        isOpen={showUserDeleteId !== null}
+        setIsOpen={() => setShowUserDeleteId(null)}
+        title="Conformation"
+        containerClassName="max-w-[95%] md:max-w-[50%] "
+      >
+        <Dialog.Title className="mb-8 mt-4">
+          Are you sure you wan to delete the candidate{" "}
+          <b>"{candidateList.find((e) => e.id == showUserDeleteId)?.title}"</b>{" "}
+          ?
+        </Dialog.Title>
+        <div className=" flex items-center justify-end space-x-2">
+          <Button
+            type="button"
+            onClick={() => setShowUserDeleteId(null)}
+            className="border-none bg-slate-200 py-2 text-black outline-slate-300"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            onClick={() => setShowUserDeleteId(null)}
+            className="border-none bg-red-500 py-2 outline-red-300"
+          >
+            Delete
+          </Button>
+        </div>
+      </PopupDialog> */}
       <PopupDialog
         isOpen={showUserDetailsId !== null}
         setIsOpen={() => setShowUserDetailsId(null)}
@@ -390,6 +468,7 @@ const AddCandidatePopup = ({
     handleSubmit,
     control,
     reset,
+    setError,
   } = useForm<z.TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -430,17 +509,22 @@ const AddCandidatePopup = ({
           city: data.city,
           platform: "SYSTEM",
         },
-      }).then((e) => e.data.isSuccess),
+      }).then((e) => e.data),
   });
   const onSubmit = (data: z.TypeOf<typeof formSchema>) => {
     //
     addCandidateMutation
       .mutateAsync(data)
-      .then((success) => {
-        if (success) {
+      .then((data) => {
+        if (data.isSuccess) {
           toast.success("Added candidate successfully");
           resetForm();
           setIsOpen(false);
+        } else if (data.message) {
+          toast.error(data.message);
+          if (data.message.toLowerCase().includes("email")) {
+            setError("email", { message: data.message });
+          }
         } else throw new Error("Some error ocurred");
       })
       .catch(() => toast.error("Some error ocurred"));

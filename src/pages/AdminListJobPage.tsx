@@ -8,6 +8,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -27,6 +28,7 @@ import { LineClamp } from "../components/LineClamp";
 import { PopupDialog } from "../components/PopupDialog";
 import { ROUTES, SortBy } from "../routes/routes";
 import { cn, emptyArray } from "../utils";
+import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 
 const defaultArr: [] = [];
@@ -67,7 +69,34 @@ export function AdminListJobPage() {
         },
       }).then((e) => e.data.data),
   });
+  const [showJobDeleteId, setShowJobDeleteId] = useState<number | null>(null);
 
+  const candidateDeleteMutation = useMutation({
+    mutationKey: ["candidateDeleteMutation", showJobDeleteId],
+    mutationFn: async () => {
+      return axiosApi({
+        url: `data-sourcing/job/${showJobDeleteId}/` as `data-sourcing/job//`,
+        method: "DELETE",
+      }).then((e) => e.data);
+    },
+  });
+
+  const onJobDelete = () => {
+    if (!showJobDeleteId)
+      return console.log("No user to delete", showJobDeleteId);
+    candidateDeleteMutation
+      .mutateAsync()
+      .then((data) => {
+        if (data.isSuccess) {
+          toast.success("Job deleted successfully");
+          setShowJobDeleteId(null);
+          jobListQuery.refetch();
+        } else if (data.message) {
+          toast.error(data.message);
+        } else throw new Error("Some error ocurred");
+      })
+      .catch(() => toast.error("Some error ocurred"));
+  };
   //#endregion
 
   console.log("re-render");
@@ -132,13 +161,21 @@ export function AdminListJobPage() {
         id: "action",
         cell: (info) => {
           return (
-            <div className="">
+            <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowUserDetailsId(info.row.original.id)}
                 className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
               >
                 <EyeIcon className="h-5 w-5 " />
               </button>
+              {info.row.original.platform === "SYSTEM" ? (
+                <button
+                  onClick={() => setShowJobDeleteId(info.row.original.id)}
+                  className="rounded-md bg-red-500 p-3 text-white hover:bg-opacity-70"
+                >
+                  <TrashIcon className="h-4 w-4 " />
+                </button>
+              ) : null}
             </div>
           );
         },
@@ -296,6 +333,18 @@ export function AdminListJobPage() {
         </div>
       </div>
       <AddJobPopup isOpen={showAddJobPopup} setIsOpen={setShowAddJobPopup} />
+      <ConfirmationDialog
+        subtitle={
+          <>
+            Are you sure you wan to delete the job{" "}
+            <b>"{jobList.find((e) => e.id == showJobDeleteId)?.title}"</b> ?
+          </>
+        }
+        closeDialog={() => setShowJobDeleteId(null)}
+        isOpen={showJobDeleteId !== null}
+        onDelete={onJobDelete}
+        isDeleteLoading={candidateDeleteMutation.isPending}
+      />
       <PopupDialog
         isOpen={showUserDetailsId !== null}
         setIsOpen={() => setShowUserDetailsId(null)}

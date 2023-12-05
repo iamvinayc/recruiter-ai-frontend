@@ -24,7 +24,7 @@ export function DepartmentLocationScrapeFromSearch({
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedScrapeForm, setSelectedScrapeForm] = useState("");
   const [selectedScrapeTo, setSelectedScrapeTo] = useState("");
-  console.log("department", department, location);
+  // console.log("department", department, location);
   useEffect(() => {
     setSelectedDepartment(department);
   }, [department]);

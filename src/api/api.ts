@@ -184,6 +184,14 @@ interface AllApiEndpoints {
     };
     response: JobListingResponse;
   };
+  "data-sourcing/job//": {
+    request: {
+      method: "DELETE";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: SuccessResponse;
+  };
   "data-sourcing/job": {
     request: {
       method: "POST";
@@ -231,6 +239,14 @@ interface AllApiEndpoints {
       data?: undefined;
     };
     response: CandidateListResponse;
+  };
+  "data-sourcing/candidate//": {
+    request: {
+      method: "DELETE";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: SuccessResponse;
   };
   "data-sourcing/candidate": {
     request: {
