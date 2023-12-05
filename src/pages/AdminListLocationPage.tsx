@@ -4,10 +4,6 @@ import PlusIcon from "@heroicons/react/24/outline/PlusIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import DataTable, {
-  defaultThemes,
-  TableColumn,
-} from "react-data-table-component";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -92,7 +88,17 @@ export function AdminListLocationPage() {
             </button>
           </div>
         </div>
-        <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
+        <div className="flex flex-wrap items-center gap-2 text-xs sm:gap-2">
+          {locationListQuery.data?.map(({ id, name }) => (
+            <span
+              key={id}
+              className=" inline-flex  text-ellipsis  rounded  bg-[#3BA2B8]  px-2 py-1 text-lg font-medium text-white hover:bg-opacity-90"
+            >
+              {name}
+            </span>
+          ))}
+        </div>
+        {/* <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white shadow-default">
             <DataTable
               columns={columns}
@@ -101,7 +107,7 @@ export function AdminListLocationPage() {
               customStyles={customStyles}
             />
           </div>
-        </div>
+        </div> */}
       </div>
       <PopupDialog
         isOpen={showAddLocationDialog}
@@ -144,50 +150,45 @@ export function AdminListLocationPage() {
   );
 }
 
-const columns: TableColumn<{ id: number; name: string }>[] = [
-  {
-    name: "id",
-    selector: (row) => row.id,
-    grow: 0,
-  },
-  {
-    name: "Location",
-    selector: (row) => row.name,
-    grow: 1,
-  },
-];
-const customStyles = {
-  header: {
-    style: {
-      minHeight: "56px",
-    },
-  },
-  headRow: {
-    style: {
-      borderTopStyle: "solid",
-      borderTopWidth: "1px",
-      borderTopColor: defaultThemes.default.divider.default,
-    },
-  },
-  headCells: {
-    style: {
-      "&:not(:last-of-type)": {
-        borderRightStyle: "solid",
-        borderRightWidth: "1px",
-        borderRightColor: defaultThemes.default.divider.default,
-      },
-    },
-  },
-  cells: {
-    style: {
-      "&:not(:last-of-type)": {
-        borderRightStyle: "solid",
-        borderRightWidth: "1px",
-        borderRightColor: defaultThemes.default.divider.default,
-      },
-    },
-  },
-} as const;
+// const columns: TableColumn<{ id: number; name: string }>[] = [
+//   {
+//     name: "Location",
+//     selector: (row) => row.name,
+//     grow: 1,
+//   },
+// ];
+// const customStyles = {
+//   header: {
+//     style: {
+//       minHeight: "56px",
+//     },
+//   },
+//   headRow: {
+//     style: {
+//       borderTopStyle: "solid",
+//       borderTopWidth: "1px",
+//       borderTopColor: defaultThemes.default.divider.default,
+//     },
+//   },
+//   headCells: {
+//     style: {
+//       "&:not(:last-of-type)": {
+//         borderRightStyle: "solid",
+//         borderRightWidth: "1px",
+//         borderRightColor: defaultThemes.default.divider.default,
+//       },
+//     },
+//   },
+//   cells: {
+//     style: {
+//       "&:not(:last-of-type)": {
+//         borderRightStyle: "solid",
+//         borderRightWidth: "1px",
+//         borderRightColor: defaultThemes.default.divider.default,
+//       },
+//     },
+//   },
+// } as const;
 const fromState = z.object({
   location: z.string().min(1, "Please enter a location"),
 });
