@@ -626,7 +626,7 @@ const AddJobPopup = ({
                           onChange(valueFn.name);
                         }
                       }}
-                      error={errors.city?.message}
+                      error={errors.city?.message?.replace("city", "location")}
                     />
                   )}
                 />
@@ -634,9 +634,9 @@ const AddJobPopup = ({
                 <Input
                   register={register}
                   name="city"
-                  label="City"
-                  placeholder="City"
-                  error={errors.city?.message}
+                  label="Location"
+                  placeholder="Location"
+                  error={errors.city?.message?.replace("city", "location")}
                 />
               )}
             </div>

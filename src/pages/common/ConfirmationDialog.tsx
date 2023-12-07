@@ -8,7 +8,7 @@ export function ConfirmationDialog({
   isOpen,
   onDelete,
   subtitle,
-  title = "Conformation",
+  title = "Confirmation",
   isDeleteLoading,
 }: ConfirmationDialogProps) {
   return (

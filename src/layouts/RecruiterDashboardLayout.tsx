@@ -44,5 +44,10 @@ const SideBarLinks = {
       link: ROUTES.RECRUITER.LIST_CANDIDATE.path,
       icon: <UsersIcon className="h-5 w-5" />,
     },
+    // {
+    //   title: "Scoring",
+    //   link: ROUTES.RECRUITER.LIST_SCORING.path,
+    //   icon: <GaugeCircleIcon className="h-5 w-5" />,
+    // },
   ],
 };

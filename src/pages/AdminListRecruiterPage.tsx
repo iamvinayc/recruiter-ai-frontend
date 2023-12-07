@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
+import { DepartmentSelector } from "@/components/DepartmentSelector";
 import { LocationSelectorMultiple } from "@/components/LocationSelector";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
@@ -48,16 +49,7 @@ export function AdminListRecruiterPage() {
   const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
 
   //#region query/mutation
-  const departmentListQuery = useQuery({
-    queryKey: ["AdminListDepartmentPage"],
-    queryFn: async () => {
-      return axiosApi({
-        url: "data-sourcing/department/",
-        method: "GET",
-        params: { type: 1 },
-      }).then((e) => e.data.data);
-    },
-  });
+
   const recruiterListQuery = useQuery({
     queryKey: ["AdminListRecruiterPage", columnFilters],
     queryFn: async () => {
@@ -213,18 +205,6 @@ export function AdminListRecruiterPage() {
     [recruiterListQuery.data],
   );
 
-  const departments = useMemo(
-    () => departmentListQuery.data || defaultArr,
-    // ?.filter(
-    //   (e) =>
-    //     !recruiterList
-    //       .find((e) => e.id == showAddingDepartmentUserId)
-    //       ?.departments?.map((e) => e.id)
-    //       ?.includes(e.id),
-    // )
-
-    [departmentListQuery.data],
-  );
   //#endregion
 
   const table = useReactTable({
@@ -236,10 +216,10 @@ export function AdminListRecruiterPage() {
   });
   console.log("columnFilters", columnFilters);
 
-  const selectedDepartmentIds =
-    recruiterList
-      .find((e) => String(e.id) === String(showAddingDepartmentUserId))
-      ?.departments?.map((e) => e.id) || [];
+  const selectedDepartments =
+    recruiterList.find(
+      (e) => String(e.id) === String(showAddingDepartmentUserId),
+    )?.departments || [];
   const selectedLocationIds =
     recruiterList.find((e) => String(e.id) === String(showAddingLocationUserId))
       ?.location || emptyArray;
@@ -353,15 +333,15 @@ export function AdminListRecruiterPage() {
         }}
       />
       <AddDepartmentDialog
-        isUpdate={selectedDepartmentIds.length > 0}
+        isUpdate={selectedDepartments.length > 0}
         isOpen={showAddingDepartmentUserId !== null}
         setIsOpen={() => setShowAddingDepartmentUserId(null)}
         onSuccess={() => {
           setShowAddingDepartmentUserId(null);
           recruiterListQuery.refetch();
         }}
-        prevSelectedDepartmentIds={selectedDepartmentIds}
-        departments={departments}
+        prevSelectedDepartmentIds={[]}
+        departments={selectedDepartments}
         selectedUserId={showAddingDepartmentUserId}
       />
       <AddLocationDialog
@@ -526,7 +506,6 @@ const AddDepartmentDialog = ({
   setIsOpen,
   departments,
   selectedUserId,
-  prevSelectedDepartmentIds = [],
   isUpdate,
 }: {
   onSuccess: VoidFunction;
@@ -537,16 +516,15 @@ const AddDepartmentDialog = ({
   selectedUserId: number | null;
   isUpdate: boolean;
 }) => {
-  const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<number[]>(
-    [],
-  );
+  const [selectedDepartments, setSelectedDepartments] = useState<
+    {
+      name: string;
+      id?: number | undefined;
+    }[]
+  >([]);
   useEffect(() => {
-    if (prevSelectedDepartmentIds && prevSelectedDepartmentIds.length > 0) {
-      setSelectedDepartmentIds(prevSelectedDepartmentIds);
-      console.log("prevSelectedDepartmentIds", prevSelectedDepartmentIds);
-    }
-  }, [prevSelectedDepartmentIds]);
-  console.log("selectedDepartmentIds", selectedDepartmentIds);
+    setSelectedDepartments(departments);
+  }, [departments]);
 
   const addDepartmentMutation = useMutation({
     mutationKey: ["addDepartmentMutation"],
@@ -560,10 +538,15 @@ const AddDepartmentDialog = ({
   const onNewRecruiterAdd = () => {
     if (!selectedUserId) return;
     addDepartmentMutation
-      .mutateAsync({ id: selectedUserId, departments: selectedDepartmentIds })
+      .mutateAsync({
+        id: selectedUserId,
+        departments: selectedDepartments
+          .map<number>((e) => e.id as number)
+          .filter(Boolean),
+      })
       .then((success) => {
         if (success) {
-          setSelectedDepartmentIds([]);
+          setSelectedDepartments([]);
           toast.success(
             isUpdate
               ? "Updated skill successfully"
@@ -581,7 +564,7 @@ const AddDepartmentDialog = ({
   };
   useEffect(() => {
     return () => {
-      setSelectedDepartmentIds([]);
+      setSelectedDepartments([]);
     };
   }, [isOpen]);
 
@@ -600,8 +583,12 @@ const AddDepartmentDialog = ({
       </button>
       <div>
         <div className="mb-4 space-y-2 py-4">
-          <div className="flex max-h-[65vh] flex-col gap-2 overflow-y-scroll">
-            {departments.map(({ id, description, name }, i) => (
+          <div className="flex max-h-[65vh] flex-col gap-2">
+            <DepartmentSelector
+              selectedItems={selectedDepartments}
+              setSelectedItems={setSelectedDepartments}
+            />
+            {/* {departments.map(({ id, description, name }, i) => (
               <label key={`department-${i}`}>
                 <div className="flex w-full items-start space-x-2">
                   <input
@@ -627,15 +614,14 @@ const AddDepartmentDialog = ({
               <div className="flex min-h-[8rem] items-center justify-center">
                 No Skills
               </div>
-            ) : null}
+            ) : null} */}
           </div>
         </div>
         <div className="flex justify-end">
           <Button
             isLoading={addDepartmentMutation.isPending}
             disabled={
-              addDepartmentMutation.isPending ||
-              selectedDepartmentIds.length == 0
+              addDepartmentMutation.isPending || selectedDepartments.length == 0
             }
             onClick={onNewRecruiterAdd}
             className="py-2 disabled:border-slate-600 disabled:bg-slate-500"

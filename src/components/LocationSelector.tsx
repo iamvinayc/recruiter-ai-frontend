@@ -9,6 +9,7 @@ import { Fragment, useState } from "react";
 
 import { axiosApi } from "../api/api";
 import { cn, emptyArray } from "../utils";
+import { useAutoOpenOnMount } from "./common/useAutoOpenOnMount";
 
 export function LocationSelector({
   selected,
@@ -21,6 +22,7 @@ export function LocationSelector({
   error?: string;
   showCreateIfNotFound?: boolean;
 }) {
+  const { btnRef, inpRef } = useAutoOpenOnMount();
   // const [selected, setSelected] = useState<Item>({ name: "" });
   const [query, setQuery] = useState("");
   const locationListQuery = useQuery({
@@ -77,8 +79,12 @@ export function LocationSelector({
                 className={cn(
                   "text-gray-900 w-full border-none py-2 pl-3 pr-10 text-sm leading-5  focus:ring-0",
                 )}
+                ref={inpRef}
               />
-              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+              <Combobox.Button
+                ref={btnRef}
+                className="absolute inset-y-0 right-0 flex items-center pr-2"
+              >
                 <ChevronUpDownIcon
                   className="text-gray-400 h-5 w-5"
                   aria-hidden="true"
@@ -163,7 +169,7 @@ export function LocationSelectorMultiple({
   showCreateIfNotFound?: boolean;
 }) {
   const [selected, setSelected] = useState<Item>({ name: "" });
-
+  const { btnRef, inpRef } = useAutoOpenOnMount();
   // const [selected, setSelected] = useState<Item>({ name: "" });
   const [query, setQuery] = useState("");
   const locationListQuery = useQuery({
@@ -237,8 +243,12 @@ export function LocationSelectorMultiple({
                   "text-gray-900 w-full border-none py-2 pl-3 pr-10 text-sm leading-5  focus:ring-0",
                   selectedItems.length > 0 && "mt-2",
                 )}
+                ref={inpRef}
               />
-              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+              <Combobox.Button
+                ref={btnRef}
+                className="absolute inset-y-0 right-0 flex items-center pr-2"
+              >
                 <ChevronUpDownIcon
                   className="text-gray-400 h-5 w-5"
                   aria-hidden="true"

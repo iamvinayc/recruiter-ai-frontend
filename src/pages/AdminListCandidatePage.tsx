@@ -317,7 +317,7 @@ export function AdminListCandidatePage() {
       <ConfirmationDialog
         subtitle={
           <>
-            Are you sure you wan to delete the candidate{" "}
+            Are you sure you want to delete the candidate{" "}
             <b>
               "{candidateList.find((e) => e.id == showUserDeleteId)?.title}"
             </b>{" "}
@@ -647,7 +647,7 @@ const AddCandidatePopup = ({
                           onChange(valueFn.name);
                         }
                       }}
-                      error={errors.city?.message}
+                      error={errors.city?.message?.replace("city", "location")}
                     />
                   )}
                 />
@@ -655,9 +655,9 @@ const AddCandidatePopup = ({
                 <Input
                   register={register}
                   name="city"
-                  label="City"
-                  placeholder="City"
-                  error={errors.city?.message}
+                  label="Location"
+                  placeholder="Location"
+                  error={errors.city?.message?.replace("city", "location")}
                 />
               )}
             </div>

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { ListScoringPage } from "@/pages/ListScoringPage";
 import { ProtectPage } from "../components/common/ProtectPage";
 import { AdminDashboardLayout } from "../layouts/AdminDashboardLayout";
 import { RecruiterDashboardLayout } from "../layouts/RecruiterDashboardLayout";
@@ -53,6 +54,10 @@ export function AppRouter() {
               path={ROUTES.ADMIN.LIST_CANDIDATE.path}
               element={<AdminListCandidatePage />}
             />
+            <Route
+              path={ROUTES.ADMIN.LIST_SCORING.path}
+              element={<ListScoringPage />}
+            />
           </Route>
 
           <Route
@@ -78,6 +83,10 @@ export function AppRouter() {
             <Route
               path={ROUTES.RECRUITER.LIST_CANDIDATE.path}
               element={<AdminListCandidatePage />}
+            />
+            <Route
+              path={ROUTES.RECRUITER.LIST_SCORING.path}
+              element={<ListScoringPage />}
             />
           </Route>
           <Route

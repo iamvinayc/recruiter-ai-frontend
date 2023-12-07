@@ -27,6 +27,12 @@ export const ROUTES = {
         },
       }),
       LIST_CANDIDATE: route("list-candidate"),
+      LIST_SCORING: route("list-scoring", {
+        searchParams: {
+          skill: string().default(""),
+          location: string().default(""),
+        },
+      }),
     },
   ),
   //
@@ -39,6 +45,12 @@ export const ROUTES = {
       CHANGE_PASSWORD: route("change-password"),
       LIST_JOBS: route("list-jobs"),
       LIST_CANDIDATE: route("list-candidate"),
+      LIST_SCORING: route("list-scoring", {
+        searchParams: {
+          skill: string().default(""),
+          location: string().default(""),
+        },
+      }),
     },
   ),
   //

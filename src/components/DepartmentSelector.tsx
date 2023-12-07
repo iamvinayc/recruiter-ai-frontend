@@ -1,10 +1,11 @@
 import { Combobox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useQuery } from "@tanstack/react-query";
-import { Fragment, useState } from "react";
+import React, { Fragment, useState } from "react";
 
 import { axiosApi } from "../api/api";
 import { cn, emptyArray } from "../utils";
+import { useAutoOpenOnMount } from "./common/useAutoOpenOnMount";
 
 export function DepartmentSelector({
   selectedItems = [],
@@ -38,12 +39,14 @@ export function DepartmentSelector({
               ?.replace(/\s+/g, "")
               ?.includes(query.toLowerCase().replace(/\s+/g, "")),
         );
+  const { btnRef, inpRef } = useAutoOpenOnMount();
 
   return (
     <div className=" ">
       <label className="mb-2.5 block font-medium text-black dark:text-white">
         Skills
       </label>
+
       <Combobox
         value={selected}
         onChange={(val) => {
@@ -84,8 +87,12 @@ export function DepartmentSelector({
                   "text-gray-900 w-full border-none py-2 pl-3 pr-10 text-sm leading-5  focus:ring-0",
                   selectedItems.length > 0 && "mt-2",
                 )}
+                ref={inpRef}
               />
-              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+              <Combobox.Button
+                ref={btnRef}
+                className="absolute inset-y-0 right-0 flex items-center pr-2"
+              >
                 <ChevronUpDownIcon
                   className="text-gray-400 h-5 w-5"
                   aria-hidden="true"

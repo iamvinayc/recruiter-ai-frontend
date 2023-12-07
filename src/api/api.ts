@@ -240,6 +240,17 @@ interface AllApiEndpoints {
     };
     response: CandidateListResponse;
   };
+  "onboarding/scoring/": {
+    request: {
+      method: "GET";
+      params: {
+        department?: string;
+        location?: string;
+      };
+      data?: undefined;
+    };
+    response: ScoringListResponse;
+  };
   "data-sourcing/candidate//": {
     request: {
       method: "DELETE";
@@ -472,6 +483,36 @@ interface Location {
 }
 
 interface Department {
+  id: number;
+  name: string;
+  description: string;
+}
+//#endregion
+//#region
+interface ScoringListResponse {
+  data: ScoringListResponseData[];
+  status: number;
+  is_success: boolean;
+  message: string;
+  next: string;
+  previous?: string | null;
+  count: number;
+}
+
+interface ScoringListResponseData {
+  candidate_name: string;
+  candidate_departments: ScoringListDepartment[];
+  candidate_location: string;
+  job_title: string;
+  job_departments: ScoringListDepartment[];
+  job_location: string;
+  profile_score: string;
+  overall_score?: number | null;
+  reasons?: number | null;
+  symmary: string;
+}
+
+interface ScoringListDepartment {
   id: number;
   name: string;
   description: string;
