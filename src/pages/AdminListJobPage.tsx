@@ -336,7 +336,7 @@ export function AdminListJobPage() {
       <ConfirmationDialog
         subtitle={
           <>
-            Are you sure you wan to delete the job{" "}
+            Are you sure you want to delete the job{" "}
             <b>"{jobList.find((e) => e.id == showJobDeleteId)?.title}"</b> ?
           </>
         }
