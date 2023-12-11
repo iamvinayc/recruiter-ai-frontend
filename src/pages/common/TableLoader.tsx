@@ -5,14 +5,16 @@ export function TableLoader<T>({
   dataList,
   isLoading,
   isUpdateLoading,
+  colSpan = 6,
 }: {
   dataList: T[];
   isLoading: boolean;
   isUpdateLoading: boolean;
+  colSpan?: number;
 }) {
   return (
     <tr className={cn(dataList.length > 0 && "hidden")}>
-      <td colSpan={6}>
+      <td colSpan={colSpan}>
         <div
           className={cn(
             "absolute left-0 top-0 h-full w-full items-center justify-center bg-white bg-opacity-50",

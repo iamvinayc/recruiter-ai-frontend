@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -10,8 +10,11 @@ import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 import { axiosApi } from "@/api/api";
 import { ChipGroup } from "@/components/common/ChipGroup";
+import { LineClamp } from "@/components/LineClamp";
+import { PopupDialog } from "@/components/PopupDialog";
 import { ROUTES } from "@/routes/routes";
 import { cn, emptyArray } from "@/utils";
+import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
 
@@ -20,40 +23,52 @@ const candidateColumnHelper = createColumnHelper<ScoringCandidateItem>();
 
 export function ListScoringPage() {
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
+  const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(
+    null,
+  );
   const [{ skill: department, location }] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_SCORING,
   );
 
   //#region list query
-  const listJobQuery = useQuery({
+  const listJobQuery = useInfiniteQuery({
     queryKey: ["listScoringListQuery", department, location],
-
-    queryFn: () => {
+    queryFn: ({ pageParam }) => {
       console.log("department, location", department, location);
       return axiosApi({
-        url: "onboarding/scoring/",
+        url: (pageParam || "data-sourcing/job/") as "data-sourcing/job/",
         method: "GET",
         params: {
           department,
           location,
         },
-      }).then((e) => e.data.data);
+      }).then((e) => e.data);
     },
+    getNextPageParam(e) {
+      return e.next;
+    },
+    initialPageParam: "",
   });
-  const listCandidateBasedOnJobQuery = useQuery({
+
+  const listCandidateBasedOnJobQuery = useInfiniteQuery({
     queryKey: ["listCandidateBasedOnJobQuery", selectedJobId],
     enabled: !!selectedJobId,
-    queryFn: () => {
+    queryFn: ({ pageParam }) => {
       return axiosApi({
-        url: "onboarding/candidates_score/",
+        url: (pageParam ||
+          "onboarding/candidates_score/") as "onboarding/candidates_score/",
         method: "GET",
         params: {
           department,
           location,
           job_id: `${selectedJobId}`,
         },
-      }).then((e) => e.data.data);
+      }).then((e) => e.data);
     },
+    getNextPageParam(e) {
+      return e.next;
+    },
+    initialPageParam: "",
   });
 
   //#endregion
@@ -144,7 +159,9 @@ export function ListScoringPage() {
           return (
             <div className="flex items-center space-x-2">
               <button
-                onClick={() => setSelectedJobId(info.row.original.candidate_id)}
+                onClick={() =>
+                  setSelectedCandidateId(info.row.original.candidate_id)
+                }
                 className="flex items-center rounded-md bg-primary p-3 text-white hover:bg-opacity-80"
               >
                 <EyeIcon className="h-5 w-5 " />
@@ -157,28 +174,38 @@ export function ListScoringPage() {
     [],
   );
 
+  const listJobQueryData = useMemo(
+    () => listJobQuery.data?.pages?.map((e) => e.data)?.flat() || emptyArray,
+    [listJobQuery.data?.pages],
+  );
   const jobList = useMemo(
     () =>
-      listJobQuery.data?.map<ScoringJobItem>((e) => ({
-        job_id: e.job_id,
-        job_title: e.job_title,
-        department: e.job_departments,
-        job_location: e.job_location,
+      listJobQueryData?.map<ScoringJobItem>((e) => ({
+        job_id: e.id,
+        job_title: e.title,
+        department: e.departments,
+        job_location: e.location.name,
       })) || emptyArray,
-    [listJobQuery.data],
+    [listJobQueryData],
+  );
+  const candidateListQueryData = useMemo(
+    () =>
+      listCandidateBasedOnJobQuery.data?.pages?.map((e) => e.data)?.flat() ||
+      emptyArray,
+    [listCandidateBasedOnJobQuery.data?.pages],
   );
   const candidateList = useMemo(
     () =>
-      listCandidateBasedOnJobQuery.data?.map<ScoringCandidateItem>((e) => ({
-        candidate_id: e.candidate_id,
-        candidate_email: e.candidate_email,
-        candidate_name: e.candidate_name,
+      candidateListQueryData?.map<ScoringCandidateItem>((e) => ({
+        candidate_id: e.candidate.id,
+        candidate_email: e.candidate.email,
+        candidate_name: e.candidate.name,
         profile_score: e.profile_score,
         overall_score: e.overall_score,
         reasons: e.reasons,
         summary: e.symmary,
       })) || emptyArray,
-    [listCandidateBasedOnJobQuery.data],
+    [candidateListQueryData],
   );
 
   //#endregion
@@ -195,12 +222,16 @@ export function ListScoringPage() {
     data: candidateList,
     getCoreRowModel: getCoreRowModel(),
   });
-  const selectedJob = listJobQuery.data?.find((e) => e.job_id == selectedJobId);
+  const selectedJob = listJobQueryData?.find((e) => e.id == selectedJobId);
+
+  const selectedUser = candidateListQueryData?.find(
+    (e) => e.candidate.id == selectedCandidateId,
+  );
   return (
     <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-          {selectedJobId ? "Candidate score list" : "List Scoring"}
+          {selectedJobId ? "Candidate score list" : "Select a job"}
         </h2>
       </div>
       {selectedJob ? (
@@ -209,10 +240,10 @@ export function ListScoringPage() {
             {/* <h2 className="text-xl font-bold text-stone-700">Selected Job</h2> */}
             <div className="flex gap-x-12">
               {[
-                { title: "Job Title", value: selectedJob.job_title },
-                { title: "Job Location", value: selectedJob.job_location },
+                { title: "Job Title", value: selectedJob.title },
+                { title: "Job Location", value: selectedJob.location.name },
               ].map(({ title, value }) => (
-                <div>
+                <div key={title}>
                   <div className="font-medium">{title}:</div>
                   <div className="text-sm">{value}</div>
                 </div>
@@ -220,7 +251,7 @@ export function ListScoringPage() {
               <div>
                 <div className="font-medium">Departments:</div>
                 <div className="text-sm">
-                  <ChipGroup items={selectedJob.job_departments} />
+                  <ChipGroup items={selectedJob.departments} />
                 </div>
               </div>
             </div>
@@ -240,27 +271,38 @@ export function ListScoringPage() {
           </div>
         </div>
       ) : null}
+
       <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
-        <div
-          className={cn(
-            "dark:bg-boxdark dark:border-strokedark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default",
-            listJobQuery.isLoading && "min-h-[20rem]",
-            selectedJobId !== null && "hidden",
-          )}
-        >
-          <Table
-            table={jobTable}
-            loader={
-              <TableLoader
-                dataList={jobList}
-                isLoading={listJobQuery.isLoading}
-                isUpdateLoading={
-                  listJobQuery.isLoading || listJobQuery.isRefetching
+        {selectedJobId !== null ? null : (
+          <div
+            className={cn(
+              "dark:bg-boxdark dark:border-strokedark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default",
+              listJobQuery.isLoading && "min-h-[20rem]",
+              selectedJobId !== null && "hidden",
+            )}
+          >
+            <InfinityLoaderComponent
+              dataLength={jobList.length}
+              hasMore={listJobQuery.hasNextPage}
+              next={() => {
+                listJobQuery.fetchNextPage();
+              }}
+            >
+              <Table
+                table={jobTable}
+                loader={
+                  <TableLoader
+                    dataList={jobList}
+                    isLoading={listJobQuery.isLoading}
+                    isUpdateLoading={
+                      listJobQuery.isLoading || listJobQuery.isRefetching
+                    }
+                  />
                 }
               />
-            }
-          />
-        </div>
+            </InfinityLoaderComponent>
+          </div>
+        )}
 
         <div
           className={cn(
@@ -269,21 +311,142 @@ export function ListScoringPage() {
             selectedJobId === null && "hidden",
           )}
         >
-          <Table
-            table={candidateTable}
-            loader={
-              <TableLoader
-                dataList={candidateList}
-                isLoading={listCandidateBasedOnJobQuery.isLoading}
-                isUpdateLoading={
-                  listCandidateBasedOnJobQuery.isLoading ||
-                  listCandidateBasedOnJobQuery.isRefetching
-                }
-              />
-            }
-          />
+          <InfinityLoaderComponent
+            dataLength={candidateList.length}
+            hasMore={listCandidateBasedOnJobQuery.hasNextPage}
+            next={() => {
+              listCandidateBasedOnJobQuery.fetchNextPage();
+            }}
+          >
+            <Table
+              table={candidateTable}
+              loader={
+                <TableLoader
+                  dataList={candidateList}
+                  isLoading={listCandidateBasedOnJobQuery.isLoading}
+                  isUpdateLoading={
+                    listCandidateBasedOnJobQuery.isLoading ||
+                    listCandidateBasedOnJobQuery.isRefetching
+                  }
+                />
+              }
+            />
+          </InfinityLoaderComponent>
         </div>
       </div>
+      <PopupDialog
+        isOpen={selectedCandidateId != null}
+        setIsOpen={() => setSelectedCandidateId(null)}
+        title="Candidate Details"
+        showXMarkIcon
+      >
+        <div>
+          <div className="mt-4 grid max-h-[50vh] grid-cols-1 gap-x-12 gap-y-4 overflow-y-auto lg:grid-cols-2">
+            <div className="space-y-2">
+              <div className="rounded-md border">
+                <div className="flex items-center space-x-2 border-b p-4 py-3 text-lg font-medium">
+                  <span>User Info</span>
+                </div>
+                <div className="divide-y">
+                  {[
+                    ["Name", selectedUser?.candidate.name],
+                    ["Email", selectedUser?.candidate.email],
+                    ["Phone", selectedUser?.candidate?.phone],
+                    ["Profile url", selectedUser?.candidate?.profile_url],
+                    ["Resume file", selectedUser?.candidate?.resume_file],
+                    ["Location", selectedUser?.candidate?.location?.name],
+                  ].map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex flex-col justify-between px-4 py-2 text-sm md:flex-row"
+                    >
+                      <div className="font-medium">{key}</div>
+                      {value?.startsWith("https://") ? (
+                        <a
+                          href={value}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                          referrerPolicy="no-referrer"
+                          className="truncate text-blue-500"
+                        >
+                          {value}
+                        </a>
+                      ) : (
+                        <div className="truncate ">{value}</div>
+                      )}
+                    </div>
+                  ))}
+                  <div className="space-y-1 px-4 py-2">
+                    <div className="font-medium">Skills</div>
+                    <div className="text-sm ">
+                      <ChipGroup
+                        items={
+                          selectedUser?.candidate.departments || emptyArray
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1 px-4 py-2">
+                    <div className="font-medium">Description</div>
+                    <div className="text-sm text-slate-700">
+                      <LineClamp
+                        text={selectedUser?.candidate?.description || ""}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="rounded-md border">
+                <div className="flex items-center space-x-2 border-b p-4 py-3 text-lg font-medium">
+                  {/* icon */}
+                  <span>Scoring Info</span>
+                </div>
+                <div className="divide-y">
+                  {[
+                    ["Profile score", selectedUser?.profile_score],
+                    ["Overall score", selectedUser?.overall_score],
+                  ].map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex flex-col justify-between px-4 py-2 text-sm md:flex-row"
+                    >
+                      <div className="font-medium">{key}</div>
+                      {value?.startsWith("https://") ? (
+                        <a
+                          href={value}
+                          target="_blank"
+                          referrerPolicy="no-referrer"
+                          className="truncate text-blue-500"
+                          rel="noreferrer"
+                        >
+                          {value}
+                        </a>
+                      ) : (
+                        <div className="truncate ">{value}</div>
+                      )}
+                    </div>
+                  ))}
+
+                  {[
+                    ["Summary:", selectedUser?.symmary],
+                    ["Reason:", selectedUser?.reasons],
+                  ].map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex flex-col justify-between px-4 py-2 text-sm"
+                    >
+                      <div className="font-medium">{key}</div>
+                      <LineClamp text={value || ""} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </PopupDialog>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { flexRender, Table } from "@tanstack/react-table";
+import { flexRender, Table as ITable } from "@tanstack/react-table";
 
 import { cn } from "@/utils";
 
@@ -6,7 +6,7 @@ export function Table<T>({
   table,
   loader,
 }: {
-  table: Table<T>;
+  table: ITable<T>;
   loader: JSX.Element;
 }) {
   return (
@@ -34,11 +34,11 @@ export function Table<T>({
       </thead>
       <tbody className="relative">
         {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
+          <tr key={`tr-${row.id}`}>
             {row.getVisibleCells().map((cell) => (
               <td
                 className="border-b border-slate-200 p-4 pl-8 text-slate-500 dark:border-slate-600 dark:text-slate-400"
-                key={cell.id}
+                key={`td-${cell.id}`}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>

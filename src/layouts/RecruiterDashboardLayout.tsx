@@ -1,6 +1,7 @@
 import BriefcaseIcon from "@heroicons/react/24/outline/BriefcaseIcon";
 import Squares2X2Icon from "@heroicons/react/24/outline/Squares2X2Icon";
 import UsersIcon from "@heroicons/react/24/outline/UsersIcon";
+import { GaugeCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -17,7 +18,10 @@ export function RecruiterDashboardLayout() {
         setSidebarOpen={setSidebarOpen}
         sidebarOpen={sidebarOpen}
       />
-      <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+      <div
+        id="layout"
+        className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden"
+      >
         <Header setSidebarOpen={setSidebarOpen} />
         <div className="bg-gray-100 h-full">
           <Outlet />
@@ -44,10 +48,10 @@ const SideBarLinks = {
       link: ROUTES.RECRUITER.LIST_CANDIDATE.path,
       icon: <UsersIcon className="h-5 w-5" />,
     },
-    // {
-    //   title: "Scoring",
-    //   link: ROUTES.RECRUITER.LIST_SCORING.path,
-    //   icon: <GaugeCircleIcon className="h-5 w-5" />,
-    // },
+    {
+      title: "Scoring",
+      link: ROUTES.RECRUITER.LIST_SCORING.path,
+      icon: <GaugeCircleIcon className="h-5 w-5" />,
+    },
   ],
 };

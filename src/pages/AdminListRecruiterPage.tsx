@@ -112,11 +112,9 @@ export function AdminListRecruiterPage() {
 
   const onAddNewDepartment = useCallback((id: number) => {
     setShowAddingDepartmentUserId(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const onAddLocation = useCallback((id: number) => {
     setShowAddingLocationUserId(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   //#endregion
 

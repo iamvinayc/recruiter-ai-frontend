@@ -211,8 +211,9 @@ interface AllApiEndpoints {
           name: string;
           description: string;
         }[];
-        city: string;
-
+        location: {
+          name: string;
+        };
         handle: string;
         platform: string;
       };
@@ -283,7 +284,9 @@ interface AllApiEndpoints {
           description?: string;
           id?: number;
         }[];
-        city: string;
+        location: {
+          name: string;
+        };
         description?: string;
         phone?: string;
         profile_url?: string | null;
@@ -433,6 +436,8 @@ interface JobListingResponse {
   message: string;
   isSuccess: boolean;
   status: number;
+  next: string | null;
+  previous?: string | null;
 }
 
 interface JobListingResponseData {
@@ -472,6 +477,8 @@ interface CandidateListResponse {
   message: string;
   isSuccess: boolean;
   status: number;
+  next?: string | null;
+  previous?: string | null;
 }
 
 interface CandidateListResponseData {
@@ -506,7 +513,7 @@ interface ScoringListResponse {
   status: number;
   is_success: boolean;
   message: string;
-  next: string;
+  next?: string | null;
   previous?: string | null;
   count: number;
 }
@@ -533,24 +540,56 @@ interface ScoringListCandidateDepartment {
 }
 
 // ---
+
 interface CandidateScoringResponse {
-  data: CandidateScoringResponseData[];
+  data: ListCandidateScoringResponseData[];
   status: number;
   is_success: boolean;
   message: string;
-  next: string;
-  previous?: null | string;
+  next?: string | null;
+  previous?: string | null;
   count: number;
 }
 
-interface CandidateScoringResponseData {
-  candidate_id: number;
-  candidate_name: string;
-  candidate_email: string;
+interface ListCandidateScoringResponseData {
+  candidate: ListCandidateScoringResponseCandidate;
   profile_score: string;
-  overall_score?: null | string;
+  overall_score?: string | null;
   symmary: string;
-  reasons?: string;
+  reasons?: string | null;
+}
+
+interface ListCandidateScoringResponseCandidate {
+  id: number;
+  user: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    role: string;
+    is_active: boolean;
+    change_password: boolean;
+  };
+  departments: {
+    id: number;
+    name: string;
+    description: string;
+  }[];
+  location: {
+    id: number;
+    name: string;
+  };
+  city: string;
+  questionnaire_score?: string | null;
+  name: string;
+  email: string;
+  phone: string;
+  description: string;
+  profile_url: string;
+  resume_file: string;
+  platform: string;
+  handle: string;
+  online_on?: string | null;
 }
 
 //#endregion

@@ -1,10 +1,9 @@
 import { EyeIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import PlusIcon from "@heroicons/react/24/outline/PlusIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -22,7 +21,6 @@ import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { Input } from "../components/common/Input";
-import { SpinnerIcon } from "../components/common/SvgIcons";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { LineClamp } from "../components/LineClamp";
 import { PopupDialog } from "../components/PopupDialog";
@@ -30,6 +28,9 @@ import { ROUTES, SortBy } from "../routes/routes";
 import { cn, emptyArray } from "../utils";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
+import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
+import { Table } from "./common/Table";
+import { TableLoader } from "./common/TableLoader";
 
 const defaultArr: [] = [];
 
@@ -47,7 +48,7 @@ export function AdminListJobPage() {
 
   //#region query/mutation
 
-  const jobListQuery = useQuery({
+  const jobListQuery = useInfiniteQuery({
     queryKey: [
       "jobListQuery",
       department,
@@ -56,9 +57,9 @@ export function AdminListJobPage() {
       scrape_to,
       sort_by,
     ],
-    queryFn: async () =>
-      axiosApi({
-        url: "data-sourcing/job/",
+    queryFn: async ({ pageParam }) => {
+      return axiosApi({
+        url: (pageParam || "data-sourcing/job/") as "data-sourcing/job/",
         method: "GET",
         params: {
           department: department || undefined,
@@ -67,7 +68,12 @@ export function AdminListJobPage() {
           to_date: scrape_to || undefined,
           sort: sort_by || undefined,
         },
-      }).then((e) => e.data.data),
+      }).then((e) => e.data);
+    },
+    getNextPageParam(e) {
+      return e.next;
+    },
+    initialPageParam: "",
   });
   const [showJobDeleteId, setShowJobDeleteId] = useState<number | null>(null);
 
@@ -184,9 +190,14 @@ export function AdminListJobPage() {
     [],
   );
 
+  const jobListQueryData = useMemo(
+    () => jobListQuery?.data?.pages?.map((e) => e.data)?.flat() || defaultArr,
+    [jobListQuery?.data?.pages],
+  );
+
   const jobList = useMemo(
     () =>
-      jobListQuery.data?.map<Person>((e) => ({
+      jobListQueryData.map<Person>((e) => ({
         id: e.id,
         title: e.title,
         description: e.description,
@@ -195,9 +206,10 @@ export function AdminListJobPage() {
         employer: e.employer.employer_label,
         platform: e.platform,
         city: e.city,
-      })) || defaultArr,
-    [jobListQuery.data],
+      })),
+    [jobListQueryData],
   );
+  console.log("re-render");
 
   //#endregion
 
@@ -212,9 +224,10 @@ export function AdminListJobPage() {
     if (value === false) jobListQuery.refetch();
   };
 
-  const selectedUser = jobListQuery.data?.find(
+  const selectedUser = jobListQueryData?.find(
     (e) => e.id === showUserDetailsId,
   );
+
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -266,69 +279,27 @@ export function AdminListJobPage() {
               jobListQuery.isLoading && "min-h-[20rem]",
             )}
           >
-            <table className={cn("min-w-full   table-fixed overflow-scroll")}>
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        className={cn(
-                          "border-b border-slate-200 p-4 pb-3 pl-8  text-left font-medium text-slate-600 dark:border-slate-600 dark:text-slate-200",
-                          header.id === "platform" && "w-[140px]",
-                          header.id === "action" && "w-[140px]",
-                        )}
-                        key={header.id}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="relative">
-                {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        className="border-b border-slate-200 p-4 pl-8 text-slate-500 dark:border-slate-600 dark:text-slate-400"
-                        key={cell.id}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!jobListQuery.isLoading && jobList?.length === 0 && (
-              <div
-                className={cn(
-                  "h-[20rem]",
-                  "flex w-full items-center justify-center",
-                )}
-              >
-                No Data
-              </div>
-            )}
-            <div
-              className={cn(
-                "absolute left-0 top-0 h-full w-full items-center justify-center bg-white bg-opacity-50",
-
-                jobListQuery.isLoading || jobListQuery.isRefetching
-                  ? "flex"
-                  : "hidden",
-              )}
+            <InfinityLoaderComponent
+              dataLength={jobList.length}
+              hasMore={jobListQuery.hasNextPage}
+              next={() => {
+                jobListQuery.fetchNextPage();
+              }}
             >
-              <SpinnerIcon className="h-6 w-6 text-black" />
-            </div>
+              <Table
+                table={table}
+                loader={
+                  <TableLoader
+                    colSpan={columns.length}
+                    dataList={jobList}
+                    isLoading={jobListQuery.isLoading}
+                    isUpdateLoading={
+                      jobListQuery.isLoading || jobListQuery.isRefetching
+                    }
+                  />
+                }
+              />
+            </InfinityLoaderComponent>
           </div>
         </div>
       </div>
@@ -491,7 +462,9 @@ const AddJobPopup = ({
           },
           expires_on: "2023-10-10",
           handle: `${Math.random()}`,
-          city: data.city,
+          location: {
+            name: data.city,
+          },
           platform: "SYSTEM",
         },
       }).then((e) => e.data.isSuccess),

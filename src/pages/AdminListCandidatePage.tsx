@@ -1,9 +1,8 @@
 import { EyeIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -23,12 +22,14 @@ import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { Input } from "../components/common/Input";
-import { SpinnerIcon } from "../components/common/SvgIcons";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { PopupDialog } from "../components/PopupDialog";
 import { cn, emptyArray } from "../utils";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
+import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
+import { Table } from "./common/Table";
+import { TableLoader } from "./common/TableLoader";
 
 const defaultArr: [] = [];
 
@@ -46,7 +47,7 @@ export function AdminListCandidatePage() {
 
   //#region query/mutation
 
-  const candidateListQuery = useQuery({
+  const candidateListQuery = useInfiniteQuery({
     queryKey: [
       "candidateListQuery",
       department,
@@ -54,9 +55,11 @@ export function AdminListCandidatePage() {
       scrape_from,
       sort_by,
     ],
-    queryFn: async () =>
+    queryFn: async ({ pageParam }) =>
       axiosApi({
-        url: "data-sourcing/candidate/",
+        url: (pageParam ||
+          "data-sourcing/candidate/") as "data-sourcing/candidate/",
+
         method: "GET",
         params: {
           department: department || undefined,
@@ -65,7 +68,11 @@ export function AdminListCandidatePage() {
           to_date: scrape_to || undefined,
           sort: sort_by || undefined,
         },
-      }).then((e) => e.data.data),
+      }).then((e) => e.data),
+    getNextPageParam(e) {
+      return e.next;
+    },
+    initialPageParam: "",
   });
   const [showUserDeleteId, setShowUserDeleteId] = useState<number | null>(null);
 
@@ -164,10 +171,15 @@ export function AdminListCandidatePage() {
     ],
     [],
   );
+  const candidateListQueryData = useMemo(
+    () =>
+      candidateListQuery?.data?.pages?.map((e) => e.data)?.flat() || defaultArr,
+    [candidateListQuery?.data?.pages],
+  );
 
   const candidateList = useMemo(
     () =>
-      candidateListQuery.data?.map<Person>((e) => ({
+      candidateListQueryData?.map<Person>((e) => ({
         id: e.id,
         title: e.name,
         description: e.description || "",
@@ -176,13 +188,13 @@ export function AdminListCandidatePage() {
         platform: e.platform,
         city: e.city,
       })) || defaultArr,
-    [candidateListQuery.data],
+    [candidateListQueryData],
   );
-  const selectedUser = candidateListQuery.data?.find(
+  const selectedUser = candidateListQueryData?.find(
     (e) => e.id === showUserDetailsId,
   );
   //#endregion
-
+  console.log("re-render");
   const table = useReactTable({
     columns: columns,
     data: candidateList,
@@ -244,69 +256,28 @@ export function AdminListCandidatePage() {
               candidateListQuery.isLoading && "min-h-[20rem]",
             )}
           >
-            <table className={cn("min-w-full   table-fixed overflow-scroll")}>
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        className={cn(
-                          "border-b border-slate-200 p-4 pb-3 pl-8  text-left font-medium text-slate-600 dark:border-slate-600 dark:text-slate-200",
-                          header.id === "platform" && "w-[140px]",
-                          header.id === "action" && "w-[140px]",
-                        )}
-                        key={header.id}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="relative">
-                {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        className="border-b border-slate-200 p-4 pl-8 text-slate-500 dark:border-slate-600 dark:text-slate-400"
-                        key={cell.id}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!candidateListQuery.isLoading && candidateList?.length === 0 && (
-              <div
-                className={cn(
-                  "h-[20rem]",
-                  "flex w-full items-center justify-center",
-                )}
-              >
-                No Data
-              </div>
-            )}
-            <div
-              className={cn(
-                "absolute left-0 top-0 h-full w-full items-center justify-center bg-white bg-opacity-50",
-
-                candidateListQuery.isLoading || candidateListQuery.isRefetching
-                  ? "flex"
-                  : "hidden",
-              )}
+            <InfinityLoaderComponent
+              dataLength={candidateListQueryData.length}
+              hasMore={candidateListQuery.hasNextPage}
+              next={() => {
+                candidateListQuery.fetchNextPage();
+              }}
             >
-              <SpinnerIcon className="h-6 w-6 text-black" />
-            </div>
+              <Table
+                table={table}
+                loader={
+                  <TableLoader
+                    colSpan={columns.length}
+                    dataList={candidateList}
+                    isLoading={candidateListQuery.isLoading}
+                    isUpdateLoading={
+                      candidateListQuery.isLoading ||
+                      candidateListQuery.isRefetching
+                    }
+                  />
+                }
+              />
+            </InfinityLoaderComponent>
           </div>
         </div>
       </div>
@@ -396,6 +367,7 @@ export function AdminListCandidatePage() {
                           target="_blank"
                           referrerPolicy="no-referrer"
                           className="truncate text-blue-500"
+                          rel="noreferrer"
                         >
                           {value}
                         </a>
@@ -506,7 +478,9 @@ const AddCandidatePopup = ({
             description: e.name,
           })),
           handle: `${Math.random()}`,
-          city: data.city,
+          location: {
+            name: data.city,
+          },
           platform: "SYSTEM",
         },
       }).then((e) => e.data),

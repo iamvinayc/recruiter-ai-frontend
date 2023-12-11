@@ -24,7 +24,7 @@ export const LineClamp = ({ text }: { text: string }) => {
   const toggleLines = () => {
     setExpanded(!expanded);
   };
-
+  if (text === "") return <></>;
   return (
     <div>
       <div
