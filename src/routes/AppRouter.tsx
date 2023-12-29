@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { QuestionnairePage } from "@/pages/QuestionnairePage";
 import { ListScoringPage } from "@/pages/ListScoringPage";
 import { ProtectPage } from "../components/common/ProtectPage";
 import { AdminDashboardLayout } from "../layouts/AdminDashboardLayout";
@@ -102,6 +103,10 @@ export function AppRouter() {
               </ProtectPage>
             }
           />
+        <Route
+            path={ROUTES.QUESTIONNAIRE.path}
+            element={<QuestionnairePage />}
+        />
         </Routes>
       </BrowserRouter>
     </WithProvider>
