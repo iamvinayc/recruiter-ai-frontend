@@ -53,6 +53,11 @@ export const ROUTES = {
       }),
     },
   ),
+  QUESTIONNAIRE: route("questionnaire", {
+    searchParams: {
+      candidate: string().default("")
+    }
+  }),
   //
   // DASHBOARD: route(
   //   "dashboard",

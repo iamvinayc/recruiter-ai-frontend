@@ -264,6 +264,29 @@ interface AllApiEndpoints {
     };
     response: CandidateScoringResponse;
   };
+  "onboarding/questionnaire/": {
+    request: {
+      method: "GET";
+      params: {
+        candidate?: string;
+      };
+      data?: undefined;
+    };
+    response: QuestionnaireResponseData;
+  };
+  "onboarding/questionnaire_submit/": {
+    request: {
+      method: "POST";
+      params: {
+        candidate?: string;
+      };
+      data: Array<{
+        question_id: number;
+        selected_option_id: number;
+      }>;
+    };
+    response: SuccessResponse;
+  };
   "data-sourcing/candidate//": {
     request: {
       method: "DELETE";
@@ -590,6 +613,21 @@ interface ListCandidateScoringResponseCandidate {
   platform: string;
   handle: string;
   online_on?: string | null;
+}
+
+interface QuestionnaireResponseData {
+  data: QuestionnaireData[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+}
+interface QuestionnaireData {
+  id: number;
+  question: string;
+  options: {
+      id: number;
+      option: string;
+  }[];
 }
 
 //#endregion
