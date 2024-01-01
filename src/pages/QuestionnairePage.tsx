@@ -7,6 +7,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { axiosApi } from "../api/api";
 import { ROUTES } from "@/routes/routes";
 import { Button } from "@/components/common/Button";
+import { emptyArray } from "@/utils";
 export const QuestionnairePage: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<{
     [key: number]: number;
@@ -15,11 +16,11 @@ export const QuestionnairePage: React.FC = () => {
   const [{ candidate }] = useTypedSearchParams(ROUTES.QUESTIONNAIRE);
 
   const {
-    data: questions,
+    data: questions = emptyArray,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["questionnaire", { candidate }],
+    queryKey: ["questionnaire", candidate],
     queryFn: async () => {
       const response = await axiosApi({
         url: "onboarding/questionnaire/",
@@ -42,9 +43,11 @@ export const QuestionnairePage: React.FC = () => {
     }));
   };
 
-  const submitQuestionnairetMutation = useMutation({
-    mutationKey: ["submitQuestionnairetMutation"],
-    mutationFn: async (payload: any) =>
+  const submitQuestionnaireMutation = useMutation({
+    mutationKey: ["submitQuestionnaireMutation"],
+    mutationFn: async (
+      payload: { question_id: number; selected_option_id: number }[],
+    ) =>
       axiosApi({
         url: "onboarding/questionnaire_submit/",
         method: "POST",
@@ -71,7 +74,7 @@ export const QuestionnairePage: React.FC = () => {
         selected_option_id: Number(optionId),
       }),
     );
-    submitQuestionnairetMutation.mutate(payload);
+    submitQuestionnaireMutation.mutate(payload);
   };
 
   return (
@@ -86,10 +89,10 @@ export const QuestionnairePage: React.FC = () => {
             <h1 className="mb-4 text-center text-2xl font-bold">
               Candidate Questionnaire
             </h1>
-            {questions?.map((question: any) => (
+            {questions?.map((question) => (
               <div key={question.id} className="mb-4">
                 <p className="mb-2 font-bold">{question.question}</p>
-                {question.options.map((option: any) => (
+                {question.options.map((option) => (
                   <label key={option.id} className="mb-1 flex items-center">
                     <input
                       type="radio"
@@ -108,7 +111,7 @@ export const QuestionnairePage: React.FC = () => {
             <Button
               type="submit"
               onClick={handleSubmit}
-              isLoading={submitQuestionnairetMutation.isPending}
+              isLoading={submitQuestionnaireMutation.isPending}
               className="py-2"
             >
               Submit
