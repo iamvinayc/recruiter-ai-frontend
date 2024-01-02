@@ -58,6 +58,11 @@ export const ROUTES = {
       candidate: string().default("")
     }
   }),
+  EMPLOYERCANDIDATESUBMIT: route("employer-candidate-submit", {
+    searchParams: {
+      employer: string().default("")
+    }
+  }),
   //
   // DASHBOARD: route(
   //   "dashboard",

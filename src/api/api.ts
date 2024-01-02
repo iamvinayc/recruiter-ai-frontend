@@ -287,6 +287,33 @@ interface AllApiEndpoints {
     };
     response: SuccessResponse;
   };
+
+  "onboarding/employer/scoring/": {
+    request: {
+      method: "GET";
+      params: {
+        employer?: string;
+      };
+      data?: undefined;
+    };
+    response: EmployerMatchingCandidatesResponseData;
+  };
+  "onboarding/employer/candidate_submit/": {
+    request: {
+      method: "POST";
+      data: {
+        employer_email: string
+        jobs: {
+          job_id: string,
+          candidates: {
+            candidate_id: string,
+          }[]
+        }[],
+      };
+    };
+    response: SuccessResponse;
+  };
+
   "data-sourcing/candidate//": {
     request: {
       method: "DELETE";
@@ -628,6 +655,22 @@ interface QuestionnaireData {
       id: number;
       option: string;
   }[];
+}
+
+interface EmployerMatchingCandidatesResponseData {
+  data: EmployerMatchingCandidatesData[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+}
+interface EmployerMatchingCandidatesData {
+    job_id: string;
+    job_title: string;
+    candidates: {
+        candidate_id: string;
+        candidate_name: string;
+        reasons: string;
+    }[];
 }
 
 //#endregion
