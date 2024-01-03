@@ -55,9 +55,20 @@ export const ROUTES = {
   ),
   QUESTIONNAIRE: route("questionnaire", {
     searchParams: {
-      candidate: string().default("")
-    }
+      candidate: string().default(""),
+    },
   }),
+  EMPLOYER: route(
+    "employer",
+    {},
+    {
+      CANDIDATE_SUBMIT: route("candidate-submit", {
+        searchParams: {
+          employer: string().default(""),
+        },
+      }),
+    },
+  ),
   //
   // DASHBOARD: route(
   //   "dashboard",
