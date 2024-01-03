@@ -69,6 +69,14 @@ export const ROUTES = {
       }),
     },
   ),
+  FEEDBACKSUBMIT: route("feedback", {
+    searchParams: {
+      employer: string().default(""),
+      candidate: string().default(""),
+      id: string().default("")
+    }
+  }),
+  
   //
   // DASHBOARD: route(
   //   "dashboard",

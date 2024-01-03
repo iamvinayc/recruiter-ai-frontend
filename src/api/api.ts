@@ -313,6 +313,18 @@ interface AllApiEndpoints {
     };
     response: SuccessResponse;
   };
+  "onboarding/feedback/": {
+    request: {
+      method: "POST";
+      data: {
+        onboarding_handle: string
+        candidate_handle: string | null
+        employer_handle: string | null
+        feedback: string
+      };
+    };
+    response: SuccessResponse;
+  };
 
   "data-sourcing/candidate//": {
     request: {
