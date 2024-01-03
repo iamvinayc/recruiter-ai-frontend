@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { FeedbackPage } from "@/pages/FeedbackPage";
 import { EmployerCandidateSubmitPage } from "@/pages/EmployerCandidateSubmitPage";
 import { QuestionnairePage } from "@/pages/QuestionnairePage";
 import { ListScoringPage } from "@/pages/ListScoringPage";
@@ -111,6 +112,10 @@ export function AppRouter() {
         <Route
             path={ROUTES.EMPLOYERCANDIDATESUBMIT.path}
             element={<EmployerCandidateSubmitPage />}
+        />
+        <Route
+            path={ROUTES.FEEDBACKSUBMIT.path}
+            element={<FeedbackPage />}
         />
         </Routes>
       </BrowserRouter>
