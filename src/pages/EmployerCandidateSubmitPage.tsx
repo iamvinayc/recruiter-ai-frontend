@@ -11,7 +11,7 @@ import { Button } from "@/components/common/Button";
 export const EmployerCandidateSubmitPage: React.FC = () => {
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const navigate = useNavigate();
-  const [{ employer }] = useTypedSearchParams(ROUTES.EMPLOYERCANDIDATESUBMIT);
+  const [{ employer }] = useTypedSearchParams(ROUTES.EMPLOYER.CANDIDATE_SUBMIT);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["employerScoring", employer],
@@ -30,20 +30,21 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
     },
   });
 
-  const submitCandidatemutation = useMutation({
-    mutationKey: ["submit-candidates"],
+  const submitCandidateMutation = useMutation({
+    mutationKey: ["submit-candidates", employer, data, selectedCandidates],
     mutationFn: async () => {
       const payload = {
         employer_email: employer,
-        jobs: data ? data.map((job) => ({
-          job_id: job.job_id,
-          candidates: job.candidates
-            .filter((candidate) =>
-              selectedCandidates.includes(candidate.candidate_id),
-            )
-            .map((candidate) => ({ candidate_id: candidate.candidate_id })),
-        }))
-        : [],
+        jobs: data
+          ? data.map((job) => ({
+              job_id: job.job_id,
+              candidates: job.candidates
+                .filter((candidate) =>
+                  selectedCandidates.includes(candidate.candidate_id),
+                )
+                .map((candidate) => ({ candidate_id: candidate.candidate_id })),
+            }))
+          : [],
       };
       const response = await axiosApi({
         url: "onboarding/employer/candidate_submit/",
@@ -67,7 +68,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
     );
   };
 
-   return (
+  return (
     <div className="flex min-h-screen items-center justify-center bg-blue-100">
       <div className="bg-gray-100 w-full max-w-7xl rounded-md bg-gray p-8 shadow-lg">
         {isLoading ? (
@@ -81,7 +82,9 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
             </h1>
             {data?.length === 0 ? (
               <div>
-                <h3 className="text-center font-semibold">No matching candidates</h3>
+                <h3 className="text-center font-semibold">
+                  No matching candidates
+                </h3>
               </div>
             ) : (
               <>
@@ -91,14 +94,17 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                     <div className="overflow-x-auto">
                       <table className="w-full whitespace-nowrap">
                         <thead>
-                          <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
-                            <th className="px-4 py-3 w-1/4">Candidate Name</th>
-                            <th className="px-4 py-3 w-3/4">Reasons</th>
+                          <tr className="text-gray-500 bg-gray-50 border-b text-left text-xs font-semibold uppercase tracking-wide">
+                            <th className="w-1/4 px-4 py-3">Candidate Name</th>
+                            <th className="w-3/4 px-4 py-3">Reasons</th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y">
+                        <tbody className="divide-y bg-white">
                           {job.candidates.map((candidate) => (
-                            <tr key={candidate.candidate_id} className="text-gray-700">
+                            <tr
+                              key={candidate.candidate_id}
+                              className="text-gray-700"
+                            >
                               <td className="px-4 py-3">
                                 <div className="flex items-center space-x-2">
                                   <label className="cursor-pointer">
@@ -108,15 +114,21 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                                         candidate.candidate_id,
                                       )}
                                       onChange={() =>
-                                        handleCheckboxChange(candidate.candidate_id)
+                                        handleCheckboxChange(
+                                          candidate.candidate_id,
+                                        )
                                       }
                                       className="mr-2"
                                     />
-                                    <span className="text-sm font-semibold uppercase">{candidate.candidate_name}</span>
+                                    <span className="text-sm font-semibold uppercase">
+                                      {candidate.candidate_name}
+                                    </span>
                                   </label>
                                 </div>
                               </td>
-                              <td className="px-4 py-3 text-sm text-gray-500 whitespace-normal">{candidate.reasons}</td>
+                              <td className="text-gray-500 whitespace-normal px-4 py-3 text-sm">
+                                {candidate.reasons}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -128,12 +140,14 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                   type="submit"
                   onClick={() => {
                     if (selectedCandidates.length === 0) {
-                      toast.error("Please select at least one candidate before submitting.");
+                      toast.error(
+                        "Please select at least one candidate before submitting.",
+                      );
                     } else {
-                      submitCandidatemutation.mutate();
+                      submitCandidateMutation.mutate();
                     }
                   }}
-                  isLoading={submitCandidatemutation.isPending}
+                  isLoading={submitCandidateMutation.isPending}
                   className="py-2"
                 >
                   Submit

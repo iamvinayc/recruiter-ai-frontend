@@ -104,14 +104,14 @@ export function AppRouter() {
               </ProtectPage>
             }
           />
-        <Route
+          <Route
             path={ROUTES.QUESTIONNAIRE.path}
             element={<QuestionnairePage />}
-        />
-        <Route
-            path={ROUTES.EMPLOYERCANDIDATESUBMIT.path}
+          />
+          <Route
+            path={ROUTES.EMPLOYER.CANDIDATE_SUBMIT.path}
             element={<EmployerCandidateSubmitPage />}
-        />
+          />
         </Routes>
       </BrowserRouter>
     </WithProvider>
