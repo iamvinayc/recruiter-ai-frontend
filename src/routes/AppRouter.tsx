@@ -19,6 +19,7 @@ import { ChangePasswordPage } from "../pages/ChangePasswordPage";
 import { ForgotPasswordPage } from "../pages/ForgotPasswordPage";
 import { LoginPage } from "../pages/LoginPage";
 import { ROUTES } from "./routes";
+import OnboardingListPage from "@/pages/OnboardingListPage";
 
 export function AppRouter() {
   return (
@@ -60,6 +61,10 @@ export function AppRouter() {
             <Route
               path={ROUTES.ADMIN.LIST_SCORING.path}
               element={<ListScoringPage />}
+            />
+            <Route
+              path={ROUTES.ADMIN.ONBOARDING.path}
+              element={<OnboardingListPage />}
             />
           </Route>
 

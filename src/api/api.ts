@@ -302,13 +302,13 @@ interface AllApiEndpoints {
     request: {
       method: "POST";
       data: {
-        employer_email: string
+        employer_email: string;
         jobs: {
-          job_id: string,
+          job_id: string;
           candidates: {
-            candidate_id: string,
-          }[]
-        }[],
+            candidate_id: string;
+          }[];
+        }[];
       };
     };
     response: SuccessResponse;
@@ -317,10 +317,10 @@ interface AllApiEndpoints {
     request: {
       method: "POST";
       data: {
-        onboarding_handle: string
-        candidate_handle: string | null
-        employer_handle: string | null
-        feedback: string
+        onboarding_handle: string;
+        candidate_handle: string | null;
+        employer_handle: string | null;
+        feedback: string;
       };
     };
     response: SuccessResponse;
@@ -365,6 +365,27 @@ interface AllApiEndpoints {
       isSuccess: boolean;
       status: number;
     };
+  };
+  "onboarding/employee_onboarding/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: OnboardingListingResponse;
+  };
+  "onboarding/status/{id}/": {
+    request: {
+      method: "PUT";
+      params?: undefined;
+      data: {
+        status: OnboardingStatus;
+        reason_for_rejection?: string;
+        video_interview_on?: string;
+        f2f_interview_on?: string;
+      };
+    };
+    response: SuccessResponse;
   };
 }
 
@@ -664,8 +685,8 @@ interface QuestionnaireData {
   id: number;
   question: string;
   options: {
-      id: number;
-      option: string;
+    id: number;
+    option: string;
   }[];
 }
 
@@ -676,13 +697,132 @@ interface EmployerMatchingCandidatesResponseData {
   status: number;
 }
 interface EmployerMatchingCandidatesData {
-    job_id: string;
-    job_title: string;
-    candidates: {
-        candidate_id: string;
-        candidate_name: string;
-        reasons: string;
-    }[];
+  job_id: string;
+  job_title: string;
+  candidates: {
+    candidate_id: string;
+    candidate_name: string;
+    reasons: string;
+  }[];
+}
+
+interface OnboardingListingResponse {
+  data: OnboardingListingResponseData[];
+  status: number;
+  is_success: boolean;
+  message: string;
+  next?: string;
+  previous?: string;
+  count: number;
+}
+
+interface OnboardingListingResponseData {
+  id: number;
+  job: Job;
+  candidate: Candidate;
+  employer: Employer;
+  scoring: Scoring;
+  interview_scheduled_recruiter_video?: string;
+  interviewed_recruiter_video?: string;
+  interview_scheduled_recruiter_f2f?: string;
+  interviewed_recruiter_f2f?: string;
+  employer_selection_marked_recruiter?: string;
+  placed_marked_recruiter?: string;
+  rejected_by_recruiter?: string;
+  cancelled_by_recruiter?: string;
+  status: OnboardingStatus;
+  video_interview_on?: string;
+  f2f_interview_on?: string;
+  employer_feedback?: string;
+  candidate_feedback?: string;
+  reason_for_rejection?: string;
+  updated_at: string
+}
+
+interface Scoring {
+  id: number;
+  job: Job;
+  candidate: Candidate;
+  profile_score: string;
+  overall_score: string;
+  reasons: string;
+  symmary: string;
+  is_employer_notified: boolean;
+}
+
+interface Candidate {
+  id: number;
+  user: User;
+  departments: Department[];
+  location: Location;
+  city: string;
+  questionnaire_score: string;
+  name: string;
+  email: string;
+  phone: string;
+  description: string;
+  profile_url: string;
+  resume_file?: string;
+  platform: string;
+  handle: string;
+  online_on?: string;
+  is_unsubscribed: boolean;
+}
+
+interface Job {
+  id: number;
+  user: User;
+  employer: Employer;
+  departments: Department[];
+  location: Location;
+  city: string;
+  title: string;
+  description: string;
+  expires_on: string;
+  platform: string;
+  handle: string;
+}
+
+interface Location {
+  id: number;
+  name: string;
+}
+
+interface Department {
+  id: number;
+  name: string;
+  description: string;
+}
+
+interface Employer {
+  id: number;
+  employer_label: string;
+  email: string;
+  phone1: string;
+  phone2: string;
+  is_interested: boolean;
+}
+
+interface User {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
+  is_active: boolean;
+  change_password: boolean;
+}
+export enum OnboardingStatus {
+  SHORTLISTED = "SHORTLISTED",
+  RECRUITER_INTERVIEWED = "RECRUITER_INTERVIEWED",
+  EMPLOYER_INTERVIEW_SCHEDULED_VIDEO = "EMPLOYER_INTERVIEW_SCHEDULED_VIDEO",
+  EMPLOYER_INTERVIEWED_VIDEO = "EMPLOYER_INTERVIEWED_VIDEO",
+  EMPLOYER_INTERVIEW_SCHEDULED_F2F = "EMPLOYER_INTERVIEW_SCHEDULED_F2F",
+  EMPLOYER_INTERVIEWED_F2F = "EMPLOYER_INTERVIEWED_F2F",
+  EMPLOYER_SELECTED = "EMPLOYER_SELECTED",
+  PLACED = "PLACED",
+  REJECTED = "REJECTED",
+  CANCELLED = "CANCELLED",
 }
 
 //#endregion

@@ -53,5 +53,10 @@ const SideBarLinks = {
       link: ROUTES.RECRUITER.LIST_SCORING.path,
       icon: <GaugeCircleIcon className="h-5 w-5" />,
     },
+    {
+      title: "Onboarding",
+      link: ROUTES.ADMIN.ONBOARDING.path,
+      icon: <GaugeCircleIcon className="h-5 w-5" />,
+    },
   ],
 };

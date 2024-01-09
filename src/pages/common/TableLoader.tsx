@@ -4,7 +4,7 @@ import { cn } from "@/utils";
 export function TableLoader<T>({
   dataList,
   isLoading,
-  isUpdateLoading,
+  isUpdateLoading ,
   colSpan = 6,
 }: {
   dataList: T[];
@@ -12,8 +12,8 @@ export function TableLoader<T>({
   isUpdateLoading: boolean;
   colSpan?: number;
 }) {
-  return (
-    <tr className={cn(dataList.length > 0 && "hidden")}>
+   return (
+    <tr className={cn((dataList.length > 0&&!isUpdateLoading) && "hidden")}>
       <td colSpan={colSpan}>
         <div
           className={cn(

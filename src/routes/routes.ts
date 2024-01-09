@@ -33,6 +33,7 @@ export const ROUTES = {
           location: string().default(""),
         },
       }),
+      ONBOARDING: route("onboarding"),
     },
   ),
   //
@@ -51,6 +52,8 @@ export const ROUTES = {
           location: string().default(""),
         },
       }),
+      ONBOARDING: route("onboarding"),
+
     },
   ),
   QUESTIONNAIRE: route("questionnaire", {
@@ -73,10 +76,10 @@ export const ROUTES = {
     searchParams: {
       employer: string().default(""),
       candidate: string().default(""),
-      id: string().default("")
-    }
+      id: string().default(""),
+    },
   }),
-  
+
   //
   // DASHBOARD: route(
   //   "dashboard",
