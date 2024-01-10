@@ -34,6 +34,15 @@ export const ROUTES = {
         },
       }),
       ONBOARDING: route("onboarding"),
+      LIST_REPORT: route("list-report", {
+        searchParams: {
+          status: string().default(""),
+          from_date: string().default(""),
+          to_date: string().default(""),
+          employer: string().default(""),
+          employer_name: string().default(""),
+        },
+      }),
     },
   ),
   //
@@ -53,7 +62,15 @@ export const ROUTES = {
         },
       }),
       ONBOARDING: route("onboarding"),
-
+      LIST_REPORT: route("list-report", {
+        searchParams: {
+          status: string().default(""),
+          from_date: string().default(""),
+          to_date: string().default(""),
+          employer: string().default(""),
+          employer_name: string().default(""),
+        },
+      }),
     },
   ),
   QUESTIONNAIRE: route("questionnaire", {

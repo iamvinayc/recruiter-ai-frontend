@@ -1,5 +1,5 @@
 import { OnboardingStatus, axiosApi } from "@/api/api";
-import { cn } from "@/utils";
+import { cn, convertEnumToStr } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   createColumnHelper,
@@ -46,6 +46,8 @@ const STATUS_NOT_EDITABLE = [
   OnboardingStatus.PLACED,
   OnboardingStatus.REJECTED,
   OnboardingStatus.CANCELLED,
+  OnboardingStatus.EMPLOYER_FEEDBACK_SUBMITTED,
+  OnboardingStatus.CANDIDATE_FEEDBACK_SUBMITTED,
 ] as string[];
 
 const STATUS_ORDER = [
@@ -79,6 +81,7 @@ export default function OnboardingListPage() {
       return e.next;
     },
     initialPageParam: "",
+    
   });
 
   const onboardingList = useMemo(
@@ -96,7 +99,6 @@ export default function OnboardingListPage() {
         })) || [],
     [onboardingListingQuery.data],
   );
-
   const columns = useMemo(
     () => [
       columnHelper.accessor("job_name", {
@@ -143,17 +145,7 @@ export default function OnboardingListPage() {
                   : "bg-blue-500",
               )}
             >
-              {info
-                .getValue()
-                .split("_")
-                .map((e) => e.toLowerCase())
-                .map((e) =>
-                  e
-                    .split("")
-                    .map((e, i) => (i === 0 ? e.toUpperCase() : e))
-                    .join(""),
-                )
-                .join(" ")}
+              {convertEnumToStr(info.getValue())}
             </span>
             {STATUS_NOT_EDITABLE.includes(info.row.original.status) ? null : (
               <button
@@ -505,14 +497,5 @@ const fromState = z
   });
 const STATUSES = Object.entries(OnboardingStatus).map(([key, value]) => ({
   value: value,
-  label: key
-    .split("_")
-    .map((e) => e.toLowerCase())
-    .map((e) =>
-      e
-        .split("")
-        .map((e, i) => (i === 0 ? e.toUpperCase() : e))
-        .join(""),
-    )
-    .join(" "),
+  label: convertEnumToStr(key),
 }));

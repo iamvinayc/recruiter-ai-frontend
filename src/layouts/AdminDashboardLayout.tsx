@@ -82,5 +82,10 @@ const SideBarLinks = {
       link: ROUTES.ADMIN.ONBOARDING.path,
       icon: <GaugeCircleIcon className="h-5 w-5" />,
     },
+    {
+      title: "Reports",
+      link: ROUTES.ADMIN.LIST_REPORT.path,
+      icon: <GaugeCircleIcon className="h-5 w-5" />,
+    },
   ],
 };

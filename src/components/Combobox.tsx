@@ -29,6 +29,8 @@ interface ComboboxProps {
   selectedValue: string;
   setSelectedValue: React.Dispatch<React.SetStateAction<string>>;
   className?: string;
+  filter?: (value: string, search: string) => number;
+
 }
 export function Combobox({
   label = "",
@@ -37,6 +39,7 @@ export function Combobox({
   selectedValue,
   setSelectedValue,
   className = "",
+  filter
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -69,7 +72,7 @@ export function Combobox({
         </div>
       </PopoverTrigger>
       <PopoverContent className="PopoverContent w-full p-0">
-        <Command>
+        <Command filter={filter}>
           <CommandInput placeholder={`Search ${label}...`} />
           <CommandEmpty>No {label} found.</CommandEmpty>
           <CommandGroup className="max-h-[30vh] overflow-y-auto">

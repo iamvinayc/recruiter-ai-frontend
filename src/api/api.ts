@@ -280,10 +280,18 @@ interface AllApiEndpoints {
       params: {
         candidate?: string;
       };
-      data: Array<{
-        question_id: number;
-        selected_option_id: number;
-      }>;
+      data: {
+        questionnaire: {
+          question_id: number;
+          selected_option_id: number;
+        }[];
+        availability: {
+          available: boolean;
+          available_on: string;
+        };
+        prefer_contract: boolean;
+        file_token: string;
+      };
     };
     response: SuccessResponse;
   };
@@ -387,7 +395,52 @@ interface AllApiEndpoints {
     };
     response: SuccessResponse;
   };
+  "report/onboarding/": {
+    request: {
+      method: "GET";
+      params?: {
+        status?: string;
+        employer?: string;
+        from_date?: string;
+        to_date?: string;
+      };
+      data?: undefined;
+    };
+    response: ReportListResponse;
+  };
+  "data-sourcing/employer/": {
+    request: {
+      method: "GET";
+      params?: {
+        per_page?: number;
+        page?: number;
+        name?: string;
+      };
+      data?: undefined;
+    };
+    response: ListEmployerResponse;
+  };
+  "onboarding/resume_upload/": {
+    request: {
+      method: "POST";
+      params: {
+        candidate: string;
+      };
+      data?: FormData;
+    };
+    response: {
+      data: {
+        file_token: string;
+      };
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
 }
+//#endregion
+
+//#region
 
 interface SuccessLoginResponse {
   data: SuccessLoginResponseData;
@@ -736,7 +789,7 @@ interface OnboardingListingResponseData {
   employer_feedback?: string;
   candidate_feedback?: string;
   reason_for_rejection?: string;
-  updated_at: string
+  updated_at: string;
 }
 
 interface Scoring {
@@ -812,6 +865,39 @@ interface User {
   is_active: boolean;
   change_password: boolean;
 }
+
+interface ReportListResponse {
+  data: ReportListResponseData[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+}
+
+interface ReportListResponseData {
+  candidate_name: string;
+  job_title: string;
+  employer_name: string;
+  status: string;
+}
+interface ListEmployerResponse {
+  data: ListEmployerResponseData[];
+  status: number;
+  is_success: boolean;
+  message: string;
+  next: string;
+  previous: string;
+  count: number;
+}
+
+interface ListEmployerResponseData {
+  id: number;
+  employer_label: string;
+  email: string;
+  phone1?: string;
+  phone2?: string;
+  is_interested: boolean;
+}
+
 export enum OnboardingStatus {
   SHORTLISTED = "SHORTLISTED",
   RECRUITER_INTERVIEWED = "RECRUITER_INTERVIEWED",
@@ -823,6 +909,8 @@ export enum OnboardingStatus {
   PLACED = "PLACED",
   REJECTED = "REJECTED",
   CANCELLED = "CANCELLED",
+  EMPLOYER_FEEDBACK_SUBMITTED = "EMPLOYER_FEEDBACK_SUBMITTED",
+  CANDIDATE_FEEDBACK_SUBMITTED = "CANDIDATE_FEEDBACK_SUBMITTED",
 }
 
 //#endregion

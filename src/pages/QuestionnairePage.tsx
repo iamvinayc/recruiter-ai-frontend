@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, {
+  Dispatch,
+  ElementRef,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
@@ -8,13 +14,20 @@ import { axiosApi } from "../api/api";
 import { ROUTES } from "@/routes/routes";
 import { Button } from "@/components/common/Button";
 import { emptyArray } from "@/utils";
+import { Input } from "@/components/common/Input";
+import { FileIcon, Trash2Icon } from "lucide-react";
+import { SpinnerIcon } from "@/components/common/SvgIcons";
+import dayjs from "dayjs";
 export const QuestionnairePage: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<{
     [key: number]: number;
   }>({});
   const navigate = useNavigate();
+  const [file, setFile] = useState<File | null>(null); 
   const [{ candidate }] = useTypedSearchParams(ROUTES.QUESTIONNAIRE);
-
+  const [available, setAvailable] = useState(true);
+  const [preferContract, setPreferContract] = useState(false);
+  const [availableOnDate, setAvailableOnDate] = useState("");
   const {
     data: questions = emptyArray,
     isLoading,
@@ -22,6 +35,18 @@ export const QuestionnairePage: React.FC = () => {
   } = useQuery({
     queryKey: ["questionnaire", candidate],
     queryFn: async () => {
+      // return [
+      //   {
+      //     id: 2,
+      //     question: "string;",
+      //     options: [
+      //       {
+      //         id: 1,
+      //         option: "string",
+      //       },
+      //     ],
+      //   },
+      // ];
       const response = await axiosApi({
         url: "onboarding/questionnaire/",
         method: "GET",
@@ -32,6 +57,7 @@ export const QuestionnairePage: React.FC = () => {
       } else {
         toast.error(response.data.message);
         navigate("/");
+        return null
       }
     },
   });
@@ -45,9 +71,18 @@ export const QuestionnairePage: React.FC = () => {
 
   const submitQuestionnaireMutation = useMutation({
     mutationKey: ["submitQuestionnaireMutation"],
-    mutationFn: async (
-      payload: { question_id: number; selected_option_id: number }[],
-    ) =>
+    mutationFn: async (payload: {
+      questionnaire: {
+        question_id: number;
+        selected_option_id: number;
+      }[];
+      availability: {
+        available: boolean;
+        available_on: string;
+      };
+      prefer_contract: boolean;
+      file_token: string;
+    }) =>
       axiosApi({
         url: "onboarding/questionnaire_submit/",
         method: "POST",
@@ -63,18 +98,68 @@ export const QuestionnairePage: React.FC = () => {
       }),
   });
 
+  const fileUploadMutation = useMutation({
+    mutationKey: ["fileUploadMutation", candidate],
+    mutationFn: async (data?: FormData) => {
+      // return {
+      //   data: {
+      //     file_token: "candidates/73Sahal Rasheed Resume.pdf",
+      //   },
+      //   message: "Success",
+      //   isSuccess: true,
+      //   status: 200,
+      // };
+      return axiosApi({
+        method: "POST",
+        url: "onboarding/resume_upload/",
+        params: {
+          candidate,
+        },
+        data,
+      }).then((e) => e.data);
+    },
+  });
+
   const handleSubmit = () => {
+    console.log(preferContract, available, file);
     if (Object.keys(selectedOptions).length !== questions?.length) {
       toast.error("Please answer all the questions.");
       return;
     }
-    const payload = Object.entries(selectedOptions).map(
-      ([questionId, optionId]) => ({
-        question_id: Number(questionId),
-        selected_option_id: Number(optionId),
-      }),
-    );
-    submitQuestionnaireMutation.mutate(payload);
+
+    if (!available && !availableOnDate) {
+      toast.error("Please select the date of availability.");
+      return;
+    }
+    const formData = new FormData();
+    if (file) {
+      formData.append("resume", file);
+    }
+    fileUploadMutation.mutateAsync(formData).then((e) => {
+      if (!e.isSuccess) {
+        toast.error(e.message);
+        return;
+      }
+      const payload = Object.entries(selectedOptions).map(
+        ([questionId, optionId]) => ({
+          question_id: Number(questionId),
+          selected_option_id: Number(optionId),
+        }),
+      );
+
+      return submitQuestionnaireMutation.mutate({
+        questionnaire: payload,
+        availability: {
+          available: available,
+          available_on:
+            availableOnDate && !available
+              ? dayjs(availableOnDate, "YYYY-MM-DD").format("DD-MM-YYYY")
+              : "",
+        },
+        file_token: e.data.file_token,
+        prefer_contract: preferContract,
+      });
+    });
   };
 
   return (
@@ -85,12 +170,12 @@ export const QuestionnairePage: React.FC = () => {
         ) : error ? (
           <div>Error occurred</div>
         ) : (
-          <>
+          <div className="space-y-4">
             <h1 className="mb-4 text-center text-2xl font-bold">
               Candidate Questionnaire
             </h1>
             {questions?.map((question) => (
-              <div key={question.id} className="mb-4">
+              <div key={question.id}>
                 <p className="mb-2 font-bold">{question.question}</p>
                 {question.options.map((option) => (
                   <label key={option.id} className="mb-1 flex items-center">
@@ -108,17 +193,201 @@ export const QuestionnairePage: React.FC = () => {
                 ))}
               </div>
             ))}
+            <div className="space-y-2">
+              <label className="mb-2 font-bold">Are you available?</label>
+              <div>
+                <label htmlFor="yes">
+                  <input
+                    name="available"
+                    type="radio"
+                    className="mx-2"
+                    id="yes"
+                    checked={available}
+                    onChange={() => setAvailable(true)}
+                  />
+                  Yes
+                </label>
+                <label htmlFor="no">
+                  <input
+                    name="available"
+                    type="radio"
+                    className="mx-2"
+                    id="no"
+                    checked={!available}
+                    onChange={() => setAvailable(false)}
+                  />
+                  No{" "}
+                </label>
+              </div>
+              {!available ? (
+                <Input
+                  type="date"
+                  containerClassName="ml-4"
+                  className="w-auto bg-white"
+                  label="When are you available?"
+                  value={availableOnDate}
+                  min={dayjs().format("YYYY-MM-DD")}
+                  onChange={(e) => {
+                    const dt = e.target.value;
+                    setAvailableOnDate(dt);
+                  }}
+                />
+              ) : null}
+            </div>
+            <div className="space-y-2">
+              <label className="mb-2 font-bold">
+                Are you seeking a Job or Project?
+              </label>
+              <div>
+                <label htmlFor="Job">
+                  <input
+                    name="job_or_project"
+                    type="radio"
+                    className="mx-2"
+                    id="Job"
+                    checked={!preferContract}
+                    onChange={() => setPreferContract(false)}
+                  />
+                  Job
+                </label>
+                <label htmlFor="Project">
+                  <input
+                    name="job_or_project"
+                    type="radio"
+                    className="mx-2"
+                    id="Project"
+                    checked={preferContract}
+                    onChange={() => setPreferContract(true)}
+                  />
+                  Project
+                </label>
+              </div>
+            </div>
+            <FileUpload
+              file={file}
+              setFile={setFile}
+              isLoading={fileUploadMutation.isPending}
+            />
+
+            {/* <div className="max-w-xl">
+              <p className="mb-2 font-bold">Resume</p>
+              <label className="border-gray-300 hover:border-gray-400 flex h-32 w-full cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed bg-white px-4 transition focus:outline-none">
+                <span className="flex items-center space-x-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="text-gray-600 h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                  <span className="text-gray-600 font-medium">
+                    Drop files to Attach, or
+                    <span className="text-blue-600 underline">browse</span>
+                  </span>
+                </span>
+                <input type="file" name="file_upload" className="hidden" />
+              </label>
+            </div> */}
             <Button
               type="submit"
               onClick={handleSubmit}
-              isLoading={submitQuestionnaireMutation.isPending}
+              isLoading={
+                submitQuestionnaireMutation.isPending ||
+                fileUploadMutation.isPending
+              }
               className="py-2"
             >
               Submit
             </Button>
-          </>
+          </div>
         )}
       </div>
     </div>
+  );
+};
+
+const FileUpload = ({
+  file,
+  setFile,
+  isLoading,
+}: {
+  file: File | null;
+  setFile: Dispatch<SetStateAction<File | null>>;
+  isLoading: boolean;
+}) => {
+  const fileRef = useRef<ElementRef<"input">>(null);
+
+  const resetFile = () => {
+    setFile(null);
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+  };
+  return (
+    <>
+      <p className="mb-2 font-bold">Resume</p>
+
+      {file ? (
+        <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="relative flex cursor-move select-none flex-col items-center overflow-hidden rounded border bg-white pt-[100%] text-center">
+            <button
+              className="absolute  right-0 top-0 z-50 rounded-bl bg-white p-2 focus:outline-none"
+              type="button"
+              onClick={resetFile}
+            >
+              {isLoading ? (
+                <SpinnerIcon className="m-0 text-primary" />
+              ) : (
+                <Trash2Icon size={18} />
+              )}
+            </button>
+            <FileIcon
+              size={24}
+              className="text-gray-400 absolute top-1/2 h-12 w-12 -translate-y-2/3 transform"
+            />
+
+            <div className="absolute bottom-0 left-0 right-0 flex flex-col bg-white bg-opacity-50 p-2 text-xs">
+              <span className="text-gray-900 w-full truncate font-bold">
+                {file.name}
+              </span>
+              <span className="text-gray-900 text-xs">
+                {(file.size / 1024).toFixed(2)} kB
+              </span>
+            </div>
+
+            <div className="absolute inset-0 z-40 transition-colors duration-300"></div>
+          </div>
+        </div>
+      ) : (
+        <div className="text-gray-400 border-gray-200 relative flex cursor-pointer flex-col rounded border border-dashed bg-white">
+          <input
+            ref={fileRef}
+            accept="*"
+            type="file"
+            className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
+            title=""
+            onChange={(e) => {
+              const file = e.target?.files?.[0];
+              if (file) {
+                setFile(file);
+              }
+            }}
+          />
+
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <FileIcon size={34} className="text-current-50 mr-1 h-6 w-6" />
+
+            <p className="m-0">Drag your files here or click in this area.</p>
+          </div>
+        </div>
+      )}
+    </>
   );
 };

@@ -20,6 +20,7 @@ import { ForgotPasswordPage } from "../pages/ForgotPasswordPage";
 import { LoginPage } from "../pages/LoginPage";
 import { ROUTES } from "./routes";
 import OnboardingListPage from "@/pages/OnboardingListPage";
+import { ReportListPage } from "@/pages/ReportListPage";
 
 export function AppRouter() {
   return (
@@ -65,6 +66,10 @@ export function AppRouter() {
             <Route
               path={ROUTES.ADMIN.ONBOARDING.path}
               element={<OnboardingListPage />}
+            />
+            <Route
+              path={ROUTES.ADMIN.LIST_REPORT.path}
+              element={<ReportListPage />}
             />
           </Route>
 
@@ -118,10 +123,7 @@ export function AppRouter() {
             path={ROUTES.EMPLOYER.CANDIDATE_SUBMIT.path}
             element={<EmployerCandidateSubmitPage />}
           />
-        <Route
-            path={ROUTES.FEEDBACKSUBMIT.path}
-            element={<FeedbackPage />}
-        />
+          <Route path={ROUTES.FEEDBACKSUBMIT.path} element={<FeedbackPage />} />
         </Routes>
       </BrowserRouter>
     </WithProvider>
