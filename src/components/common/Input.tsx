@@ -23,7 +23,7 @@ export function Input<
             rest.className,
           )}
         />
-        <span className="absolute right-4 top-4">{icon}</span>
+        <span className="absolute right-2 top-2">{icon}</span>
       </div>
       {error ? (
         <span className="mt-2 text-sm text-red-500">{error}</span>
