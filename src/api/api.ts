@@ -312,6 +312,8 @@ interface AllApiEndpoints {
       data: {
         employer_email: string;
         jobs: {
+          prefer_contract: boolean;
+          expired: boolean;
           job_id: string;
           candidates: {
             candidate_id: string;
