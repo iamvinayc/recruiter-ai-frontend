@@ -22,30 +22,17 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["employerScoring", employer],
     queryFn: async () => {
-      return [
-        {
-            "job_id": "gAAAAABlgZ4fP-mgGXJZJVuzZIOISAj3XhIFeBYna38AT1c-JK9NDxub98as5ibanT9sQhqr48pM5yWMBdyQy0v49umEkQsY5g==",
-            "job_title": "Python FUll Stack",
-            "candidates": [
-                {
-                    "candidate_id": "gAAAAABlgZ4fNNtaWtbO1AygOrwMFnla-V-JgBvXdshzgZE7v3vAtHl5OBW8wMY6TD1kssIqjVOSbz5mUuZYcMk4X2nEhfSQ9g==",
-                    "candidate_name": "Test Sahal Updated",
-                    "reasons": "Lack of Python Experience: The resume does not mention any experience or skills specifically related to Python development, which is a key requirement for the job of a Python Django Engineer (0/100).#$No Relevant Responsibilities or Achievements: The resume does not provide any specific details about the candidate's responsibilities or achievements in their previous roles, making it difficult to assess their suitability for a Python Django Engineer position (0/100).#$Limited Information on Programming Skills: While the candidate has experience and expertise in Django development, the resume does not provide sufficient information about their proficiency in Python programming, which is essential for the role of a Python Django Engineer (0/100).#$No Mention of RESTful API Development: The job description specifically mentions the need for experience in creating RESTful APIs, but the resume does not provide any information about the candidate's experience in this area (0/100).#$Limited Information on Database Management: The resume mentions experience with databases like PostgreSQL, MySQL, or SQLite, but does not provide details about the candidate's experience in managing databases or optimizing SQL queries, which are crucial skills for a Python Django Engineer (0/100).#$No Mention of Testing and Debugging: The job description highlights the importance of experience in testing, debugging, and maintaining code quality using frameworks like pytest, but the resume does not mention any experience or skills in this area (0/100)."
-                }
-            ]
-        }
-    ]
-      // const response = await axiosApi({
-      //   url: "onboarding/employer/scoring/",
-      //   method: "GET",
-      //   params: { employer },
-      // });
-      // if (response.data.isSuccess) {
-      //   return response.data.data;
-      // } else {
-      //   toast.error(response.data.message);
-      //   navigate("/");
-      // }
+      const response = await axiosApi({
+        url: "onboarding/employer/scoring/",
+        method: "GET",
+        params: { employer },
+      });
+      if (response.data.isSuccess) {
+        return response.data.data;
+      } else {
+        toast.error(response.data.message);
+        navigate("/");
+      }
     },
   });
   useEffect(() => {
@@ -122,7 +109,25 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
               <div>
                 {data?.map((job, index) => (
                   <div key={job.job_id} className="mb-4">
-                    <p className="mb-2 font-bold">{job.job_title}</p>
+                    <div className="flex items-center  justify-between border-b-2 border-b-[#ddd] bg-slate-200 p-4">
+                      <p className="font-bold">{job.job_title}</p>
+                      <MoreOptionsComponent
+                        setState={(newState) => {
+                          if (typeof newState === "function") {
+                            setMoreOptions((prev) =>
+                              prev.map((e, i) =>
+                                i === index ? newState(e) : e,
+                              ),
+                            );
+                          } else {
+                            setMoreOptions((prev) =>
+                              prev.map((e, i) => (i === index ? newState : e)),
+                            );
+                          }
+                        }}
+                        state={moreOptions[index]}
+                      />
+                    </div>
                     <div className="overflow-x-auto">
                       <table className="w-full whitespace-nowrap">
                         <thead>
@@ -166,20 +171,6 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                         </tbody>
                       </table>
                     </div>
-                    <MoreOptionsComponent
-                      setState={(newState) => {
-                        if (typeof newState === "function") {
-                          setMoreOptions((prev) =>
-                            prev.map((e, i) => (i === index ? newState(e) : e)),
-                          );
-                        } else {
-                          setMoreOptions((prev) =>
-                            prev.map((e, i) => (i === index ? newState : e)),
-                          );
-                        }
-                      }}
-                      state={moreOptions[index]}
-                    />
                   </div>
                 ))}
                 <Button
@@ -216,8 +207,8 @@ const MoreOptionsComponent = ({
   if (!state) return <></>;
   const { expired, job_id, prefer_contract } = state;
   return (
-    <div className="flex justify-end  bg-slate-200">
-      <div className="space-y-2 p-2">
+    <>
+      <div className="space-y-2">
         <div>
           <label htmlFor={`no-${job_id}`} className="mb-2 font-bold">
             Expired
@@ -271,6 +262,6 @@ const MoreOptionsComponent = ({
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
