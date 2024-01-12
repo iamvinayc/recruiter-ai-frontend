@@ -23,7 +23,7 @@ export const QuestionnairePage: React.FC = () => {
     [key: number]: number;
   }>({});
   const navigate = useNavigate();
-  const [file, setFile] = useState<File | null>(null); 
+  const [file, setFile] = useState<File | null>(null);
   const [{ candidate }] = useTypedSearchParams(ROUTES.QUESTIONNAIRE);
   const [available, setAvailable] = useState(true);
   const [preferContract, setPreferContract] = useState(false);
@@ -57,7 +57,7 @@ export const QuestionnairePage: React.FC = () => {
       } else {
         toast.error(response.data.message);
         navigate("/");
-        return null
+        return null;
       }
     },
   });
@@ -120,7 +120,7 @@ export const QuestionnairePage: React.FC = () => {
     },
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(preferContract, available, file);
     if (Object.keys(selectedOptions).length !== questions?.length) {
       toast.error("Please answer all the questions.");
@@ -132,33 +132,36 @@ export const QuestionnairePage: React.FC = () => {
       return;
     }
     const formData = new FormData();
+    let file_token = "";
     if (file) {
       formData.append("resume", file);
-    }
-    fileUploadMutation.mutateAsync(formData).then((e) => {
-      if (!e.isSuccess) {
-        toast.error(e.message);
-        return;
-      }
-      const payload = Object.entries(selectedOptions).map(
-        ([questionId, optionId]) => ({
-          question_id: Number(questionId),
-          selected_option_id: Number(optionId),
-        }),
-      );
-
-      return submitQuestionnaireMutation.mutate({
-        questionnaire: payload,
-        availability: {
-          available: available,
-          available_on:
-            availableOnDate && !available
-              ? dayjs(availableOnDate, "YYYY-MM-DD").format("DD-MM-YYYY")
-              : "",
-        },
-        file_token: e.data.file_token,
-        prefer_contract: preferContract,
+      await fileUploadMutation.mutateAsync(formData).then((e) => {
+        if (!e.isSuccess) {
+          toast.error(e.message);
+          return;
+        }
+        file_token = e.data.file_token;
       });
+    }
+
+    const payload = Object.entries(selectedOptions).map(
+      ([questionId, optionId]) => ({
+        question_id: Number(questionId),
+        selected_option_id: Number(optionId),
+      }),
+    );
+
+    return submitQuestionnaireMutation.mutate({
+      questionnaire: payload,
+      availability: {
+        available: available,
+        available_on:
+          availableOnDate && !available
+            ? dayjs(availableOnDate, "YYYY-MM-DD").format("DD-MM-YYYY")
+            : "",
+      },
+      file_token: file_token,
+      prefer_contract: preferContract,
     });
   };
 
