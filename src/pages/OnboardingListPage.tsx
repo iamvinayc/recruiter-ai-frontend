@@ -88,7 +88,7 @@ export default function OnboardingListPage() {
       onboardingListingQuery?.data?.pages
         ?.map((e) => e?.data)
         ?.flat()
-        ?.map((e) => ({
+        ?.map<OnboardingList>((e) => ({
           id: e.id,
           job_name: e.job.title,
           employer_name: e.employer.employer_label,

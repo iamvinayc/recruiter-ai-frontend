@@ -702,6 +702,7 @@ interface ListCandidateScoringResponseData {
   overall_score?: string | null;
   symmary: string;
   reasons?: string | null;
+  is_employer_notified :boolean
 }
 
 interface ListCandidateScoringResponseCandidate {
@@ -810,6 +811,7 @@ interface Scoring {
   reasons: string;
   symmary: string;
   is_employer_notified: boolean;
+  is_calculating: boolean;
 }
 
 interface Candidate {

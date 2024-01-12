@@ -96,7 +96,7 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
             }}
           /> */}
           <Combobox
-            label="Skill"
+            label="Status"
             items={Object.entries(OnboardingStatus).map(([key, value]) => ({
               label: convertEnumToStr(key),
               value: value,

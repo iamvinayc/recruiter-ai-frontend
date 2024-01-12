@@ -151,7 +151,21 @@ export function ListScoringPage() {
         ),
         footer: (info) => info.column.id,
       }),
-
+      candidateColumnHelper.accessor("is_employer_notified", {
+        header: "Is Employer Notified",
+        cell: (info) => (
+          <div className="flex">
+            <span
+              className={cn(
+                "relative grid select-none items-center whitespace-nowrap rounded-lg  px-3 py-1.5 font-sans text-xs font-bold text-white",
+                info.getValue() ? "bg-green-500" : "bg-yellow-500",
+              )}
+            >
+              {info.getValue() ? "Notified" : "Pending"}
+            </span>
+          </div>
+        ),
+      }),
       candidateColumnHelper.display({
         header: "Action",
         id: "action",
@@ -204,6 +218,7 @@ export function ListScoringPage() {
         overall_score: e.overall_score,
         reasons: e.reasons,
         summary: e.symmary,
+        is_employer_notified: e.is_employer_notified,
       })) || emptyArray,
     [candidateListQueryData],
   );
@@ -441,6 +456,23 @@ export function ListScoringPage() {
                       <LineClamp text={value || ""} />
                     </div>
                   ))}
+                  <div className="flex flex-col justify-between px-4 py-2 text-sm">
+                    <div className="font-medium">Is Employer Notified</div>
+                    <div className="flex mt-2">
+                      <span
+                        className={cn(
+                          "whitespace-nowrap  rounded-lg  px-3 py-1.5 font-sans text-xs font-bold text-white",
+                          selectedUser?.is_employer_notified
+                            ? "bg-green-500"
+                            : "bg-yellow-500",
+                        )}
+                      >
+                        {selectedUser?.is_employer_notified
+                          ? "Notified"
+                          : "Pending"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -466,4 +498,5 @@ interface ScoringCandidateItem {
   summary?: string;
   overall_score?: string | null;
   reasons?: string | null;
+  is_employer_notified: boolean;
 }
