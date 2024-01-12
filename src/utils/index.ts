@@ -1,4 +1,4 @@
- import { ClassValue, clsx } from "clsx";
+import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -18,3 +18,25 @@ export const convertEnumToStr = (status: string) => {
     )
     .join(" ");
 };
+
+export const replaceWith = <T extends string>(path: T, val?: string): T =>
+  val ? (val as T) : path;
+export const makeUrlWithParams = <T extends string>(
+  url: T,
+  params: ExtractUrlParams<T>,
+) => {
+  let finalUrl = url;
+  Object.entries(params).map(([key, val]) => {
+    const expr = new RegExp(`{{${key}}}`, "g");
+    finalUrl = finalUrl.replace(expr, val as string) as T;
+  });
+
+  return finalUrl;
+};
+
+type ExtractUrlParams<T extends string> =
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  T extends `${infer _Start}/{{${infer Param}}}${infer Rest}`
+    ? { [K in Param | keyof ExtractUrlParams<Rest>]: string }
+    : // eslint-disable-next-line @typescript-eslint/ban-types
+      {};
