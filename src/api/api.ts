@@ -487,6 +487,13 @@ interface DashboardOverviewResponse {
   data: {
     total_candidates: number;
     total_jobs: number;
+    total_candt_responded: number;
+    total_candt_placed: number;
+    total_open_candt: number;
+    total_candt_scrapped_tdy: number;
+    total_interviews: number;
+    total_open_jobs: number;
+    total_jobs_scrapped_tdy: number;
   };
   message: string;
   isSuccess: boolean;

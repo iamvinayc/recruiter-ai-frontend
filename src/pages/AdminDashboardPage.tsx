@@ -30,7 +30,7 @@ export function AdminDashboardPage() {
           <p className="font-medium">Latest statistics</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 2xl:gap-7.5">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6 2xl:gap-7.5">
           <Link
             to={
               isRecruiter
@@ -61,6 +61,57 @@ export function AdminDashboardPage() {
               isLoading={dashboardOverviewQuery.isLoading}
             />
           </Link>
+          <Card
+            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+            title="Total Candidate Responded"
+            value={
+              String(dashboardOverviewQuery.data?.total_candt_responded) || ""
+            }
+            isLoading={dashboardOverviewQuery.isLoading}
+          />
+          <Card
+            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+            title="Total Candidate Placed"
+            value={
+              String(dashboardOverviewQuery.data?.total_candt_placed) || ""
+            }
+            isLoading={dashboardOverviewQuery.isLoading}
+          />
+          <Card
+            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+            title="Total Open Candidate"
+            value={String(dashboardOverviewQuery.data?.total_open_candt) || ""}
+            isLoading={dashboardOverviewQuery.isLoading}
+          />
+          <Card
+            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+            title="Total Candidate Scraped Today"
+            value={
+              String(dashboardOverviewQuery.data?.total_candt_scrapped_tdy) ||
+              ""
+            }
+            isLoading={dashboardOverviewQuery.isLoading}
+          />
+          <Card
+            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+            title="Total Interviews"
+            value={String(dashboardOverviewQuery.data?.total_interviews) || ""}
+            isLoading={dashboardOverviewQuery.isLoading}
+          />
+          <Card
+            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+            title="Total Open Jobs"
+            value={String(dashboardOverviewQuery.data?.total_open_jobs) || ""}
+            isLoading={dashboardOverviewQuery.isLoading}
+          />
+          <Card
+            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+            title="Total Jobs Scraped Today"
+            value={
+              String(dashboardOverviewQuery.data?.total_jobs_scrapped_tdy) || ""
+            }
+            isLoading={dashboardOverviewQuery.isLoading}
+          />
         </div>
       </div>
     </main>
