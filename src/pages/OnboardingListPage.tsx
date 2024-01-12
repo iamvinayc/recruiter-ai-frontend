@@ -81,7 +81,6 @@ export default function OnboardingListPage() {
       return e.next;
     },
     initialPageParam: "",
-    
   });
 
   const onboardingList = useMemo(
@@ -405,7 +404,7 @@ export function UpdateStatusModal({
           containerClassName="mb-4"
           name="reason_for_rejection"
           label="Reason for rejection"
-          placeholder="Enter your password"
+          placeholder="Reason for rejection"
           error={errors.reason_for_rejection?.message}
           register={register}
         />

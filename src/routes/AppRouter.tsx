@@ -101,6 +101,14 @@ export function AppRouter() {
               path={ROUTES.RECRUITER.LIST_SCORING.path}
               element={<ListScoringPage />}
             />
+            <Route
+              path={ROUTES.RECRUITER.ONBOARDING.path}
+              element={<OnboardingListPage />}
+            />
+            <Route
+              path={ROUTES.RECRUITER.LIST_REPORT.path}
+              element={<ReportListPage />}
+            />
           </Route>
           <Route
             path={ROUTES.FORGOT_PASSWORD.path}
