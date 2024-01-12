@@ -372,8 +372,8 @@ const FileUpload = ({
         <div className="text-gray-400 border-gray-200 relative flex cursor-pointer flex-col rounded border border-dashed bg-white">
           <input
             ref={fileRef}
-            accept="*"
-            type="file"
+            accept="application/pdf"
+                        type="file"
             className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
             title=""
             onChange={(e) => {
