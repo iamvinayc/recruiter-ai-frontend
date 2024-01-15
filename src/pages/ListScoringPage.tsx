@@ -13,7 +13,7 @@ import { ChipGroup } from "@/components/common/ChipGroup";
 import { LineClamp } from "@/components/LineClamp";
 import { PopupDialog } from "@/components/PopupDialog";
 import { ROUTES } from "@/routes/routes";
-import { cn, emptyArray } from "@/utils";
+import { cn, emptyArray, replaceWith } from "@/utils";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
@@ -36,12 +36,12 @@ export function ListScoringPage() {
     queryFn: ({ pageParam }) => {
       console.log("department, location", department, location);
       return axiosApi({
-        url: (pageParam || "data-sourcing/job/") as "data-sourcing/job/",
+        url: replaceWith("onboarding/scored_jobs/", pageParam),
         method: "GET",
-        params: {
-          department,
-          location,
-        },
+        // params: {
+        //   department,
+        //   location,
+        // },
       }).then((e) => e.data);
     },
     getNextPageParam(e) {
@@ -55,13 +55,13 @@ export function ListScoringPage() {
     enabled: !!selectedJobId,
     queryFn: ({ pageParam }) => {
       return axiosApi({
-        url: (pageParam ||
-          "onboarding/candidates_score/") as "onboarding/candidates_score/",
+        url: replaceWith("onboarding/candidates_score/", pageParam),
         method: "GET",
         params: {
           department,
           location,
           job_id: `${selectedJobId}`,
+          is_employer_notified: true,
         },
       }).then((e) => e.data);
     },
@@ -137,20 +137,20 @@ export function ListScoringPage() {
         cell: (info) => <div>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
-      candidateColumnHelper.accessor("summary", {
-        header: "Summary",
-        cell: (info) => (
-          <div className="max-w-[150px] truncate">{info.getValue()}</div>
-        ),
-        footer: (info) => info.column.id,
-      }),
-      candidateColumnHelper.accessor("reasons", {
-        header: "Reason",
-        cell: (info) => (
-          <div className="max-w-[150px] truncate">{info.getValue()}</div>
-        ),
-        footer: (info) => info.column.id,
-      }),
+      // candidateColumnHelper.accessor("summary", {
+      //   header: "Summary",
+      //   cell: (info) => (
+      //     <div className="max-w-[150px] truncate">{info.getValue()}</div>
+      //   ),
+      //   footer: (info) => info.column.id,
+      // }),
+      // candidateColumnHelper.accessor("reasons", {
+      //   header: "Reason",
+      //   cell: (info) => (
+      //     <div className="max-w-[150px] truncate">{info.getValue()}</div>
+      //   ),
+      //   footer: (info) => info.column.id,
+      // }),
       candidateColumnHelper.accessor("is_employer_notified", {
         header: "Is Employer Notified",
         cell: (info) => (
@@ -458,7 +458,7 @@ export function ListScoringPage() {
                   ))}
                   <div className="flex flex-col justify-between px-4 py-2 text-sm">
                     <div className="font-medium">Is Employer Notified</div>
-                    <div className="flex mt-2">
+                    <div className="mt-2 flex">
                       <span
                         className={cn(
                           "whitespace-nowrap  rounded-lg  px-3 py-1.5 font-sans text-xs font-bold text-white",

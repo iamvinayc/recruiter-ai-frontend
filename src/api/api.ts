@@ -259,10 +259,39 @@ interface AllApiEndpoints {
         department?: string;
         location?: string;
         job_id?: string;
+        is_employer_notified: boolean;
       };
       data?: undefined;
     };
     response: CandidateScoringResponse;
+  };
+  "onboarding/scored_jobs/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: {
+      data: {
+        id: number;
+        title: string;
+        departments: {
+          id: number;
+          name: string;
+          description: string;
+        }[];
+        location: {
+          id: number;
+          name: string;
+        };
+      }[];
+      status: number;
+      is_success: boolean;
+      message: string;
+      next: string;
+      previous?: string;
+      count: number;
+    };
   };
   "onboarding/questionnaire/": {
     request: {
@@ -702,7 +731,7 @@ interface ListCandidateScoringResponseData {
   overall_score?: string | null;
   symmary: string;
   reasons?: string | null;
-  is_employer_notified :boolean
+  is_employer_notified: boolean;
 }
 
 interface ListCandidateScoringResponseCandidate {
