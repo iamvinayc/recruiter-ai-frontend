@@ -259,7 +259,7 @@ interface AllApiEndpoints {
         department?: string;
         location?: string;
         job_id?: string;
-        is_employer_notified: boolean;
+        is_employer_notified?: boolean;
       };
       data?: undefined;
     };

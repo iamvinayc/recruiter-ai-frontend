@@ -17,11 +17,13 @@ import { cn, emptyArray, replaceWith } from "@/utils";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
+import { Switch } from "@headlessui/react";
 
 const jobColumnHelper = createColumnHelper<ScoringJobItem>();
 const candidateColumnHelper = createColumnHelper<ScoringCandidateItem>();
 
 export function ListScoringPage() {
+  const [isEmployerNotified, setIsEmployerNotified] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(
     null,
@@ -51,7 +53,11 @@ export function ListScoringPage() {
   });
 
   const listCandidateBasedOnJobQuery = useInfiniteQuery({
-    queryKey: ["listCandidateBasedOnJobQuery", selectedJobId],
+    queryKey: [
+      "listCandidateBasedOnJobQuery",
+      selectedJobId,
+      isEmployerNotified,
+    ],
     enabled: !!selectedJobId,
     queryFn: ({ pageParam }) => {
       return axiosApi({
@@ -61,7 +67,7 @@ export function ListScoringPage() {
           department,
           location,
           job_id: `${selectedJobId}`,
-          is_employer_notified: true,
+          is_employer_notified: isEmployerNotified ? true : undefined,
         },
       }).then((e) => e.data);
     },
@@ -268,6 +274,27 @@ export function ListScoringPage() {
                 <div className="text-sm">
                   <ChipGroup items={selectedJob.departments} />
                 </div>
+              </div>
+              <div>
+                <div className="font-medium">Is Employer Notified:</div>
+
+                <Switch
+                  checked={isEmployerNotified}
+                  onChange={setIsEmployerNotified}
+                  className={`${
+                    isEmployerNotified ? "bg-green-500" : "bg-green-700"
+                  }
+                relative inline-flex h-[28px] w-[52px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white/75`}
+                >
+                  <span className="sr-only">Use setting</span>
+                  <span
+                    aria-hidden="true"
+                    className={`${
+                      isEmployerNotified ? "translate-x-6" : "translate-x-0"
+                    }
+                  pointer-events-none inline-block h-[24px] w-[24px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                  />
+                </Switch>
               </div>
             </div>
             {/* <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> */}
