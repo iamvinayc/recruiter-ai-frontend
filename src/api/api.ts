@@ -468,6 +468,40 @@ interface AllApiEndpoints {
       status: number;
     };
   };
+  "user/recruiter/actions/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: FormData;
+    };
+    response: {
+      data: {
+        candidate: {
+          id: number;
+          name: string;
+        };
+        job: {
+          id: number;
+          title: string;
+        };
+        employer: {
+          id: number;
+          name: string;
+        };
+        action: {
+          interview: {
+            onboarding_id: number;
+            date: string;
+            time: string;
+          };
+        };
+        type: string;
+      }[];
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
 }
 //#endregion
 

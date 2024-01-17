@@ -7,6 +7,7 @@ import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
 import { axiosApi } from "../api/api";
 import { cn } from "../utils";
+import { SpinnerIcon } from "@/components/common/SvgIcons";
 
 export function AdminDashboardPage() {
   const { isRecruiter } = useLogin();
@@ -31,87 +32,106 @@ export function AdminDashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6 2xl:gap-7.5">
-          <Link
-            to={
+          {isRecruiter ? (
+            <div className="col-span-1 md:order-last">
+              <ListRecruiterActions />
+            </div>
+          ) : null}
+          <div
+            className={cn(
+              "grid grid-cols-1 gap-4 ",
               isRecruiter
-                ? ROUTES.RECRUITER.LIST_CANDIDATE.path
-                : ROUTES.ADMIN.LIST_CANDIDATE.path
-            }
+                ? "col-span-3 md:grid-cols-3"
+                : "col-span-4 md:grid-cols-4",
+            )}
           >
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_CANDIDATE.path
+                  : ROUTES.ADMIN.LIST_CANDIDATE.path
+              }
+            >
+              <Card
+                icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+                title="Total Candidates"
+                value={
+                  String(dashboardOverviewQuery.data?.total_candidates) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_JOBS.path
+                  : ROUTES.ADMIN.LIST_JOBS.path
+              }
+            >
+              <Card
+                icon={<BriefcaseIcon className="h-8 w-8 text-[#10B981]" />}
+                title="Total Jobs"
+                value={String(dashboardOverviewQuery.data?.total_jobs) || ""}
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
             <Card
               icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-              title="Total Candidates"
+              title="Total Candidate Responded"
               value={
-                String(dashboardOverviewQuery.data?.total_candidates) || ""
+                String(dashboardOverviewQuery.data?.total_candt_responded) || ""
               }
               isLoading={dashboardOverviewQuery.isLoading}
             />
-          </Link>
-          <Link
-            to={
-              isRecruiter
-                ? ROUTES.RECRUITER.LIST_JOBS.path
-                : ROUTES.ADMIN.LIST_JOBS.path
-            }
-          >
             <Card
-              icon={<BriefcaseIcon className="h-8 w-8 text-[#10B981]" />}
-              title="Total Jobs"
-              value={String(dashboardOverviewQuery.data?.total_jobs) || ""}
+              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+              title="Total Candidate Placed"
+              value={
+                String(dashboardOverviewQuery.data?.total_candt_placed) || ""
+              }
               isLoading={dashboardOverviewQuery.isLoading}
             />
-          </Link>
-          <Card
-            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-            title="Total Candidate Responded"
-            value={
-              String(dashboardOverviewQuery.data?.total_candt_responded) || ""
-            }
-            isLoading={dashboardOverviewQuery.isLoading}
-          />
-          <Card
-            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-            title="Total Candidate Placed"
-            value={
-              String(dashboardOverviewQuery.data?.total_candt_placed) || ""
-            }
-            isLoading={dashboardOverviewQuery.isLoading}
-          />
-          <Card
-            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-            title="Total Open Candidate"
-            value={String(dashboardOverviewQuery.data?.total_open_candt) || ""}
-            isLoading={dashboardOverviewQuery.isLoading}
-          />
-          <Card
-            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-            title="Total Candidate Scraped Today"
-            value={
-              String(dashboardOverviewQuery.data?.total_candt_scrapped_tdy) ||
-              ""
-            }
-            isLoading={dashboardOverviewQuery.isLoading}
-          />
-          <Card
-            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-            title="Total Interviews"
-            value={String(dashboardOverviewQuery.data?.total_interviews) || ""}
-            isLoading={dashboardOverviewQuery.isLoading}
-          />
-          <Card
-            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-            title="Total Open Jobs"
-            value={String(dashboardOverviewQuery.data?.total_open_jobs) || ""}
-            isLoading={dashboardOverviewQuery.isLoading}
-          />
-          <Card
-            icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-            title="Total Jobs Scraped Today"
-            value={
-              String(dashboardOverviewQuery.data?.total_jobs_scrapped_tdy) || ""
-            }
-            isLoading={dashboardOverviewQuery.isLoading}
-          />
+            <Card
+              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+              title="Total Open Candidate"
+              value={
+                String(dashboardOverviewQuery.data?.total_open_candt) || ""
+              }
+              isLoading={dashboardOverviewQuery.isLoading}
+            />
+            <Card
+              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+              title="Total Candidate Scraped Today"
+              value={
+                String(dashboardOverviewQuery.data?.total_candt_scrapped_tdy) ||
+                ""
+              }
+              isLoading={dashboardOverviewQuery.isLoading}
+            />
+            <Card
+              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+              title="Total Interviews"
+              value={
+                String(dashboardOverviewQuery.data?.total_interviews) || ""
+              }
+              isLoading={dashboardOverviewQuery.isLoading}
+            />
+            <Card
+              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+              title="Total Open Jobs"
+              value={String(dashboardOverviewQuery.data?.total_open_jobs) || ""}
+              isLoading={dashboardOverviewQuery.isLoading}
+            />
+            <Card
+              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+              title="Total Jobs Scraped Today"
+              value={
+                String(dashboardOverviewQuery.data?.total_jobs_scrapped_tdy) ||
+                ""
+              }
+              isLoading={dashboardOverviewQuery.isLoading}
+            />
+          </div>
         </div>
       </div>
     </main>
@@ -143,6 +163,46 @@ const Card = ({
       >
         {isLoading ? "Loading..." : value}
       </h3>
+    </div>
+  );
+};
+
+const ListRecruiterActions = () => {
+  const { data: listRecruiterActions, isLoading } = useQuery({
+    queryKey: [],
+    queryFn: async () => {
+      return axiosApi({
+        url: "user/recruiter/actions/",
+        method: "GET",
+      }).then((e) => e.data.data);
+    },
+  });
+  return (
+    <div className="mb-4 rounded-lg border bg-white px-3 py-2 shadow-md">
+      <div className="block px-2 py-2 text-lg font-semibold text-slate-700">
+        Action List
+      </div>
+
+      <div className="text-sm">
+        {listRecruiterActions?.map((e, i) => (
+          <div
+            key={i}
+            className="flex cursor-pointer justify-start rounded-md px-2 py-2 text-slate-700 hover:bg-blue-100 hover:text-blue-400"
+          >
+            <span className="m-2 h-2 w-2 rounded-full bg-slate-400"></span>
+            <div className="flex-grow px-2 font-medium">{e.type}</div>
+            {/* <div className="text-sm font-normal tracking-wide text-slate-500">
+              Team
+            </div> */}
+          </div>
+        ))}
+        <div className="flex min-h-[15vh] items-center justify-center">
+          {isLoading ? <SpinnerIcon className="text-primary" /> : null}
+          {listRecruiterActions?.length === 0 && !isLoading ? (
+            <div>No Data</div>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };
