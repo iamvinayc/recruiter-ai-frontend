@@ -63,7 +63,7 @@ export const QuestionnairePage: React.FC = () => {
         return response.data.data;
       } else {
         toast.error(response.data.message);
-        // navigate("/");
+        navigate("/");
         return null;
       }
     },
@@ -284,8 +284,8 @@ export const QuestionnairePage: React.FC = () => {
             />
             <Document
               className="h-[400px] overflow-x-auto bg-slate-200"
-              // file="https://img1.digitallocker.gov.in/nad/assets/user_manual/dl_fetch_document.pdf"
               file="https://recruiter-ai.s3.eu-central-1.amazonaws.com/agreements/candidate.pdf"
+              // file="https://img1.digitallocker.gov.in/nad/assets/user_manual/dl_fetch_document.pdf"
             >
               <Page pageNumber={1} />
             </Document>
