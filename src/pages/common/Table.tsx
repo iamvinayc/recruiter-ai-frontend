@@ -5,9 +5,11 @@ import { cn } from "@/utils";
 export function Table<T>({
   table,
   loader,
+  flat,
 }: {
   table: ITable<T>;
   loader: JSX.Element;
+  flat?: boolean;
 }) {
   return (
     <table className={cn("min-w-full   table-fixed overflow-scroll")}>
@@ -17,7 +19,8 @@ export function Table<T>({
             {headerGroup.headers.map((header) => (
               <th
                 className={cn(
-                  "border-b border-slate-200 p-4 pb-3 pl-8  text-left font-medium text-slate-600 dark:border-slate-600 dark:text-slate-200",
+                  "border-b border-slate-200  text-left font-medium text-slate-600 dark:border-slate-600 dark:text-slate-200",
+                  flat ? "p-2 pl-3 " : "p-4 pb-3 pl-8 ",
                 )}
                 key={header.id}
               >
@@ -37,7 +40,10 @@ export function Table<T>({
           <tr key={`tr-${row.id}`}>
             {row.getVisibleCells().map((cell) => (
               <td
-                className="border-b border-slate-200 p-4 pl-8 text-slate-500 dark:border-slate-600 dark:text-slate-400"
+                className={cn(
+                  "border-b border-slate-200 text-slate-500 dark:border-slate-600 dark:text-slate-400",
+                  flat ? "p-2 pl-3 " : "p-4 pl-8 ",
+                )}
                 key={`td-${cell.id}`}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

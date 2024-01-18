@@ -6,8 +6,16 @@ import { Link } from "react-router-dom";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
 import { axiosApi } from "../api/api";
-import { cn } from "../utils";
-import { SpinnerIcon } from "@/components/common/SvgIcons";
+import { cn, emptyArray } from "../utils";
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useMemo } from "react";
+import { Table } from "./common/Table";
+import { TableLoader } from "./common/TableLoader";
+import { ChipGroup } from "@/components/common/ChipGroup";
 
 export function AdminDashboardPage() {
   const { isRecruiter } = useLogin();
@@ -31,17 +39,13 @@ export function AdminDashboardPage() {
           <p className="font-medium">Latest statistics</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6 2xl:gap-7.5">
-          {isRecruiter ? (
-            <div className="col-span-1 md:order-last">
-              <ListRecruiterActions />
-            </div>
-          ) : null}
+        <div className="">
+          {isRecruiter ? <ListRecruiterActions /> : null}
           <div
             className={cn(
               "grid grid-cols-1 gap-4 ",
               isRecruiter
-                ? "col-span-3 md:grid-cols-3"
+                ? "col-span-4 md:grid-cols-4"
                 : "col-span-4 md:grid-cols-4",
             )}
           >
@@ -166,9 +170,14 @@ const Card = ({
     </div>
   );
 };
+const columnHelper = createColumnHelper<PendingItem>();
 
 const ListRecruiterActions = () => {
-  const { data: listRecruiterActions, isLoading } = useQuery({
+  const {
+    data: listRecruiterActions = emptyArray,
+    isLoading,
+    isRefetching,
+  } = useQuery({
     queryKey: [],
     queryFn: async () => {
       return axiosApi({
@@ -176,33 +185,85 @@ const ListRecruiterActions = () => {
         method: "GET",
       }).then((e) => e.data.data);
     },
+    select(data) {
+      return data.map<PendingItem>((e) => ({
+        candidate_name: e.candidate.name,
+        interview_date: e.action.interview.date,
+        job_title: e.job.title,
+        pending_action: e.type,
+      }));
+    },
+  });
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("pending_action", {
+        header: "Pending Action",
+        cell: (info) => (
+          <div className=" truncate" title={info.getValue()}>
+            <ChipGroup items={[{ id: 1, name: info.getValue() }]} />
+            {}
+          </div>
+        ),
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor("job_title", {
+        header: "Job Title",
+        cell: (info) => (
+          <div className="max-w-[150px] truncate" title={info.getValue()}>
+            {info.getValue()}
+          </div>
+        ),
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor("candidate_name", {
+        header: "Candidate Name",
+        cell: (info) => (
+          <div className="max-w-[150px] truncate" title={info.getValue()}>
+            {info.getValue()}
+          </div>
+        ),
+        footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor("interview_date", {
+        header: "Interview Date",
+        cell: (info) => (
+          <div className="max-w-[150px] truncate" title={info.getValue()}>
+            {info.getValue()}
+          </div>
+          // return <ChipGroup items={info.getValue()} />;
+        ),
+      }),
+    ],
+    [],
+  );
+
+  const table = useReactTable({
+    columns: columns,
+    data: listRecruiterActions,
+    getCoreRowModel: getCoreRowModel(),
   });
   return (
-    <div className="mb-4 rounded-lg border bg-white px-3 py-2 shadow-md">
-      <div className="block px-2 py-2 text-lg font-semibold text-slate-700">
-        Action List
-      </div>
-
-      <div className="text-sm">
-        {listRecruiterActions?.map((e, i) => (
-          <div
-            key={i}
-            className="flex cursor-pointer justify-start rounded-md px-2 py-2 text-slate-700 hover:bg-blue-100 hover:text-blue-400"
-          >
-            <span className="m-2 h-2 w-2 rounded-full bg-slate-400"></span>
-            <div className="flex-grow px-2 font-medium">{e.type}</div>
-            {/* <div className="text-sm font-normal tracking-wide text-slate-500">
-              Team
-            </div> */}
-          </div>
-        ))}
-        <div className="flex min-h-[15vh] items-center justify-center">
-          {isLoading ? <SpinnerIcon className="text-primary" /> : null}
-          {listRecruiterActions?.length === 0 && !isLoading ? (
-            <div>No Data</div>
-          ) : null}
-        </div>
-      </div>
+    <div className="relative mb-4 overflow-x-auto rounded-lg border bg-white shadow-md">
+      <Table
+        flat
+        table={table}
+        loader={
+          <TableLoader
+            colSpan={columns.length}
+            dataList={listRecruiterActions}
+            isLoading={isLoading}
+            isUpdateLoading={isLoading || isRefetching}
+          />
+        }
+      />
     </div>
   );
 };
+
+interface PendingItem {
+  pending_action: string;
+  job_title: string;
+  candidate_name: string;
+  interview_date: string;
+}
