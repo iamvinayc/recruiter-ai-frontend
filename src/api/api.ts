@@ -1001,5 +1001,24 @@ export enum OnboardingStatus {
   EMPLOYER_FEEDBACK_SUBMITTED = "EMPLOYER_FEEDBACK_SUBMITTED",
   CANDIDATE_FEEDBACK_SUBMITTED = "CANDIDATE_FEEDBACK_SUBMITTED",
 }
-
+export const OnboardingStatusMap = {
+  SHORTLISTED: "Shortlisted",
+  RECRUITER_INTERVIEWED: "Recruiter Interview Completed",
+  EMPLOYER_INTERVIEW_SCHEDULED_VIDEO:
+    "Video Conference Scheduled Recruiter, Candidate, Employer)",
+  EMPLOYER_INTERVIEWED_VIDEO:
+    "Video Conference Completed Recruiter, Candidate, Employer)",
+  EMPLOYER_INTERVIEW_SCHEDULED_F2F:
+    "Face to Face Interview Scheduled Recruiter, Candidate, Employer)",
+  EMPLOYER_INTERVIEWED_F2F:
+    "Face to Face Interview Completed Recruiter, Candidate, Employer)",
+  EMPLOYER_SELECTED: "Selected by Employer",
+  PLACED: "Placed",
+  EMPLOYER_FEEDBACK_SUBMITTED: "Feedback Submitted by Employer",
+  CANDIDATE_FEEDBACK_SUBMITTED: "Feedback Submitted by Candidate",
+  REJECTED: "Rejected",
+  CANCELLED: "Cancelled",
+};
+export const formatOnboardingStatus = (status: string) =>
+  OnboardingStatusMap[status as OnboardingStatus];
 //#endregion
