@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-
+import { Document, Page } from "react-pdf";
 import { axiosApi } from "../api/api";
 import { ROUTES } from "@/routes/routes";
 import { Button } from "@/components/common/Button";
@@ -18,6 +18,12 @@ import { Input } from "@/components/common/Input";
 import { FileIcon, Trash2Icon } from "lucide-react";
 import { SpinnerIcon } from "@/components/common/SvgIcons";
 import dayjs from "dayjs";
+import { pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+
 export const QuestionnairePage: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<{
     [key: number]: number;
@@ -28,6 +34,7 @@ export const QuestionnairePage: React.FC = () => {
   const [available, setAvailable] = useState(true);
   const [preferContract, setPreferContract] = useState(false);
   const [availableOnDate, setAvailableOnDate] = useState("");
+  const [acceptAgreement, setAcceptAgreement] = useState(false);
   const {
     data: questions = emptyArray,
     isLoading,
@@ -56,7 +63,7 @@ export const QuestionnairePage: React.FC = () => {
         return response.data.data;
       } else {
         toast.error(response.data.message);
-        navigate("/");
+        // navigate("/");
         return null;
       }
     },
@@ -122,6 +129,10 @@ export const QuestionnairePage: React.FC = () => {
 
   const handleSubmit = async () => {
     console.log(preferContract, available, file);
+    if (!acceptAgreement) {
+      toast.error("Please accept the terms & agreement");
+      return;
+    }
     if (Object.keys(selectedOptions).length !== questions?.length) {
       toast.error("Please answer all the questions.");
       return;
@@ -271,33 +282,26 @@ export const QuestionnairePage: React.FC = () => {
               setFile={setFile}
               isLoading={fileUploadMutation.isPending}
             />
+            <Document
+              className="h-[400px] overflow-x-auto bg-slate-200"
+              // file="https://img1.digitallocker.gov.in/nad/assets/user_manual/dl_fetch_document.pdf"
+              file="https://recruiter-ai.s3.eu-central-1.amazonaws.com/agreements/candidate.pdf"
+            >
+              <Page pageNumber={1} />
+            </Document>
 
-            {/* <div className="max-w-xl">
-              <p className="mb-2 font-bold">Resume</p>
-              <label className="border-gray-300 hover:border-gray-400 flex h-32 w-full cursor-pointer appearance-none justify-center rounded-md border-2 border-dashed bg-white px-4 transition focus:outline-none">
-                <span className="flex items-center space-x-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="text-gray-600 h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                  </svg>
-                  <span className="text-gray-600 font-medium">
-                    Drop files to Attach, or
-                    <span className="text-blue-600 underline">browse</span>
-                  </span>
-                </span>
-                <input type="file" name="file_upload" className="hidden" />
+            <div className="pt-2">
+              <label className="text-lg font-bold">
+                <input
+                  type="checkbox"
+                  className="mr-2"
+                  checked={acceptAgreement}
+                  onChange={(e) => setAcceptAgreement(e.target.checked)}
+                />
+                I accept the terms & agreement
               </label>
-            </div> */}
+            </div>
+
             <Button
               type="submit"
               onClick={handleSubmit}
@@ -373,7 +377,7 @@ const FileUpload = ({
           <input
             ref={fileRef}
             accept="application/pdf"
-                        type="file"
+            type="file"
             className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
             title=""
             onChange={(e) => {

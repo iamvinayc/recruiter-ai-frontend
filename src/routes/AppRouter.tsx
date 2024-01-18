@@ -21,6 +21,7 @@ import { LoginPage } from "../pages/LoginPage";
 import { ROUTES } from "./routes";
 import OnboardingListPage from "@/pages/OnboardingListPage";
 import { ReportListPage } from "@/pages/ReportListPage";
+import EmployerAgreementPage from "@/pages/employer/EmployerAgreementPage";
 
 export function AppRouter() {
   return (
@@ -130,6 +131,10 @@ export function AppRouter() {
           <Route
             path={ROUTES.EMPLOYER.CANDIDATE_SUBMIT.path}
             element={<EmployerCandidateSubmitPage />}
+          />
+          <Route
+            path={ROUTES.EMPLOYER.AGREEMENT.path}
+            element={<EmployerAgreementPage />}
           />
           <Route path={ROUTES.FEEDBACKSUBMIT.path} element={<FeedbackPage />} />
         </Routes>

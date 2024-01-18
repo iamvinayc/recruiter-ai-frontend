@@ -472,7 +472,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params?: undefined;
-      data?: FormData;
+      data?: undefined;
     };
     response: {
       data: {
@@ -497,6 +497,21 @@ interface AllApiEndpoints {
         };
         type: string;
       }[];
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
+  "data-sourcing/employer/show_interest/": {
+    request: {
+      method: "POST";
+      params: {
+        employer: string;
+      };
+      data?: FormData;
+    };
+    response: {
+      data: object;
       message: string;
       isSuccess: boolean;
       status: number;

@@ -87,6 +87,11 @@ export const ROUTES = {
           employer: string().default(""),
         },
       }),
+      AGREEMENT: route("agreement", {
+        searchParams: {
+          employer: string().default(""),
+        },
+      }),
     },
   ),
   FEEDBACKSUBMIT: route("feedback", {

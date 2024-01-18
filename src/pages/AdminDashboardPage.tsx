@@ -188,7 +188,10 @@ const ListRecruiterActions = () => {
     select(data) {
       return data.map<PendingItem>((e) => ({
         candidate_name: e.candidate.name,
-        interview_date: e.action.interview.date,
+        interview_date: [
+          e.action?.interview?.date,
+          e.action?.interview?.time,
+        ].join(" "),
         job_title: e.job.title,
         pending_action: e.type,
       }));
@@ -228,7 +231,7 @@ const ListRecruiterActions = () => {
       columnHelper.accessor("interview_date", {
         header: "Interview Date",
         cell: (info) => (
-          <div className="max-w-[150px] truncate" title={info.getValue()}>
+          <div className=" truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
           // return <ChipGroup items={info.getValue()} />;
