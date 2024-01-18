@@ -42,18 +42,6 @@ export const QuestionnairePage: React.FC = () => {
   } = useQuery({
     queryKey: ["questionnaire", candidate],
     queryFn: async () => {
-      // return [
-      //   {
-      //     id: 2,
-      //     question: "string;",
-      //     options: [
-      //       {
-      //         id: 1,
-      //         option: "string",
-      //       },
-      //     ],
-      //   },
-      // ];
       const response = await axiosApi({
         url: "onboarding/questionnaire/",
         method: "GET",
@@ -282,6 +270,7 @@ export const QuestionnairePage: React.FC = () => {
               setFile={setFile}
               isLoading={fileUploadMutation.isPending}
             />
+            <div className=" text-lg font-bold">Terms and conditions</div>
             <Document
               className="h-[400px] overflow-x-auto bg-slate-200"
               file="https://recruiter-ai.s3.eu-central-1.amazonaws.com/agreements/candidate.pdf"
@@ -298,7 +287,7 @@ export const QuestionnairePage: React.FC = () => {
                   checked={acceptAgreement}
                   onChange={(e) => setAcceptAgreement(e.target.checked)}
                 />
-                I accept the terms & agreement
+                I accept the terms and conditions mentioned above
               </label>
             </div>
 
