@@ -779,7 +779,7 @@ interface ListCandidateScoringResponseData {
   profile_score: string;
   overall_score?: string | null;
   symmary: string;
-  reasons?: string | null;
+  reasons?: string | string[] | null;
   is_employer_notified: boolean;
 }
 
@@ -843,7 +843,7 @@ interface EmployerMatchingCandidatesData {
   candidates: {
     candidate_id: string;
     candidate_name: string;
-    reasons: string;
+    reasons: string | string[];
   }[];
 }
 
@@ -886,7 +886,7 @@ interface Scoring {
   candidate: Candidate;
   profile_score: string;
   overall_score: string;
-  reasons: string;
+  reasons: string | string[];
   symmary: string;
   is_employer_notified: boolean;
   is_calculating: boolean;

@@ -18,6 +18,7 @@ import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
 import { Switch } from "@headlessui/react";
+import { ReasonRenderer } from "@/components/ReasonRenderer";
 
 const jobColumnHelper = createColumnHelper<ScoringJobItem>();
 const candidateColumnHelper = createColumnHelper<ScoringCandidateItem>();
@@ -381,9 +382,10 @@ export function ListScoringPage() {
         setIsOpen={() => setSelectedCandidateId(null)}
         title="Candidate Details"
         showXMarkIcon
+        containerClassName="max-w-[80%]"
       >
         <div>
-          <div className="mt-4 grid max-h-[50vh] grid-cols-1 gap-x-12 gap-y-4 overflow-y-auto lg:grid-cols-2">
+          <div className="mt-4 grid max-h-[80vh] grid-cols-1 gap-x-12 gap-y-4 overflow-y-auto lg:grid-cols-2">
             <div className="space-y-2">
               <div className="rounded-md border">
                 <div className="flex items-center space-x-2 border-b p-4 py-3 text-lg font-medium">
@@ -471,16 +473,22 @@ export function ListScoringPage() {
                     </div>
                   ))}
 
-                  {[
-                    ["Summary:", selectedUser?.symmary],
-                    ["Reason:", selectedUser?.reasons],
-                  ].map(([key, value]) => (
+                  {(
+                    [
+                      ["Summary:", selectedUser?.symmary],
+                      ["Reason:", selectedUser?.reasons],
+                    ] as const
+                  ).map(([key, value]) => (
                     <div
                       key={key}
                       className="flex flex-col justify-between px-4 py-2 text-sm"
                     >
                       <div className="font-medium">{key}</div>
-                      <LineClamp text={value || ""} />
+                      {Array.isArray(value) ? (
+                        <ReasonRenderer reason={value} />
+                      ) : (
+                        <LineClamp text={value || ""} />
+                      )}
                     </div>
                   ))}
                   <div className="flex flex-col justify-between px-4 py-2 text-sm">
@@ -524,6 +532,6 @@ interface ScoringCandidateItem {
   profile_score: string;
   summary?: string;
   overall_score?: string | null;
-  reasons?: string | null;
+  reasons?: string | string[] | null;
   is_employer_notified: boolean;
 }

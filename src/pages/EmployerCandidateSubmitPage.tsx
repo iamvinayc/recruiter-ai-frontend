@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { axiosApi } from "../api/api";
 import { ROUTES } from "@/routes/routes";
 import { Button } from "@/components/common/Button";
+import { ReasonRenderer } from "@/components/ReasonRenderer";
 
 interface MoreOptionsProps {
   prefer_contract: boolean;
@@ -22,6 +23,28 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["employerScoring", employer],
     queryFn: async () => {
+      // return [
+      //   {
+      //     job_id: "string",
+      //     job_title: "string",
+      //     candidates: [
+      //       {
+      //         candidate_id: "string",
+      //         candidate_name: "string",
+      //         reasons: [
+      //           "Lack of Neo4j Experience: The resume does not mention any experience or skills specifically related to Neo4j (graph) databases, which is a mandatory requirement for the job (0/100).",
+      //           "No Mention of PL/SQL Experience: The resume does not provide any specific details about the candidate's experience with PL/SQL, which is a key requirement for the job (0/100).",
+      //           "Limited Information on Data Modeling and Optimization: While the candidate has experience in designing and implementing scalable and efficient database solutions, there is no specific mention of expertise in data modeling and database optimization techniques (50/100).",
+      //           "No Mention of DBA Certification: The resume does not indicate whether the candidate has a DBA certification, which is preferred for the job (0/100).",
+      //           "No Mention of GIS Tools and Libraries: The resume does mention experience with GIS tools and libraries, which is required for the job (100/100).",
+      //           "Familiarity with Postgres: The resume mentions familiarity with the internal working of Postgres, which is required for the job (100/100).",
+      //           "Limited Information on Concurrency and Reversibility of Transactions: While the candidate mentions expertise in managing concurrency and reversibility of transactions, there is no specific information provided about their experience in this area (50/100).",
+      //           "Handling SQL Injection Vulnerabilities: The resume mentions experience in handling SQL injection vulnerabilities, which is required for the job (100/100).",
+      //         ],
+      //       },
+      //     ],
+      //   },
+      // ];
       const response = await axiosApi({
         url: "onboarding/employer/scoring/",
         method: "GET",
@@ -31,7 +54,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
         return response.data.data;
       } else {
         toast.error(response.data.message);
-        navigate("/");
+        // navigate("/");
       }
     },
   });
@@ -164,7 +187,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                                 </div>
                               </td>
                               <td className="text-gray-500 whitespace-normal px-4 py-3 text-sm">
-                                {candidate.reasons}
+                                <ReasonRenderer reason={candidate.reasons} />
                               </td>
                             </tr>
                           ))}
