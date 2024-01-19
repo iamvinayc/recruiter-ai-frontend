@@ -17,7 +17,7 @@ export function AdminDashboardLayout() {
   const isClient = useIsClient();
   useEffect(() => {
     if (!isClient) return;
-    if (window.innerWidth > 1024) setSidebarOpen(true);
+    if (window.innerWidth > 1424) setSidebarOpen(true);
   }, [isClient]);
 
   return (

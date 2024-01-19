@@ -148,8 +148,9 @@ export const SideBar = ({
   return (
     <aside
       className={cn(
-        "dark:bg-boxdark absolute left-0 top-0 z-9999 flex h-screen w-72.5 -translate-x-full flex-col overflow-y-hidden bg-black duration-300 ease-linear 2xl:static 2xl:translate-x-0 ",
-        !sidebarOpen ? "-translate-x-full" : "translate-x-0",
+        "dark:bg-boxdark flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear 2xl:static 2xl:translate-x-0 ",
+        sidebarOpen ? "translate-x-0" : " hidden -translate-x-full",
+        // "absolute left-0 top-0 z-9999 "
       )}
     >
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">

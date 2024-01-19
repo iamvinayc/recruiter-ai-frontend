@@ -20,7 +20,7 @@ import { useLogin } from "@/hooks/useLogin";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
-import { Input } from "../components/common/Input";
+import { Input, TextArea } from "../components/common/Input";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { LineClamp } from "../components/LineClamp";
 import { PopupDialog } from "../components/PopupDialog";
@@ -515,7 +515,7 @@ const AddJobPopup = ({
               />
             </div>
             <div className="flex flex-1 flex-col">
-              <Input
+              <TextArea
                 label="Description"
                 placeholder="Description"
                 className=" px-3 py-3"

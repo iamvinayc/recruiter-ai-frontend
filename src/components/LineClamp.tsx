@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 export const LineClamp = ({ text }: { text: string }) => {
   const [expanded, setExpanded] = useState(false);
-  const textRef = useRef<React.ElementRef<"div">>(null);
+  const textRef = useRef<React.ElementRef<"pre">>(null);
 
   useLayoutEffect(() => {
     setTimeout(() => {
@@ -27,14 +27,19 @@ export const LineClamp = ({ text }: { text: string }) => {
   if (text === "") return <></>;
   return (
     <div>
-      <div
-        className={`line-clamp ${
+      <pre
+        className={`line-clamp w-full ${
           expanded ? "line-clamp-none" : "line-clamp-4"
         }`}
         ref={textRef}
+        style={{
+          wordWrap: "break-word",
+          overflowWrap: "break-word",
+          whiteSpace: "break-spaces",
+        }}
       >
         {text}
-      </div>
+      </pre>
       {
         <button
           className="text-blue-500 hover:underline focus:outline-none"

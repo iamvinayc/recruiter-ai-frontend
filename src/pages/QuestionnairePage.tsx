@@ -22,7 +22,7 @@ import { pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `/js/pdf.worker.min.js`;
 
 export const QuestionnairePage: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<{
@@ -273,7 +273,8 @@ export const QuestionnairePage: React.FC = () => {
             <div className=" text-lg font-bold">Terms and conditions</div>
             <Document
               className="h-[400px] overflow-x-auto bg-slate-200"
-              file="https://recruiter-ai.s3.eu-central-1.amazonaws.com/agreements/candidate.pdf"
+              file="/Privacy Policy Example Document.pdf"
+              // file="https://recruiter-ai.s3.eu-central-1.amazonaws.com/agreements/candidate.pdf"
               // file="https://img1.digitallocker.gov.in/nad/assets/user_manual/dl_fetch_document.pdf"
             >
               <Page pageNumber={1} />
