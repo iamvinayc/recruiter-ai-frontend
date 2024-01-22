@@ -39,6 +39,11 @@ const SideBarLinks = {
       icon: <Squares2X2Icon className="h-5 w-5" />,
     },
     {
+      title: "Employer",
+      link: ROUTES.RECRUITER.LIST_EMPLOYER.path,
+      icon: <BriefcaseIcon className="h-5 w-5" />,
+    },
+    {
       title: "Jobs",
       link: ROUTES.RECRUITER.LIST_JOBS.path,
       icon: <BriefcaseIcon className="h-5 w-5" />,

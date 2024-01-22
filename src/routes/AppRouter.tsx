@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import EmployerListPage from "@/pages/EmployerListPage";
 import { FeedbackPage } from "@/pages/FeedbackPage";
 import { EmployerCandidateSubmitPage } from "@/pages/EmployerCandidateSubmitPage";
 import { QuestionnairePage } from "@/pages/QuestionnairePage";
@@ -72,6 +73,10 @@ export function AppRouter() {
               path={ROUTES.ADMIN.LIST_REPORT.path}
               element={<ReportListPage />}
             />
+            <Route
+              path={ROUTES.ADMIN.LIST_EMPLOYER.path}
+              element={<EmployerListPage />}
+            />
           </Route>
 
           <Route
@@ -109,6 +114,10 @@ export function AppRouter() {
             <Route
               path={ROUTES.RECRUITER.LIST_REPORT.path}
               element={<ReportListPage />}
+            />
+            <Route
+              path={ROUTES.RECRUITER.LIST_EMPLOYER.path}
+              element={<EmployerListPage />}
             />
           </Route>
           <Route
