@@ -245,6 +245,7 @@ const ListRecruiterActions = () => {
     columns: columns,
     data: listRecruiterActions,
     getCoreRowModel: getCoreRowModel(),
+    enableFilters: false,
   });
   return (
     <div className="relative mb-4 overflow-x-auto rounded-lg border bg-white shadow-md">

@@ -63,6 +63,11 @@ const SideBarLinks = {
       icon: <MapPinIcon className="h-5 w-5" />,
     },
     {
+      title: "Employer",
+      link: ROUTES.ADMIN.LIST_EMPLOYER.path,
+      icon: <BriefcaseIcon className="h-5 w-5" />,
+    },
+    {
       title: "Jobs",
       link: ROUTES.ADMIN.LIST_JOBS.path,
       icon: <BriefcaseIcon className="h-5 w-5" />,

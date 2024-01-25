@@ -24,16 +24,17 @@ import { ChipGroup } from "../components/common/ChipGroup";
 import { Input, TextArea } from "../components/common/Input";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { PopupDialog } from "../components/PopupDialog";
-import { cn, emptyArray } from "../utils";
+import { cn, emptyArray, replaceWith } from "../utils";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
+import { BlockButton } from "@/components/common/BlockButton";
 
 const defaultArr: [] = [];
 
-const columnHelper = createColumnHelper<Person>();
+const columnHelper = createColumnHelper<CandidateListItem>();
 
 export function AdminListCandidatePage() {
   const [
@@ -83,6 +84,28 @@ export function AdminListCandidatePage() {
         url: `data-sourcing/candidate/${showUserDeleteId}/` as `data-sourcing/candidate//`,
         method: "DELETE",
       }).then((e) => e.data);
+    },
+  });
+
+  const blockCandidateMutation = useMutation({
+    mutationKey: ["blockCandidateMutation"],
+    mutationFn: async ({ blocked, id }: { id: number; blocked: boolean }) => {
+      return axiosApi({
+        url: replaceWith(
+          "data-sourcing/candidate/block/:id/",
+          "data-sourcing/candidate/block/:id/".replace(":id", id.toString()),
+        ),
+        method: "PATCH",
+        params: undefined,
+        data: {
+          blocked,
+        },
+      })
+        .then((e) => e.data.isSuccess)
+        .then((success) => {
+          if (success) candidateListQuery.refetch();
+          return success;
+        });
     },
   });
 
@@ -149,7 +172,7 @@ export function AdminListCandidatePage() {
         id: "action",
         cell: (info) => {
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setShowUserDetailsId(info.row.original.id)}
                 className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
@@ -164,12 +187,26 @@ export function AdminListCandidatePage() {
                   <TrashIcon className="h-4 w-4 " />
                 </button>
               ) : null}
+              <BlockButton
+                isLoading={
+                  blockCandidateMutation.variables?.id ===
+                    info.row.original.id && blockCandidateMutation.isPending
+                }
+                onClick={() => {
+                  blockCandidateMutation.mutateAsync({
+                    id: info.row.original.id,
+                    blocked: !info.row.original.is_blocked,
+                  });
+                }}
+                is_blocked={info.row.original.is_blocked}
+              />
             </div>
           );
         },
       }),
     ],
-    [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [blockCandidateMutation.variables?.id, blockCandidateMutation.isPending],
   );
   const candidateListQueryData = useMemo(
     () =>
@@ -179,7 +216,7 @@ export function AdminListCandidatePage() {
 
   const candidateList = useMemo(
     () =>
-      candidateListQueryData?.map<Person>((e) => ({
+      candidateListQueryData?.map<CandidateListItem>((e) => ({
         id: e.id,
         title: e.name,
         description: e.description || "",
@@ -187,6 +224,7 @@ export function AdminListCandidatePage() {
         departments: e.departments.map((e) => ({ id: e.id, name: e.name })),
         platform: e.platform,
         city: e.city,
+        is_blocked: e.is_blocked,
       })) || defaultArr,
     [candidateListQueryData],
   );
@@ -199,6 +237,7 @@ export function AdminListCandidatePage() {
     columns: columns,
     data: candidateList,
     getCoreRowModel: getCoreRowModel(),
+    enableFilters: false,
   });
   const setShowAddCandidatePopup = (v: React.SetStateAction<boolean>) => {
     const value = typeof v === "function" ? v(showAddCandidatePopup) : v;
@@ -413,7 +452,7 @@ export function AdminListCandidatePage() {
 
 //#region Table helper
 
-interface Person {
+interface CandidateListItem {
   id: number;
   title: string;
   description: string;
@@ -422,6 +461,7 @@ interface Person {
   location: { id: number; name: string }[];
   platform: string;
   city: string;
+  is_blocked: boolean;
 }
 
 //#endregion

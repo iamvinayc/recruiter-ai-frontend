@@ -17,6 +17,11 @@ export const ROUTES = {
       LIST_SKILL: route("list-skill"),
       LIST_RECRUITER: route("list-recruiter"),
       LIST_LOCATION: route("list-location"),
+      LIST_EMPLOYER: route("list-employer", {
+        searchParams: {
+          name: string().default(""),
+        },
+      }),
       LIST_JOBS: route("list-jobs", {
         searchParams: {
           skill: string().default(""),
@@ -53,6 +58,7 @@ export const ROUTES = {
       LOGIN: route("login"),
       DASHBOARD: route("dashboard"),
       CHANGE_PASSWORD: route("change-password"),
+      LIST_EMPLOYER: route("list-employer"),
       LIST_JOBS: route("list-jobs"),
       LIST_CANDIDATE: route("list-candidate"),
       LIST_SCORING: route("list-scoring", {

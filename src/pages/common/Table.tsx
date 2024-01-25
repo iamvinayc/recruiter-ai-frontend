@@ -1,6 +1,13 @@
-import { flexRender, Table as ITable } from "@tanstack/react-table";
+import {
+  Column,
+  flexRender,
+  Table as ITable,
+  Table,
+} from "@tanstack/react-table";
 
 import { cn } from "@/utils";
+import { DebouncedInput } from "@/components/common/Input";
+import { useState } from "react";
 
 export function Table<T>({
   table,
@@ -30,6 +37,9 @@ export function Table<T>({
                       header.column.columnDef.header,
                       header.getContext(),
                     )}
+                {header.column.getCanFilter() ? (
+                  <Filter column={header.column} table={table} />
+                ) : null}
               </th>
             ))}
           </tr>
@@ -56,3 +66,48 @@ export function Table<T>({
     </table>
   );
 }
+
+//#region filter
+
+const Filter = <T,>({
+  column,
+}: {
+  column: Column<T, unknown>;
+  table: Table<T>;
+}) => {
+  const { setFilterValue, id } = column;
+  const [value, setValue] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
+  if (id == "is_active") {
+    return (
+      <div className="w-auto text-center">
+        <input
+          type="checkbox"
+          className="mt-2"
+          checked={isChecked}
+          onChange={(e) => {
+            const val = e.currentTarget.checked;
+            setIsChecked(val);
+            setFilterValue(val);
+          }}
+        />
+      </div>
+    );
+  }
+  const headerText = column?.columnDef?.header;
+  return (
+    <div>
+      <DebouncedInput
+        className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+        type="text"
+        placeholder={typeof headerText === "string" ? headerText : id}
+        value={value}
+        onChange={(val) => {
+          setValue("" + val);
+          setFilterValue("" + val);
+        }}
+      />
+    </div>
+  );
+};
+//#endregion filter

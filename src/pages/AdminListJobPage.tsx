@@ -217,6 +217,7 @@ export function AdminListJobPage() {
     columns: columns,
     data: jobList,
     getCoreRowModel: getCoreRowModel(),
+    enableFilters: false,
   });
   const setShowAddJobPopup = (v: React.SetStateAction<boolean>) => {
     const value = typeof v === "function" ? v(showAddJobPopup) : v;
