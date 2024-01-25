@@ -517,6 +517,36 @@ interface AllApiEndpoints {
       status: number;
     };
   };
+  "data-sourcing/employer/block/:id/": {
+    request: {
+      method: "PATCH";
+      params: undefined;
+      data?: {
+        blocked: boolean;
+      };
+    };
+    response: {
+      data: object;
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
+  "data-sourcing/candidate/block/:id/": {
+    request: {
+      method: "PATCH";
+      params: undefined;
+      data?: {
+        blocked: boolean;
+      };
+    };
+    response: {
+      data: object;
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
 }
 //#endregion
 
@@ -717,6 +747,7 @@ interface CandidateListResponseData {
   handle: string;
   platform: string;
   city: string;
+  is_blocked: boolean;
 }
 
 interface Location {
@@ -878,6 +909,7 @@ interface OnboardingListingResponseData {
   candidate_feedback?: string;
   reason_for_rejection?: string;
   updated_at: string;
+  is_editable: boolean;
 }
 
 interface Scoring {
@@ -985,6 +1017,7 @@ interface ListEmployerResponseData {
   phone1?: string;
   phone2?: string;
   is_interested: boolean;
+  is_blocked: boolean;
 }
 
 export enum OnboardingStatus {

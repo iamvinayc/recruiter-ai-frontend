@@ -238,11 +238,13 @@ export function ListScoringPage() {
     columns: jobListColumns,
     data: jobList,
     getCoreRowModel: getCoreRowModel(),
+    enableFilters: false,
   });
   const candidateTable = useReactTable({
     columns: candidateListColumns,
     data: candidateList,
     getCoreRowModel: getCoreRowModel(),
+    enableFilters: false,
   });
   const selectedJob = listJobQueryData?.find((e) => e.id == selectedJobId);
 

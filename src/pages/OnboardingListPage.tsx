@@ -32,6 +32,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/common/Input";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
+import { useLogin } from "@/hooks/useLogin";
 interface OnboardingList {
   id: number;
   job_name: string;
@@ -39,16 +40,17 @@ interface OnboardingList {
   candidate_name: string;
   status: string;
   updated_at: string;
+  is_editable: boolean;
 }
 const columnHelper = createColumnHelper<OnboardingList>();
 
-const STATUS_NOT_EDITABLE = [
-  OnboardingStatus.PLACED,
-  OnboardingStatus.REJECTED,
-  OnboardingStatus.CANCELLED,
-  OnboardingStatus.EMPLOYER_FEEDBACK_SUBMITTED,
-  OnboardingStatus.CANDIDATE_FEEDBACK_SUBMITTED,
-] as string[];
+// const STATUS_NOT_EDITABLE = [
+//   OnboardingStatus.PLACED,
+//   OnboardingStatus.REJECTED,
+//   OnboardingStatus.CANCELLED,
+//   OnboardingStatus.EMPLOYER_FEEDBACK_SUBMITTED,
+//   OnboardingStatus.CANDIDATE_FEEDBACK_SUBMITTED,
+// ] as string[];
 
 const STATUS_ORDER = [
   OnboardingStatus.SHORTLISTED,
@@ -69,6 +71,7 @@ export default function OnboardingListPage() {
   const [selectedOnboardingId, setSelectedOnboardingId] = useState<
     number | null
   >(null);
+  const { isRecruiter } = useLogin();
   const onboardingListingQuery = useInfiniteQuery({
     queryKey: ["onboardingListingQuery"],
     queryFn: async ({ pageParam }) =>
@@ -95,6 +98,7 @@ export default function OnboardingListPage() {
           candidate_name: e.candidate.name,
           status: e.status,
           updated_at: e.updated_at,
+          is_editable: e.is_editable,
         })) || [],
     [onboardingListingQuery.data],
   );
@@ -146,7 +150,13 @@ export default function OnboardingListPage() {
             >
               {convertEnumToStr(info.getValue())}
             </span>
-            {STATUS_NOT_EDITABLE.includes(info.row.original.status) ? null : (
+            {(
+              isRecruiter
+                ? info.row.original.status === OnboardingStatus.SHORTLISTED
+                  ? false
+                  : info.row.original.is_editable
+                : true
+            ) ? (
               <button
                 className={cn(
                   "rounded-md bg-primary p-2 text-white hover:bg-opacity-70",
@@ -155,7 +165,7 @@ export default function OnboardingListPage() {
               >
                 <Edit2Icon size={16} strokeWidth={3} />
               </button>
-            )}
+            ) : null}
           </div>
         ),
       }),
@@ -168,13 +178,14 @@ export default function OnboardingListPage() {
         ),
       }),
     ],
-    [],
+    [isRecruiter],
   );
 
   const table = useReactTable({
     columns: columns,
     data: onboardingList,
     getCoreRowModel: getCoreRowModel(),
+    enableFilters: false,
   });
   const selectedValue = onboardingList.find((e) => selectedOnboardingId == e.id)
     ?.status;

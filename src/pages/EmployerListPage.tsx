@@ -1,28 +1,61 @@
 import { axiosApi } from "@/api/api";
-import { cn } from "@/utils";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { cn, replaceWith } from "@/utils";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
+  ColumnFilter,
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
-import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
-
+import { Table } from "./common/Table";
+import { BlockButton } from "@/components/common/BlockButton";
 
 const columnHelper = createColumnHelper<EmployerListItem>();
 
 export default function EmployerListPage() {
+  const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
+
+  const blockEmployerMutation = useMutation({
+    mutationKey: ["blockEmployerMutation"],
+    mutationFn: async ({ blocked, id }: { id: number; blocked: boolean }) => {
+      return axiosApi({
+        url: replaceWith(
+          "data-sourcing/employer/block/:id/",
+          "data-sourcing/employer/block/:id/".replace(":id", id.toString()),
+        ),
+        method: "PATCH",
+        params: undefined,
+        data: {
+          blocked,
+        },
+      })
+        .then((e) => e.data.isSuccess)
+        .then((success) => {
+          if (success) employerListingQuery.refetch();
+          return success;
+        });
+    },
+  });
+
   const employerListingQuery = useInfiniteQuery({
-    queryKey: ["onboardingListingQuery"],
-    queryFn: async ({ pageParam }) =>
-      axiosApi({
+    queryKey: ["employerListingQuery", columnFilters],
+    queryFn: async ({ pageParam }) => {
+      const name =
+        (columnFilters.find((e) => e.id === "employer_label")
+          ?.value as string) || "";
+      return axiosApi({
         url: (pageParam ||
-            "data-sourcing/employer/") as "data-sourcing/employer/",
+          "data-sourcing/employer/") as "data-sourcing/employer/",
         method: "GET",
-      }).then((e) => e.data),
+        params: {
+          per_page: 12,
+          name,
+        },
+      }).then((e) => e.data);
+    },
     getNextPageParam(e) {
       return e.next;
     },
@@ -35,14 +68,17 @@ export default function EmployerListPage() {
         ?.map((e) => e?.data)
         ?.flat()
         ?.map<EmployerListItem>((e) => ({
+          id: e.id,
           employer_label: e.employer_label,
           email: e.email,
           phone1: e.phone1,
           phone2: e.phone2,
           is_interested: e.is_interested,
+          is_blocked: e.is_blocked,
         })) || [],
     [employerListingQuery.data],
   );
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("employer_label", {
@@ -53,15 +89,17 @@ export default function EmployerListPage() {
           </div>
         ),
         footer: (info) => info.column.id,
+        enableColumnFilter: true,
       }),
       columnHelper.accessor("email", {
         header: "Email",
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
+          <div className="truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
         footer: (info) => info.column.id,
+        enableColumnFilter: false,
       }),
       columnHelper.accessor("phone1", {
         header: "Phone No. 1",
@@ -70,6 +108,7 @@ export default function EmployerListPage() {
             {info.getValue()}
           </div>
         ),
+        enableColumnFilter: false,
       }),
       columnHelper.accessor("phone2", {
         header: "Phone No. 2",
@@ -78,14 +117,40 @@ export default function EmployerListPage() {
             {info.getValue()}
           </div>
         ),
+        enableColumnFilter: false,
+      }),
+      columnHelper.display({
+        id: "action",
+        header: "Action",
+        cell: (info) => (
+          <div className="max-w-[150px] truncate">
+            <BlockButton
+              isLoading={
+                blockEmployerMutation.variables?.id === info.row.original.id &&
+                blockEmployerMutation.isPending
+              }
+              onClick={() => {
+                blockEmployerMutation.mutateAsync({
+                  id: info.row.original.id,
+                  blocked: !info.row.original.is_blocked,
+                });
+              }}
+              is_blocked={info.row.original.is_blocked}
+            />
+          </div>
+        ),
+        enableColumnFilter: false,
       }),
     ],
-    [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [blockEmployerMutation.variables?.id, blockEmployerMutation.isPending],
   );
 
   const table = useReactTable({
     columns: columns,
     data: employerList,
+    state: { columnFilters },
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
   });
   return (
@@ -134,9 +199,11 @@ export default function EmployerListPage() {
 }
 
 interface EmployerListItem {
-    employer_label: string;
-    email: string;
-    phone1?: string;
-    phone2?: string;
-    is_interested: boolean;
+  id: number;
+  employer_label: string;
+  email: string;
+  phone1?: string;
+  phone2?: string;
+  is_interested: boolean;
+  is_blocked: boolean;
 }
