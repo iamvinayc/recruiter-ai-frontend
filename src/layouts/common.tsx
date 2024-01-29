@@ -52,15 +52,15 @@ export const Header = ({
   return (
     <header className="dark:bg-boxdark sticky top-0 z-1 flex w-full bg-white drop-shadow-1 dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
-        <div className="flex items-center gap-2 sm:gap-4 2xl:hidden">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
             aria-controls="sidebar"
             onClick={() => setSidebarOpen((b) => !b)}
-            className="dark:bg-boxdark dark:border-strokedark z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm 2xl:hidden"
+            className="dark:bg-boxdark dark:border-strokedark z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm "
           >
             <Bars3Icon className="relative block h-5.5 w-5.5 cursor-pointer" />
           </button>
-          <div className="block flex-shrink-0 2xl:hidden">
+          <div className="block flex-shrink-0">
             <div className="text-3xl text-black">AI-RECRUIT</div>
           </div>
         </div>

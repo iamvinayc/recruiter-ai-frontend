@@ -1,5 +1,5 @@
 import { OnboardingStatus, axiosApi } from "@/api/api";
-import { cn, convertEnumToStr } from "@/utils";
+import { cn, convertEnumToStr, replaceWith } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   createColumnHelper,
@@ -33,6 +33,7 @@ import { Input } from "@/components/common/Input";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
 import { useLogin } from "@/hooks/useLogin";
+import { match, P } from "ts-pattern";
 interface OnboardingList {
   id: number;
   job_name: string;
@@ -44,13 +45,13 @@ interface OnboardingList {
 }
 const columnHelper = createColumnHelper<OnboardingList>();
 
-// const STATUS_NOT_EDITABLE = [
-//   OnboardingStatus.PLACED,
-//   OnboardingStatus.REJECTED,
-//   OnboardingStatus.CANCELLED,
-//   OnboardingStatus.EMPLOYER_FEEDBACK_SUBMITTED,
-//   OnboardingStatus.CANDIDATE_FEEDBACK_SUBMITTED,
-// ] as string[];
+const STATUS_NOT_EDITABLE = [
+  OnboardingStatus.PLACED,
+  OnboardingStatus.REJECTED,
+  OnboardingStatus.CANCELLED,
+  OnboardingStatus.EMPLOYER_FEEDBACK_SUBMITTED,
+  OnboardingStatus.CANDIDATE_FEEDBACK_SUBMITTED,
+] as string[];
 
 const STATUS_ORDER = [
   OnboardingStatus.SHORTLISTED,
@@ -76,8 +77,7 @@ export default function OnboardingListPage() {
     queryKey: ["onboardingListingQuery"],
     queryFn: async ({ pageParam }) =>
       axiosApi({
-        url: (pageParam ||
-          "onboarding/employee_onboarding/") as "onboarding/employee_onboarding/",
+        url: replaceWith("onboarding/employee_onboarding/", pageParam),
         method: "GET",
       }).then((e) => e.data),
     getNextPageParam(e) {
@@ -150,13 +150,15 @@ export default function OnboardingListPage() {
             >
               {convertEnumToStr(info.getValue())}
             </span>
-            {(
-              isRecruiter
-                ? info.row.original.status === OnboardingStatus.SHORTLISTED
-                  ? false
-                  : info.row.original.is_editable
-                : true
-            ) ? (
+            {match(info.row.original.status)
+              .with(
+                P.when((arg) => STATUS_NOT_EDITABLE.includes(arg)),
+                () => false,
+              )
+              .with(OnboardingStatus.SHORTLISTED, () => true)
+              .otherwise(() =>
+                isRecruiter ? info.row.original.is_editable : true,
+              ) ? (
               <button
                 className={cn(
                   "rounded-md bg-primary p-2 text-white hover:bg-opacity-70",
