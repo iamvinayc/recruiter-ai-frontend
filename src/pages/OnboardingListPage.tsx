@@ -57,8 +57,10 @@ const STATUS_ORDER = [
   OnboardingStatus.SHORTLISTED,
   OnboardingStatus.RECRUITER_INTERVIEWED,
   OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO,
+  OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
   OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
   OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F,
+  OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
   OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
   OnboardingStatus.EMPLOYER_SELECTED,
   OnboardingStatus.PLACED,
@@ -67,7 +69,18 @@ const ALWAYS_SHOW_STATUS = [
   OnboardingStatus.REJECTED,
   OnboardingStatus.CANCELLED,
 ] as string[];
-
+const EXTRA_MAPPINGS_OPTIONS = {
+  [OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO]: [
+    OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
+    OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
+  ],
+  [OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F]: [
+    OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
+    OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
+  ],
+} as {
+  [key: string]: string[];
+};
 export default function OnboardingListPage() {
   const [selectedOnboardingId, setSelectedOnboardingId] = useState<
     number | null
@@ -365,6 +378,13 @@ export function UpdateStatusModal({
                 <CommandEmpty>No status found.</CommandEmpty>
                 <CommandGroup>
                   {STATUSES.filter((e, i) => {
+                    if (
+                      _selectedValue &&
+                      EXTRA_MAPPINGS_OPTIONS[_selectedValue]
+                    ) {
+                      const maybe = EXTRA_MAPPINGS_OPTIONS[_selectedValue];
+                      if (maybe.includes(e.value)) return true;
+                    }
                     const index = STATUS_ORDER.findIndex(
                       (status) => status === _selectedValue,
                     );
