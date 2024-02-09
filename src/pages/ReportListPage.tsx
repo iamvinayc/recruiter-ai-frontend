@@ -1,4 +1,4 @@
-import { cn, convertEnumToStr } from "@/utils";
+import { cn } from "@/utils";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { OnboardingStatus, axiosApi } from "@/api/api";
+import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ReportListFilter } from "./common/ReportListFilter";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
@@ -65,7 +65,10 @@ export function ReportListPage() {
         header: "Status",
         cell: (info) => {
           return (
-            <div className="flex items-center space-x-3 truncate">
+            <div
+              className="flex items-center space-x-3 truncate"
+              title={formatOnboardingStatus(info.getValue())}
+            >
               <span
                 className={cn(
                   "relative grid select-none items-center whitespace-nowrap rounded-lg  px-3 py-1.5 font-sans text-xs font-bold text-white",
@@ -77,7 +80,7 @@ export function ReportListPage() {
                     : "bg-blue-500",
                 )}
               >
-                {convertEnumToStr(info.getValue())}
+                {formatOnboardingStatus(info.getValue())}
               </span>
             </div>
           );

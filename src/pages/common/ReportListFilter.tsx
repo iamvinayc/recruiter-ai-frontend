@@ -1,8 +1,7 @@
-import { OnboardingStatus, axiosApi } from "@/api/api";
+import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
 import { Combobox } from "@/components/Combobox";
 import { Input } from "@/components/common/Input";
 import { ROUTES } from "@/routes/routes";
-import { convertEnumToStr } from "@/utils";
 import { Combobox as HUICombobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
@@ -98,7 +97,7 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
           <Combobox
             label="Status"
             items={Object.entries(OnboardingStatus).map(([key, value]) => ({
-              label: convertEnumToStr(key),
+              label: formatOnboardingStatus(key),
               value: value,
             }))}
             selectedValue={selectedStatus}
@@ -199,7 +198,7 @@ function Example({
   const [isFetching, setIsLoading] = useState(false);
 
   useEffect(() => {
-     setIsLoading(true);
+    setIsLoading(true);
     axiosApi({
       url: "data-sourcing/employer/",
       method: "GET",

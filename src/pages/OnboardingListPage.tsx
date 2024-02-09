@@ -1,5 +1,5 @@
-import { OnboardingStatus, axiosApi } from "@/api/api";
-import { cn, convertEnumToStr, replaceWith } from "@/utils";
+import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
+import { cn, replaceWith } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   createColumnHelper,
@@ -135,7 +135,7 @@ export default function OnboardingListPage() {
         cell: (info) => (
           <div
             className="flex items-center space-x-3 truncate"
-            title={info.getValue()}
+            title={formatOnboardingStatus(info.getValue())}
           >
             <span
               className={cn(
@@ -148,7 +148,7 @@ export default function OnboardingListPage() {
                   : "bg-blue-500",
               )}
             >
-              {convertEnumToStr(info.getValue())}
+              {formatOnboardingStatus(info.getValue())}
             </span>
             {match(info.row.original.status)
               .with(
@@ -509,5 +509,5 @@ const fromState = z
   });
 const STATUSES = Object.entries(OnboardingStatus).map(([key, value]) => ({
   value: value,
-  label: convertEnumToStr(key),
+  label: formatOnboardingStatus(key),
 }));
