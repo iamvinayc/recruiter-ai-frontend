@@ -431,7 +431,8 @@ export function UpdateStatusModal({
           </span>
         ) : null}{" "}
       </Popover>
-      {selectedValue === OnboardingStatus.REJECTED ? (
+      {match(selectedValue)
+        .with(OnboardingStatus.REJECTED, () => (
         <Input
           disabled={updateStatusMutation.isPending}
           containerClassName="mb-4"
@@ -441,9 +442,12 @@ export function UpdateStatusModal({
           error={errors.reason_for_rejection?.message}
           register={register}
         />
-      ) : null}
-      {selectedValue === OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F ||
-      selectedValue === OnboardingStatus.EMPLOYER_INTERVIEWED_F2F ? (
+        ))
+        .with(
+          OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F,
+          OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
+          OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
+          () => (
         <Input
           disabled={updateStatusMutation.isPending}
           containerClassName="mb-4"
@@ -454,9 +458,13 @@ export function UpdateStatusModal({
           error={errors.f2f_interview_on?.message}
           register={register}
         />
-      ) : null}
-      {selectedValue === OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO ||
-      selectedValue === OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO ? (
+          ),
+        )
+        .with(
+          OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO,
+          OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
+          OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
+          () => (
         <Input
           key={selectedValue}
           disabled={updateStatusMutation.isPending}
@@ -466,8 +474,11 @@ export function UpdateStatusModal({
           type="datetime-local"
           error={errors.video_interview_on?.message}
           register={register}
-        />
-      ) : null}
+            />
+          ),
+        )
+        .otherwise(() => null)}
+
       <div className="flex justify-end">
         <Btn
           className="py-2"
