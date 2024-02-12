@@ -330,6 +330,7 @@ export function UpdateStatusModal({
       .with(
         OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO,
         OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
+        OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
         () => ({
           reason_for_rejection: undefined,
           f2f_interview_on: undefined,
@@ -341,6 +342,7 @@ export function UpdateStatusModal({
       .with(
         OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F,
         OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
+        OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
         () => ({
           reason_for_rejection: undefined,
           video_interview_on: undefined,
