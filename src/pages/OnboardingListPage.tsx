@@ -321,21 +321,40 @@ export function UpdateStatusModal({
       (status) => status.value?.toLowerCase() === selectedValue?.toLowerCase(),
     );
 
+    const obj = match(selectedValue)
+      .with(OnboardingStatus.REJECTED, () => ({
+        reason_for_rejection: fromValue.reason_for_rejection,
+        video_interview_on: undefined,
+        f2f_interview_on: undefined,
+      }))
+      .with(
+        OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO,
+        OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
+        () => ({
+          reason_for_rejection: undefined,
+          f2f_interview_on: undefined,
+          video_interview_on: dayjs(fromValue.video_interview_on).format(
+            "DD-MM-YYYY HH:mm:ss",
+          ),
+        }),
+      )
+      .with(
+        OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F,
+        OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
+        () => ({
+          reason_for_rejection: undefined,
+          video_interview_on: undefined,
+          f2f_interview_on: dayjs(fromValue.f2f_interview_on).format(
+            "DD-MM-YYYY HH:mm:ss",
+          ),
+        }),
+      )
+      .otherwise(() => ({}));
+
     updateStatusMutation
       .mutateAsync({
         status: found?.value as OnboardingStatus,
-        reason_for_rejection:
-          selectedValue === OnboardingStatus.REJECTED
-            ? fromValue.reason_for_rejection
-            : undefined,
-        video_interview_on:
-          selectedValue === OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO
-            ? dayjs(fromValue.video_interview_on).format("DD-MM-YYYY HH:mm:ss")
-            : undefined,
-        f2f_interview_on:
-          selectedValue === OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F
-            ? dayjs(fromValue.f2f_interview_on).format("DD-MM-YYYY HH:mm:ss")
-            : undefined,
+        ...obj,
       })
       .then((e) => {
         if (e.isSuccess) {
@@ -433,31 +452,31 @@ export function UpdateStatusModal({
       </Popover>
       {match(selectedValue)
         .with(OnboardingStatus.REJECTED, () => (
-        <Input
-          disabled={updateStatusMutation.isPending}
-          containerClassName="mb-4"
-          name="reason_for_rejection"
-          label="Reason for rejection"
-          placeholder="Reason for rejection"
-          error={errors.reason_for_rejection?.message}
-          register={register}
-        />
+          <Input
+            disabled={updateStatusMutation.isPending}
+            containerClassName="mb-4"
+            name="reason_for_rejection"
+            label="Reason for rejection"
+            placeholder="Reason for rejection"
+            error={errors.reason_for_rejection?.message}
+            register={register}
+          />
         ))
         .with(
           OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F,
           OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
           OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
           () => (
-        <Input
-          disabled={updateStatusMutation.isPending}
-          containerClassName="mb-4"
-          name="f2f_interview_on"
-          label="F2F interview on"
-          type="datetime-local"
-          key={selectedValue}
-          error={errors.f2f_interview_on?.message}
-          register={register}
-        />
+            <Input
+              disabled={updateStatusMutation.isPending}
+              containerClassName="mb-4"
+              name="f2f_interview_on"
+              label="F2F interview on"
+              type="datetime-local"
+              key={selectedValue}
+              error={errors.f2f_interview_on?.message}
+              register={register}
+            />
           ),
         )
         .with(
@@ -465,15 +484,15 @@ export function UpdateStatusModal({
           OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
           OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
           () => (
-        <Input
-          key={selectedValue}
-          disabled={updateStatusMutation.isPending}
-          containerClassName="mb-4"
-          name="video_interview_on"
-          label="Video interview on"
-          type="datetime-local"
-          error={errors.video_interview_on?.message}
-          register={register}
+            <Input
+              key={selectedValue}
+              disabled={updateStatusMutation.isPending}
+              containerClassName="mb-4"
+              name="video_interview_on"
+              label="Video interview on"
+              type="datetime-local"
+              error={errors.video_interview_on?.message}
+              register={register}
             />
           ),
         )
