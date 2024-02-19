@@ -42,9 +42,16 @@ export function AdminListJobPage() {
     null,
   );
   const [
-    { skill: department, location, scrape_from, scrape_to, sort_by },
+    { skill: department, location, scrape_from, scrape_to, sort_by, common },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
+  
+  const handleFilterCommonJobs = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypeSearch(prevParams => ({
+      ...prevParams,
+      common: event.target.checked ? 'true' : '',
+    }));
+  };
 
   //#region query/mutation
 
@@ -56,6 +63,7 @@ export function AdminListJobPage() {
       scrape_from,
       scrape_to,
       sort_by,
+      common,
     ],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
@@ -67,6 +75,7 @@ export function AdminListJobPage() {
           from_date: scrape_from || undefined,
           to_date: scrape_to || undefined,
           sort: sort_by || undefined,
+          common: common || undefined,
         },
       }).then((e) => e.data);
     },
@@ -236,7 +245,7 @@ export function AdminListJobPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Jobs
           </h2>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
             <Combobox
               className="w-[200px]"
               items={Object.entries(SortBy).map(([key, value]) => ({
@@ -257,6 +266,18 @@ export function AdminListJobPage() {
                 }
               }}
             />
+            
+            <label htmlFor="common-filter" className="inline-flex items-center text-lg font-semibold">
+              <input
+                type="checkbox"
+                id="common-filter"
+                checked={common === 'true'}
+                onChange={handleFilterCommonJobs}
+                className="form-checkbox h-6 w-6 text-primary border-primary rounded focus:ring-primary"
+              />
+              <span className="ml-2">Common Jobs</span>
+            </label>
+
             <button
               type="button"
               onClick={() => setShowAddJobPopup(true)}
