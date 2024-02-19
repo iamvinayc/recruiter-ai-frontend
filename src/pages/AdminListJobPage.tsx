@@ -42,9 +42,19 @@ export function AdminListJobPage() {
     null,
   );
   const [
-    { skill: department, location, scrape_from, scrape_to, sort_by },
+    { skill: department, location, scrape_from, scrape_to, sort_by, common },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
+
+  const handleFilterCommonJobs = () => {
+    setTypeSearch(prevParams => {
+      const updatedCommon = prevParams.common === 'true' ? '' : 'true';
+      return {
+        ...prevParams,
+        common: updatedCommon,
+      };
+    });
+  };
 
   //#region query/mutation
 
@@ -56,6 +66,7 @@ export function AdminListJobPage() {
       scrape_from,
       scrape_to,
       sort_by,
+      common,
     ],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
@@ -67,6 +78,7 @@ export function AdminListJobPage() {
           from_date: scrape_from || undefined,
           to_date: scrape_to || undefined,
           sort: sort_by || undefined,
+          common: common || undefined,
         },
       }).then((e) => e.data);
     },
@@ -257,6 +269,15 @@ export function AdminListJobPage() {
                 }
               }}
             />
+
+            <button 
+              type="button"
+              onClick={handleFilterCommonJobs}
+              className={`flex items-center gap-2 rounded px-4.5 py-2 font-medium text-white hover:bg-opacity-80 ${common === 'true' ? 'bg-green-500' : 'bg-primary'}`}
+            >
+              Common Jobs
+            </button>
+
             <button
               type="button"
               onClick={() => setShowAddJobPopup(true)}

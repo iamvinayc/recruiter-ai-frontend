@@ -29,6 +29,7 @@ export const ROUTES = {
           scrape_from: string().default(""),
           scrape_to: string().default(""),
           sort_by: string().default(SortBy.Latest),
+          common: string().default(""),
         },
       }),
       LIST_CANDIDATE: route("list-candidate"),
