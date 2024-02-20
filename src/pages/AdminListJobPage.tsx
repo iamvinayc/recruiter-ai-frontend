@@ -49,7 +49,7 @@ export function AdminListJobPage() {
   const handleFilterCommonJobs = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypeSearch(prevParams => ({
       ...prevParams,
-      common: event.target.checked ? 'true' : '',
+      common: event.target.checked ? 'True' : '',
     }));
   };
 
