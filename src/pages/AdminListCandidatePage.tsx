@@ -286,7 +286,7 @@ export function AdminListCandidatePage() {
               <input
                 type="checkbox"
                 id="common-filter"
-                checked={common === 'true'}
+                checked={common === 'True'}
                 onChange={handleFilterCommonCandidates}
                 className="form-checkbox h-6 w-6 text-primary border-primary rounded focus:ring-primary"
               />
