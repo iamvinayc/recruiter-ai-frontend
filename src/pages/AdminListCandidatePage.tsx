@@ -38,13 +38,20 @@ const columnHelper = createColumnHelper<CandidateListItem>();
 
 export function AdminListCandidatePage() {
   const [
-    { skill: department, location, scrape_from, sort_by, scrape_to },
+    { skill: department, location, scrape_from, sort_by, scrape_to, common },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
   const [showAddCandidatePopup, _setShowAddCandidatePopup] = useState(false);
+
+  const handleFilterCommonCandidates = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTypeSearch(prevParams => ({
+      ...prevParams,
+      common: event.target.checked ? 'True' : '',
+    }));
+  };
 
   //#region query/mutation
 
@@ -55,6 +62,7 @@ export function AdminListCandidatePage() {
       location,
       scrape_from,
       sort_by,
+      common
     ],
     queryFn: async ({ pageParam }) =>
       axiosApi({
@@ -68,6 +76,7 @@ export function AdminListCandidatePage() {
           from_date: scrape_from || undefined,
           to_date: scrape_to || undefined,
           sort: sort_by || undefined,
+          common: common || undefined,
         },
       }).then((e) => e.data),
     getNextPageParam(e) {
@@ -272,6 +281,18 @@ export function AdminListCandidatePage() {
                 }
               }}
             />
+
+            <label htmlFor="common-filter" className="inline-flex items-center text-lg font-semibold">
+              <input
+                type="checkbox"
+                id="common-filter"
+                checked={common === 'True'}
+                onChange={handleFilterCommonCandidates}
+                className="form-checkbox h-6 w-6 text-primary border-primary rounded focus:ring-primary"
+              />
+              <span className="ml-2">Common Candidates</span>
+            </label>
+
             <button
               type="button"
               onClick={() => setShowAddCandidatePopup(true)}

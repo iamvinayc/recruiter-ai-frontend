@@ -237,6 +237,7 @@ interface AllApiEndpoints {
         from_date?: string;
         to_date?: string;
         sort?: string;
+        common?: string;
       };
       data?: undefined;
     };

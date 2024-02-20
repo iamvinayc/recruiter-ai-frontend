@@ -49,7 +49,7 @@ export function AdminListJobPage() {
   const handleFilterCommonJobs = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTypeSearch(prevParams => ({
       ...prevParams,
-      common: event.target.checked ? 'true' : '',
+      common: event.target.checked ? 'True' : '',
     }));
   };
 
@@ -271,7 +271,7 @@ export function AdminListJobPage() {
               <input
                 type="checkbox"
                 id="common-filter"
-                checked={common === 'true'}
+                checked={common === 'True'}
                 onChange={handleFilterCommonJobs}
                 className="form-checkbox h-6 w-6 text-primary border-primary rounded focus:ring-primary"
               />
