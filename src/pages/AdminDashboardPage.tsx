@@ -16,6 +16,8 @@ import { useMemo } from "react";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
 import { ChipGroup } from "@/components/common/ChipGroup";
+import { EventCalendar, EventItem } from "@/components/EventCalendar";
+import { EventTodo } from "@/components/EventTodo";
 
 export function AdminDashboardPage() {
   const { isRecruiter } = useLogin();
@@ -28,6 +30,32 @@ export function AdminDashboardPage() {
       }).then((e) => e.data.data);
     },
   });
+  const {
+    data: listRecruiterActions = emptyArray,
+    isLoading,
+    isRefetching,
+  } = useQuery({
+    queryKey: [],
+    queryFn: async () => {
+      return axiosApi({
+        url: "user/recruiter/actions/",
+        method: "GET",
+      }).then((e) => e.data.data);
+    },
+    select(data) {
+      return data.map<EventItem>((e) => ({
+        candidate_name: e.candidate.name,
+        interview_date: [
+          e.action?.interview?.date,
+          e.action?.interview?.time,
+        ].join(" "),
+        job_title: e.job.title,
+        pending_action: e.type,
+        id: e.action.interview.onboarding_id,
+        title: e.type,
+      }));
+    },
+  });
 
   return (
     <main>
@@ -38,9 +66,20 @@ export function AdminDashboardPage() {
           </h2>
           <p className="font-medium">Latest statistics</p>
         </div>
-
+        {isRecruiter && (
+          <div className="mb-4 grid gap-4 md:grid-cols-2">
+            <EventCalendar
+              events_data={listRecruiterActions}
+              isLoading={isLoading || isRefetching}
+            />
+            <EventTodo
+              events_data={listRecruiterActions}
+              isLoading={isLoading || isRefetching}
+            />
+          </div>
+        )}
         <div className="">
-          {isRecruiter ? <ListRecruiterActions /> : null}
+          {/* {isRecruiter ? <ListRecruiterActions /> : null} */}
           <div
             className={cn(
               "grid grid-cols-1 gap-4 ",
@@ -172,7 +211,7 @@ const Card = ({
 };
 const columnHelper = createColumnHelper<PendingItem>();
 
-const ListRecruiterActions = () => {
+export const ListRecruiterActions = () => {
   const {
     data: listRecruiterActions = emptyArray,
     isLoading,
@@ -194,6 +233,8 @@ const ListRecruiterActions = () => {
         ].join(" "),
         job_title: e.job.title,
         pending_action: e.type,
+        id: e.action.interview.onboarding_id,
+        title: e.type,
       }));
     },
   });
@@ -270,4 +311,6 @@ interface PendingItem {
   job_title: string;
   candidate_name: string;
   interview_date: string;
+  id: number;
+  title: string;
 }

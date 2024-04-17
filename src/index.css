@@ -83,3 +83,13 @@
 [data-headlessui-state="open"] {
   z-index: 10000;
 }
+
+.Popover {
+  width: max-content;
+  background-color: white;
+  border: 1px solid #ddd;
+  font-size: 90%;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: left;
+}
