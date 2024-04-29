@@ -49,6 +49,7 @@ export const ROUTES = {
           employer_name: string().default(""),
         },
       }),
+      LIST_NOTIFICATION: route("list-notification"),
     },
   ),
   //
@@ -78,6 +79,7 @@ export const ROUTES = {
           employer_name: string().default(""),
         },
       }),
+      LIST_NOTIFICATION: route("list-notification"),
     },
   ),
   QUESTIONNAIRE: route("questionnaire", {

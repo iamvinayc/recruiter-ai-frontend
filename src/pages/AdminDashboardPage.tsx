@@ -3,21 +3,21 @@ import UserCircleIcon from "@heroicons/react/24/outline/UserCircleIcon";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
+import { EventCalendar, EventItem } from "@/components/EventCalendar";
+import { EventTodo } from "@/components/EventTodo";
+import { ChipGroup } from "@/components/common/ChipGroup";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
-import { axiosApi } from "../api/api";
-import { cn, emptyArray } from "../utils";
 import {
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { axiosApi } from "../api/api";
+import { cn, emptyArray } from "../utils";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
-import { ChipGroup } from "@/components/common/ChipGroup";
-import { EventCalendar, EventItem } from "@/components/EventCalendar";
-import { EventTodo } from "@/components/EventTodo";
 
 export function AdminDashboardPage() {
   const { isRecruiter } = useLogin();
@@ -66,18 +66,15 @@ export function AdminDashboardPage() {
           </h2>
           <p className="font-medium">Latest statistics</p>
         </div>
-        {isRecruiter && (
-          <div className="mb-4 grid gap-4 md:grid-cols-2">
-            <EventCalendar
-              events_data={listRecruiterActions}
-              isLoading={isLoading || isRefetching}
-            />
-            <EventTodo
-              events_data={listRecruiterActions}
-              isLoading={isLoading || isRefetching}
-            />
-          </div>
-        )}
+
+        <div className="mb-4 grid gap-4 md:grid-cols-2">
+          <EventCalendar />
+          <EventTodo
+            events_data={listRecruiterActions}
+            isLoading={isLoading || isRefetching}
+          />
+        </div>
+
         <div className="">
           {/* {isRecruiter ? <ListRecruiterActions /> : null} */}
           <div

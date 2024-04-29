@@ -1,25 +1,28 @@
 import React from "react";
 
-import { clsx } from "clsx";
+import { axiosApi } from "@/api/api";
+import { cn } from "@/utils";
 import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  useDismiss,
-  useRole,
-  useClick,
-  useInteractions,
-  FloatingFocusManager,
-  useId,
-  arrow,
   FloatingArrow,
+  FloatingFocusManager,
+  arrow,
+  autoUpdate,
+  flip,
+  offset,
+  shift,
+  useClick,
+  useDismiss,
+  useFloating,
+  useId,
+  useInteractions,
+  useRole,
 } from "@floating-ui/react";
+import { useQuery } from "@tanstack/react-query";
+import { clsx } from "clsx";
 import dayjs from "dayjs";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { match } from "ts-pattern";
 import { SpinnerIcon } from "./common/SvgIcons";
-import { cn } from "@/utils";
 
 export interface EventItem {
   id: number;
@@ -29,18 +32,56 @@ export interface EventItem {
   interview_date: string;
   title: string;
 }
-
-export function EventCalendar({
-  events_data,
-  isLoading,
-}: {
-  events_data: EventItem[];
-  isLoading: boolean;
-}) {
+const date_format = "DD-MM-YYYY";
+export function EventCalendar() {
   const [isOpen, setIsOpen] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [calendarType, setCalendarType] = useState<"week" | "month">("month");
+  const [calendarType, setCalendarType] = useState<"day" | "week" | "month">(
+    "month",
+  );
+  const eventsDataQuery = useQuery({
+    queryKey: ["events_data", calendarType, selectedDate.format(date_format)],
+    queryFn: async () => {
+      const { from_date, to_date } = match(calendarType)
+        .with("day", () => ({
+          from_date: selectedDate.startOf("day").format(date_format),
+          to_date: selectedDate.endOf("day").format(date_format),
+        }))
+        .with("week", () => ({
+          from_date: selectedDate.startOf("week").format(date_format),
+          to_date: selectedDate.endOf("week").format(date_format),
+        }))
+        .with("month", () => ({
+          from_date: selectedDate.startOf("month").format(date_format),
+          to_date: selectedDate.endOf("month").format(date_format),
+        }))
+        .exhaustive();
 
+      return axiosApi({
+        url: "dashboard/calender_events/",
+        method: "GET",
+        params: {
+          from_date,
+          to_date,
+        },
+      }).then((e) => e.data.data);
+    },
+    select(data) {
+      return data.map<EventItem>((e) => ({
+        candidate_name: e.candidate.name,
+        interview_date: [
+          e.action?.interview?.date,
+          e.action?.interview?.time,
+        ].join(" "),
+        job_title: e.job.title,
+        pending_action: e.type,
+        id: e.action.interview.onboarding_id,
+        title: e.type,
+      }));
+    },
+  });
+  const events_data = eventsDataQuery.data ?? [];
+  const isLoading = eventsDataQuery.isPending;
   //#region useFloating
   const arrowRef = useRef(null);
 
@@ -133,73 +174,121 @@ export function EventCalendar({
         calendarType={calendarType}
         setCalendarType={setCalendarType}
       />
-      {calendarType === "month" ? (
-        <div className="grid grid-cols-7  divide-x divide-y border-b ">
-          {monthDays.map((monthDay, i) => (
-            <div
-              className={clsx(
-                "min-h-[7em] space-y-1 p-1 text-left text-sm",
-                !selectedDate.isSame(monthDay, "month") &&
-                  "bg-slate-100 text-slate-500",
-              )}
-              key={i}
-            >
-              {monthDay.format("DD")}
-              {events_data
-                .filter((event) =>
-                  dayjs(`${event.interview_date}`).isSame(monthDay, "day"),
-                )
-                .map((event) => (
-                  <RenderEvent date={monthDay} event={event} key={event.id} />
-                ))}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-8  divide-x border-b ">
-          <div className="space-y-1 divide-y">
-            {hours.map((h) => (
+      {match(calendarType)
+        .with("month", () => (
+          <div className="grid grid-cols-7  divide-x divide-y border-b ">
+            {monthDays.map((monthDay, i) => (
               <div
-                className="flex h-[4em] items-center justify-center p-1"
-                key={h}
+                className={clsx(
+                  "min-h-[7em] space-y-1 p-1 text-left text-sm",
+                  !selectedDate.isSame(monthDay, "month") &&
+                    "bg-slate-100 text-slate-500",
+                )}
+                key={i}
               >
-                {h}:00
+                {monthDay.format("DD")}
+                {events_data
+                  .filter((event) =>
+                    dayjs(`${event.interview_date}`).isSame(monthDay, "day"),
+                  )
+                  .map((event) => (
+                    <RenderEvent date={monthDay} event={event} key={event.id} />
+                  ))}
               </div>
             ))}
           </div>
-          {weekDays.map((weekDay, i) => (
-            <div className="space-y-1 divide-y" key={i}>
-              {hours
-                .map((h) =>
-                  weekDay.set("hour", h).set("minute", 0).set("second", 0),
-                )
-                .map((hourWeekDay, i) => (
-                  <div className="h-[4em] space-y-1 p-1" key={i}>
-                    {events_data
-                      .filter(
-                        (event) =>
-                          dayjs(`${event.interview_date}`).isSame(
-                            hourWeekDay,
-                            "hour",
-                          ) &&
-                          dayjs(`${event.interview_date}`).isSame(
-                            hourWeekDay,
-                            "day",
-                          ),
-                      )
-                      .map((event) => (
-                        <RenderEvent
-                          date={hourWeekDay}
-                          event={event}
-                          key={event.id}
-                        />
-                      ))}
-                  </div>
-                ))}
+        ))
+        .with("week", () => (
+          <div className="grid grid-cols-8  divide-x border-b ">
+            <div className="space-y-1 divide-y">
+              {hours.map((h) => (
+                <div
+                  className="flex h-[4em] items-center justify-center p-1"
+                  key={h}
+                >
+                  {h}:00
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+            {weekDays.map((weekDay, i) => (
+              <div className="space-y-1 divide-y" key={i}>
+                {hours
+                  .map((h) =>
+                    weekDay.set("hour", h).set("minute", 0).set("second", 0),
+                  )
+                  .map((hourWeekDay, i) => (
+                    <div className="h-[4em] space-y-1 p-1" key={i}>
+                      {events_data
+                        .filter(
+                          (event) =>
+                            dayjs(`${event.interview_date}`).isSame(
+                              hourWeekDay,
+                              "hour",
+                            ) &&
+                            dayjs(`${event.interview_date}`).isSame(
+                              hourWeekDay,
+                              "day",
+                            ),
+                        )
+                        .map((event) => (
+                          <RenderEvent
+                            date={hourWeekDay}
+                            event={event}
+                            key={event.id}
+                          />
+                        ))}
+                    </div>
+                  ))}
+              </div>
+            ))}
+          </div>
+        ))
+        .with("day", () => (
+          <div className="grid grid-cols-8  divide-x border-b ">
+            <div className="space-y-1 divide-y">
+              {hours.map((h) => (
+                <div
+                  className="flex h-[4em] items-center justify-center p-1"
+                  key={h}
+                >
+                  {h}:00
+                </div>
+              ))}
+            </div>
+            {[selectedDate].map((weekDay, i) => (
+              <div className="col-span-7 space-y-1 divide-y" key={i}>
+                {hours
+                  .map((h) =>
+                    weekDay.set("hour", h).set("minute", 0).set("second", 0),
+                  )
+                  .map((hourWeekDay, i) => (
+                    <div className="h-[4em] space-y-1 p-1" key={i}>
+                      {events_data
+                        .filter(
+                          (event) =>
+                            dayjs(`${event.interview_date}`).isSame(
+                              hourWeekDay,
+                              "hour",
+                            ) &&
+                            dayjs(`${event.interview_date}`).isSame(
+                              hourWeekDay,
+                              "day",
+                            ),
+                        )
+                        .map((event) => (
+                          <RenderEvent
+                            date={hourWeekDay}
+                            event={event}
+                            key={event.id}
+                          />
+                        ))}
+                    </div>
+                  ))}
+              </div>
+            ))}
+          </div>
+        ))
+        .exhaustive()}
       {isOpen && (
         <FloatingFocusManager context={context} modal={false}>
           <div
@@ -250,8 +339,10 @@ function CalendarHeader({
   selectedDate: dayjs.Dayjs;
   setSelectedDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>;
   header: JSX.Element;
-  calendarType: "week" | "month";
-  setCalendarType: React.Dispatch<React.SetStateAction<"week" | "month">>;
+  calendarType: "day" | "week" | "month";
+  setCalendarType: React.Dispatch<
+    React.SetStateAction<"day" | "week" | "month">
+  >;
 }) {
   return (
     <div className="sticky top-0 z-10 w-full bg-white">
@@ -267,11 +358,17 @@ function CalendarHeader({
               stroke="currentColor"
               className="h-4 w-4"
               onClick={() => {
-                if (calendarType === "month") {
-                  setSelectedDate((prev) => prev.subtract(1, "month"));
-                } else if (calendarType === "week") {
-                  setSelectedDate((prev) => prev.subtract(1, "week"));
-                }
+                match(calendarType)
+                  .with("day", () =>
+                    setSelectedDate((prev) => prev.subtract(1, "day")),
+                  )
+                  .with("week", () =>
+                    setSelectedDate((prev) => prev.subtract(1, "week")),
+                  )
+                  .with("month", () =>
+                    setSelectedDate((prev) => prev.subtract(1, "month")),
+                  )
+                  .exhaustive();
               }}
             >
               <path
@@ -290,11 +387,17 @@ function CalendarHeader({
               stroke="currentColor"
               className="h-4 w-4"
               onClick={() => {
-                if (calendarType === "month") {
-                  setSelectedDate((prev) => prev.add(1, "month"));
-                } else if (calendarType === "week") {
-                  setSelectedDate((prev) => prev.add(1, "week"));
-                }
+                match(calendarType)
+                  .with("day", () =>
+                    setSelectedDate((prev) => prev.add(1, "day")),
+                  )
+                  .with("week", () =>
+                    setSelectedDate((prev) => prev.add(1, "week")),
+                  )
+                  .with("month", () =>
+                    setSelectedDate((prev) => prev.add(1, "month")),
+                  )
+                  .exhaustive();
               }}
             >
               <path
@@ -307,7 +410,7 @@ function CalendarHeader({
         </div>
         <div>{selectedDate.format("MMMM YYYY")}</div>
         <div className="space-x-2 rounded-lg bg-blue-300 px-1  py-1">
-          {(["week", "month"] as const).map((e, i) => (
+          {(["day", "week", "month"] as const).map((e, i) => (
             <button
               key={i}
               className={clsx(
@@ -331,14 +434,30 @@ const WeekHeader = ({
   calendarType,
 }: {
   selectedDate: dayjs.Dayjs;
-  calendarType: "week" | "month";
+  calendarType: "day" | "week" | "month";
 }) => {
   const weekDays = useMemo(
     () => getCalendarByWeek(selectedDate),
     [selectedDate],
   );
-  if (calendarType === "month")
-    return (
+  return match(calendarType)
+    .with("day", () => (
+      <div className="flex items-center justify-center border-y border-slate-300 py-4">
+        {selectedDate.format("DD MMM")}
+      </div>
+    ))
+    .with("week", () => (
+      <div className="grid grid-cols-8  divide-x border-y">
+        <div />
+        {weekDays.map((e, i) => (
+          <div className="p-2 text-center" key={i}>
+            <div>{e.format("ddd")}</div>
+            <div>{e.format("DD")}</div>
+          </div>
+        ))}
+      </div>
+    ))
+    .with("month", () => (
       <div className="grid grid-cols-7  divide-x border-y">
         {weekDays.map((e, i) => (
           <div className="p-2 text-center" key={i}>
@@ -346,18 +465,8 @@ const WeekHeader = ({
           </div>
         ))}
       </div>
-    );
-  return (
-    <div className="grid grid-cols-8  divide-x border-y">
-      <div />
-      {weekDays.map((e, i) => (
-        <div className="p-2 text-center" key={i}>
-          <div>{e.format("ddd")}</div>
-          <div>{e.format("DD")}</div>
-        </div>
-      ))}
-    </div>
-  );
+    ))
+    .exhaustive();
 };
 
 function getCalendarByDate(date: dayjs.Dayjs) {

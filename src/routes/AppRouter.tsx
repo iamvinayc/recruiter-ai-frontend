@@ -2,11 +2,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { EmployerCandidateSubmitPage } from "@/pages/EmployerCandidateSubmitPage";
 import EmployerListPage from "@/pages/EmployerListPage";
 import { FeedbackPage } from "@/pages/FeedbackPage";
-import { EmployerCandidateSubmitPage } from "@/pages/EmployerCandidateSubmitPage";
-import { QuestionnairePage } from "@/pages/QuestionnairePage";
 import { ListScoringPage } from "@/pages/ListScoringPage";
+import { NotificationListPage } from "@/pages/NotificationListPage";
+import OnboardingListPage from "@/pages/OnboardingListPage";
+import { QuestionnairePage } from "@/pages/QuestionnairePage";
+import { ReportListPage } from "@/pages/ReportListPage";
+import EmployerAgreementPage from "@/pages/employer/EmployerAgreementPage";
 import { ProtectPage } from "../components/common/ProtectPage";
 import { AdminDashboardLayout } from "../layouts/AdminDashboardLayout";
 import { RecruiterDashboardLayout } from "../layouts/RecruiterDashboardLayout";
@@ -20,9 +24,6 @@ import { ChangePasswordPage } from "../pages/ChangePasswordPage";
 import { ForgotPasswordPage } from "../pages/ForgotPasswordPage";
 import { LoginPage } from "../pages/LoginPage";
 import { ROUTES } from "./routes";
-import OnboardingListPage from "@/pages/OnboardingListPage";
-import { ReportListPage } from "@/pages/ReportListPage";
-import EmployerAgreementPage from "@/pages/employer/EmployerAgreementPage";
 
 export function AppRouter() {
   return (
@@ -77,6 +78,10 @@ export function AppRouter() {
               path={ROUTES.ADMIN.LIST_EMPLOYER.path}
               element={<EmployerListPage />}
             />
+            <Route
+              path={ROUTES.ADMIN.LIST_NOTIFICATION.path}
+              element={<NotificationListPage />}
+            />
           </Route>
 
           <Route
@@ -118,6 +123,10 @@ export function AppRouter() {
             <Route
               path={ROUTES.RECRUITER.LIST_EMPLOYER.path}
               element={<EmployerListPage />}
+            />
+            <Route
+              path={ROUTES.RECRUITER.LIST_NOTIFICATION.path}
+              element={<NotificationListPage />}
             />
           </Route>
           <Route

@@ -424,6 +424,8 @@ interface AllApiEndpoints {
         reason_for_rejection?: string;
         video_interview_on?: string;
         f2f_interview_on?: string;
+        followup_reason?: string;
+        followup_on?: string;
       };
     };
     response: SuccessResponse;
@@ -544,6 +546,41 @@ interface AllApiEndpoints {
     };
     response: {
       data: object;
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
+  "notification/": {
+    request: {
+      method: "GET";
+      params?: {
+        page?: number;
+        page_size?: number;
+      };
+      data?: undefined;
+    };
+    response: NotificationListResponse;
+  };
+  "dashboard/calender_events/": {
+    request: {
+      method: "GET";
+      params: {
+        from_date: string;
+        to_date: string;
+      };
+      data?: undefined;
+    };
+    response: CalendarEventsResponse;
+  };
+  "notification/:id/": {
+    request: {
+      method: "PUT";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: {
+      data: unknown;
       message: string;
       isSuccess: boolean;
       status: number;
@@ -764,6 +801,58 @@ interface Department {
 }
 //#endregion
 //#region
+interface CalendarEventsResponse {
+  data: CalendarEventsData[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+}
+
+interface CalendarEventsData {
+  candidate: {
+    id: number;
+    name: string;
+  };
+  job: {
+    id: number;
+    title: string;
+  };
+  employer: {
+    id: number;
+    name: string;
+  };
+  action: {
+    interview: {
+      onboarding_id: number;
+      date: string;
+      time: string;
+    };
+  };
+  type: string;
+}
+
+interface NotificationListResponse {
+  data: NotificationListData[];
+  status: number;
+  is_success: boolean;
+  message: string;
+  next: string;
+  previous: null;
+  count: number;
+}
+
+interface NotificationListData {
+  id: number;
+  recruiter_name: null;
+  to_name: string;
+  to_email: string;
+  subject: string;
+  content: string;
+  is_followup: boolean;
+  is_admin_read: boolean;
+  is_user_read: boolean;
+  created_at: string;
+}
 interface ScoringListResponse {
   data: ScoringListResponseData[];
   status: number;

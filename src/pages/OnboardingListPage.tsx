@@ -1,22 +1,7 @@
 import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
-import { cn, replaceWith } from "@/utils";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { useEffect, useMemo, useState } from "react";
-import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
-import { Table } from "./common/Table";
-import { TableLoader } from "./common/TableLoader";
-import { Check, ChevronsUpDown, Edit2Icon } from "lucide-react";
 import { PopupDialog } from "@/components/PopupDialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Button as Btn } from "@/components/common/Button";
+import { Input, TextArea } from "@/components/common/Input";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -25,15 +10,30 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
-import { Button as Btn } from "@/components/common/Button";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/common/Input";
-import toast from "react-hot-toast";
-import dayjs from "dayjs";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useLogin } from "@/hooks/useLogin";
-import { match, P } from "ts-pattern";
+import { cn, replaceWith } from "@/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import dayjs from "dayjs";
+import { Check, ChevronsUpDown, Edit2Icon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { P, match } from "ts-pattern";
+import { z } from "zod";
+import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
+import { Table } from "./common/Table";
+import { TableLoader } from "./common/TableLoader";
 interface OnboardingList {
   id: number;
   job_name: string;
@@ -278,6 +278,7 @@ export function UpdateStatusModal({
 }) {
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
+  const [followUpChecked, setFollowUpChecked] = useState(false);
   const {
     register,
     formState: { errors },
@@ -287,6 +288,13 @@ export function UpdateStatusModal({
     setValue,
   } = useForm<z.TypeOf<typeof fromState>>({
     resolver: zodResolver(fromState),
+  });
+  const followUpForm = useForm<z.TypeOf<typeof followUpState>>({
+    defaultValues: {
+      followUpOn: "",
+      followUpReason: "",
+    },
+    resolver: zodResolver(followUpState),
   });
   useEffect(() => {
     if (_selectedValue) {
@@ -305,6 +313,8 @@ export function UpdateStatusModal({
       reason_for_rejection?: string;
       video_interview_on?: string;
       f2f_interview_on?: string;
+      followup_reason?: string;
+      followup_on?: string;
     }) => {
       return axiosApi({
         url: "onboarding/status/{id}/".replace(
@@ -316,6 +326,7 @@ export function UpdateStatusModal({
       }).then((e) => e.data);
     },
   });
+
   const onSubmit = (fromValue: z.TypeOf<typeof fromState>) => {
     const found = STATUSES.find(
       (status) => status.value?.toLowerCase() === selectedValue?.toLowerCase(),
@@ -369,14 +380,41 @@ export function UpdateStatusModal({
       .catch(() => toast.error("Some error ocurred"))
       .finally(refresh);
   };
+  const onFollowUpSubmit = (fromValue: z.TypeOf<typeof followUpState>) => {
+    console.log(fromValue);
+    updateStatusMutation
+      .mutateAsync({
+        status: undefined as unknown as OnboardingStatus,
+        followup_on: dayjs(fromValue.followUpOn).format("DD-MM-YYYY HH:mm:ss"),
+        followup_reason: fromValue.followUpReason,
+      })
+      .then((e) => {
+        if (e.isSuccess) {
+          toast.success(e.message);
+          onDismiss();
+        } else {
+          toast.error(e.message);
+        }
+      })
+      .catch(() => toast.error("Some error ocurred"))
+      .finally(refresh);
+  };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+    <form
+      onSubmit={
+        followUpChecked
+          ? followUpForm.handleSubmit(onFollowUpSubmit)
+          : handleSubmit(onSubmit)
+      }
+      className="space-y-3"
+    >
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
+            disabled={followUpChecked}
             className="w-full justify-between"
           >
             {selectedValue
@@ -499,7 +537,35 @@ export function UpdateStatusModal({
           ),
         )
         .otherwise(() => null)}
+      <div className="mt-2">
+        <label className="">
+          <input
+            type="checkbox"
+            checked={followUpChecked}
+            onChange={(e) => setFollowUpChecked(e.target.checked)}
+          />
+          <span className="ml-2 ">Follow Up</span>
+        </label>
+      </div>
+      {followUpChecked && (
+        <>
+          <Input
+            min={dayjs().format("YYYY-MM-DDTHH:mm")}
+            containerClassName="mb-4"
+            register={followUpForm.register}
+            name="followUpOn"
+            label="Followup On"
+            type="datetime-local"
+          />
 
+          <TextArea
+            containerClassName="mb-4"
+            register={followUpForm.register}
+            name="followUpReason"
+            label="Followup Reason"
+          />
+        </>
+      )}
       <div className="flex justify-end">
         <Btn
           className="py-2"
@@ -563,3 +629,8 @@ const STATUSES = Object.entries(OnboardingStatus).map(([key, value]) => ({
   value: value,
   label: formatOnboardingStatus(key),
 }));
+
+const followUpState = z.object({
+  followUpOn: z.string().min(1, "Required"),
+  followUpReason: z.string().min(1, "Required"),
+});

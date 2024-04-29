@@ -8,9 +8,16 @@ import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon";
 import { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
 
+import { axiosApi } from "@/api/api";
+import { ROUTES } from "@/routes/routes";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { BellIcon } from "lucide-react";
 import { useLogin } from "../hooks/useLogin";
 import { cn } from "../utils";
 
+dayjs.extend(relativeTime);
 const MenuItems = [
   {
     Icon: <UserCircleIcon className="h-6 w-6" />,
@@ -47,8 +54,33 @@ export const Header = ({
 }: {
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { user, logout } = useLogin();
+  const { user, logout, isRecruiter } = useLogin();
+  const notificationListQuery = useQuery({
+    queryKey: ["notificationList"],
+    queryFn: async () => {
+      return axiosApi({
+        url: "notification/",
+        method: "GET",
+        params: {
+          page_size: 5,
+        },
+      }).then((e) => e.data.data);
+    },
+  });
 
+  const readNotificationsMutation = useMutation({
+    mutationKey: ["readNotifications"],
+    mutationFn: async ({ id }: { id: number }) => {
+      return axiosApi({
+        url: "notification/:id/".replace(":id", "" + id) as "notification/:id/",
+        method: "PUT",
+      }).then((e) => e.data);
+    },
+  });
+
+  const notificationList = (notificationListQuery.data || []).filter(
+    (_, i) => i <= 5,
+  );
   return (
     <header className="dark:bg-boxdark sticky top-0 z-[100] flex w-full bg-white drop-shadow-1 dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
@@ -125,6 +157,82 @@ export const Header = ({
                 </Menu.Items>
               </Transition>
             </div>
+          </Menu>
+          <Menu as="div" className="relative inline-block text-left">
+            <div>
+              <Menu.Button>
+                <BellIcon className="h-6 w-6 text-slate-600" />
+              </Menu.Button>
+            </div>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="divide-gray-100 absolute right-0 mt-2 w-56 origin-top-right divide-y rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                <div className="divide-y px-1 py-1">
+                  {notificationList.map((e) => (
+                    <Menu.Item key={e.id} as="div">
+                      {({ active }) => (
+                        <div
+                          className={`${
+                            active
+                              ? "bg-violet-500 text-white"
+                              : "text-gray-900"
+                          } relative w-full cursor-pointer rounded-md px-2 py-2 text-sm`}
+                          onClick={() => {
+                            readNotificationsMutation
+                              .mutateAsync({ id: e.id })
+                              .then((e) => {
+                                if (e.isSuccess) {
+                                  notificationListQuery.refetch();
+                                } else {
+                                  console.log("error", e);
+                                }
+                              });
+                          }}
+                        >
+                          <div>{e.subject}</div>
+                          <div className="flex justify-end">
+                            {dayjs(e.created_at).fromNow()}
+                          </div>
+                          {(
+                            isRecruiter ? e.is_user_read : e.is_admin_read
+                          ) ? null : (
+                            <div className="absolute right-2 top-3 h-1 w-1 rounded-full bg-primary" />
+                          )}
+                        </div>
+                      )}
+                    </Menu.Item>
+                  ))}
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        to={
+                          isRecruiter
+                            ? ROUTES.RECRUITER.LIST_NOTIFICATION.path
+                            : ROUTES.ADMIN.LIST_NOTIFICATION.path
+                        }
+                      >
+                        <button
+                          className={`${
+                            active
+                              ? "bg-violet-500 text-white"
+                              : "text-gray-900"
+                          } group flex w-full items-center justify-center rounded-md border-t border-slate-200 px-2 py-2 text-sm`}
+                        >
+                          Show All Notifications
+                        </button>
+                      </Link>
+                    )}
+                  </Menu.Item>
+                </div>
+              </Menu.Items>
+            </Transition>
           </Menu>
         </div>
       </div>
