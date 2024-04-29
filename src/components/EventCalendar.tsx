@@ -186,7 +186,16 @@ export function EventCalendar() {
                 )}
                 key={i}
               >
-                {monthDay.format("DD")}
+                <div
+                  className={clsx(
+                    "inline-block",
+                    monthDay.isSame(dayjs(), "day") &&
+                      "flex h-8 w-8 items-center justify-center rounded-full border bg-primary p-2 text-white",
+                  )}
+                >
+                  {monthDay.format("DD")}
+                </div>
+
                 {events_data
                   .filter((event) =>
                     dayjs(`${event.interview_date}`).isSame(monthDay, "day"),
@@ -450,9 +459,19 @@ const WeekHeader = ({
       <div className="grid grid-cols-8  divide-x border-y">
         <div />
         {weekDays.map((e, i) => (
-          <div className="p-2 text-center" key={i}>
-            <div>{e.format("ddd")}</div>
-            <div>{e.format("DD")}</div>
+          <div className="flex flex-col items-center p-2 text-center" key={i}>
+            <div className={clsx(e.isSame(dayjs(), "day") && "text-primary")}>
+              {e.format("ddd")}
+            </div>
+            <div
+              className={clsx(
+                "inline-block",
+                e.isSame(dayjs(), "day") &&
+                  "flex h-8 w-8 items-center justify-center rounded-full border bg-primary p-2 text-white",
+              )}
+            >
+              {e.format("DD")}
+            </div>
           </div>
         ))}
       </div>

@@ -537,16 +537,26 @@ export function UpdateStatusModal({
           ),
         )
         .otherwise(() => null)}
-      <div className="mt-2">
-        <label className="">
-          <input
-            type="checkbox"
-            checked={followUpChecked}
-            onChange={(e) => setFollowUpChecked(e.target.checked)}
-          />
-          <span className="ml-2 ">Follow Up</span>
-        </label>
-      </div>
+      <Controller
+        control={control}
+        name="status"
+        render={({ field: { value } }) =>
+          value === OnboardingStatus.SHORTLISTED ? (
+            <div className="mt-2">
+              <label className="">
+                <input
+                  type="checkbox"
+                  checked={followUpChecked}
+                  onChange={(e) => setFollowUpChecked(e.target.checked)}
+                />
+                <span className="ml-2 ">Follow Up</span>
+              </label>
+            </div>
+          ) : (
+            <></>
+          )
+        }
+      />
       {followUpChecked && (
         <>
           <Input
