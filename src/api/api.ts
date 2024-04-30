@@ -272,7 +272,9 @@ interface AllApiEndpoints {
   "onboarding/scored_jobs/": {
     request: {
       method: "GET";
-      params?: undefined;
+      params?: {
+        search: string;
+      };
       data?: undefined;
     };
     response: ScoredJobsResponse;
@@ -394,6 +396,7 @@ interface AllApiEndpoints {
       method: "GET";
       params?: {
         id?: string;
+        search: string;
       };
       data?: undefined;
     };
@@ -870,6 +873,7 @@ interface NotificationListResponse {
   next: string;
   previous: null;
   count: number;
+  unread_count: number;
 }
 
 interface NotificationListData {

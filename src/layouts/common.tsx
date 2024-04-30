@@ -64,7 +64,7 @@ export const Header = ({
         params: {
           page_size: 5,
         },
-      }).then((e) => e.data.data);
+      }).then((e) => e.data);
     },
   });
 
@@ -78,9 +78,10 @@ export const Header = ({
     },
   });
 
-  const notificationList = (notificationListQuery.data || []).filter(
+  const notificationList = (notificationListQuery.data?.data || []).filter(
     (_, i) => i <= 5,
   );
+  const unreadCount = notificationListQuery.data?.unread_count || 0;
   return (
     <header className="dark:bg-boxdark sticky top-0 z-[100] flex w-full bg-white drop-shadow-1 dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
@@ -160,8 +161,11 @@ export const Header = ({
           </Menu>
           <Menu as="div" className="relative inline-block text-left">
             <div>
-              <Menu.Button>
+              <Menu.Button className="relative">
                 <BellIcon className="h-6 w-6 text-slate-600" />
+                <div className="dark:border-gray-900 min-w-6 absolute  right-0 top-0 inline-flex h-6 -translate-y-1/2 translate-x-1/2 transform items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 text-xs font-medium text-white">
+                  {unreadCount > 100 ? "99+" : unreadCount}
+                </div>
               </Menu.Button>
             </div>
             <Transition

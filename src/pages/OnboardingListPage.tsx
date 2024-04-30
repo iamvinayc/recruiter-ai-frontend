@@ -1,7 +1,7 @@
 import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
 import { PopupDialog } from "@/components/PopupDialog";
 import { Button as Btn } from "@/components/common/Button";
-import { Input, TextArea } from "@/components/common/Input";
+import { DebouncedInput, Input, TextArea } from "@/components/common/Input";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -26,7 +26,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { Check, ChevronsUpDown, Edit2Icon } from "lucide-react";
+import { Check, ChevronsUpDown, Edit2Icon, InfoIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -45,6 +45,8 @@ interface OnboardingList {
   updated_at: string;
   is_editable: boolean;
   followup: boolean;
+  followup_on?: string;
+  followup_reason?: string;
 }
 const columnHelper = createColumnHelper<OnboardingList>();
 
@@ -92,15 +94,16 @@ export default function OnboardingListPage() {
   const [{ id: onboardingId }] = useTypedSearchParams(
     isRecruiter ? ROUTES.RECRUITER.ONBOARDING : ROUTES.ADMIN.ONBOARDING,
   );
-
+  const [search, setSearch] = useState("");
   const onboardingListingQuery = useInfiniteQuery({
-    queryKey: ["onboardingListingQuery"],
+    queryKey: ["onboardingListingQuery", search, onboardingId],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: replaceWith("onboarding/employee_onboarding/", pageParam),
         method: "GET",
         params: {
           id: onboardingId,
+          search,
         },
       }).then((e) => e.data),
     getNextPageParam(e) {
@@ -123,6 +126,8 @@ export default function OnboardingListPage() {
           updated_at: e.updated_at,
           is_editable: e.is_editable,
           followup: e.followup ?? false,
+          followup_on: e.followup_on,
+          followup_reason: e.followup_reason,
         })) || [],
     [onboardingListingQuery.data],
   );
@@ -152,7 +157,20 @@ export default function OnboardingListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("candidate_name", {
-        header: "Candidate Name",
+        header: () => (
+          <div>
+            <div>Candidate Name</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Search"
+              value={search}
+              onChange={(val) => {
+                setSearch("" + val);
+              }}
+            />
+          </div>
+        ),
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -163,7 +181,7 @@ export default function OnboardingListPage() {
         header: "Status",
         cell: (info) => (
           <div
-            className="flex items-center space-x-3 truncate"
+            className="flex items-center gap-3 truncate"
             title={formatOnboardingStatus(info.getValue())}
           >
             <span
@@ -177,9 +195,41 @@ export default function OnboardingListPage() {
                   : "bg-blue-500",
               )}
             >
-              {formatOnboardingStatus(info.getValue())}{" "}
-              {info.row.original.followup ? " (Follow Up)" : ""}
+              {formatOnboardingStatus(info.getValue())}
             </span>
+
+            {info.row.original.followup ? (
+              <Popover>
+                <PopoverTrigger
+                  className={cn(
+                    "relative flex select-none items-center  justify-center whitespace-nowrap rounded-lg px-3 py-1.5 font-sans text-xs font-bold text-white",
+                    "bg-yellow-500",
+                  )}
+                >
+                  <span>Follow Up</span>
+                  <InfoIcon className="ml-2 h-4 w-4" />
+                </PopoverTrigger>
+
+                <PopoverContent>
+                  <div className="space-y-2 text-sm">
+                    {[
+                      [
+                        "Followup On:",
+                        dayjs(info.row.original.followup_on).format(
+                          "DD/MM/YYYY HH:mm:ss",
+                        ),
+                      ],
+                      ["Followup Reason:", info.row.original.followup_reason],
+                    ].map((e) => (
+                      <div key={e[0]} className="flex space-x-2">
+                        <span className="font-bold">{e[0]}</span>
+                        <span className="flex-wrap break-all">{e[1]}</span>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            ) : null}
             {match(info.row.original.status)
               .with(
                 P.when((arg) => STATUS_NOT_EDITABLE.includes(arg)),
@@ -210,7 +260,7 @@ export default function OnboardingListPage() {
         ),
       }),
     ],
-    [isRecruiter],
+    [isRecruiter, search],
   );
 
   const table = useReactTable({
@@ -329,7 +379,11 @@ export function UpdateStatusModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_selectedValue]);
   useEffect(() => {
-    setFollowUpChecked(!!followup);
+    if (followup) {
+      setValue("status", OnboardingStatus.RECRUITER_INTERVIEWED);
+      trigger("status");
+      setSelectedValue(OnboardingStatus.RECRUITER_INTERVIEWED);
+    }
   }, [followup]);
 
   const updateStatusMutation = useMutation({
@@ -456,9 +510,9 @@ export function UpdateStatusModal({
         <Controller
           control={control}
           name="status"
-          render={({ field: { onChange, onBlur } }) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <PopoverContent className="z-[100000] w-full p-0">
-              <Command className="w-full">
+              <Command className="w-full" value={value}>
                 <CommandInput placeholder="Search status..." />
                 <CommandEmpty>No status found.</CommandEmpty>
                 <CommandGroup>
@@ -567,7 +621,7 @@ export function UpdateStatusModal({
         control={control}
         name="status"
         render={({ field: { value } }) =>
-          value === OnboardingStatus.SHORTLISTED ? (
+          value === OnboardingStatus.SHORTLISTED && !followup ? (
             <div className="mt-2">
               <label className="">
                 <input
