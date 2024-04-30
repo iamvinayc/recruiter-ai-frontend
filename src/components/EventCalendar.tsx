@@ -26,6 +26,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { match } from "ts-pattern";
 import { SpinnerIcon } from "./common/SvgIcons";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export interface EventItem {
   id: number;
@@ -129,7 +130,6 @@ export function EventCalendar() {
     () => getCalendarByDate(selectedDate).map((e) => e),
     [selectedDate],
   );
-  console.log("monthDays", monthDays);
 
   const selectedEvent = events_data.find((e) => e.id === isOpen);
 
@@ -143,7 +143,7 @@ export function EventCalendar() {
             setIsOpen(event.id);
           }}
           className={[
-            `text-balance relative w-full cursor-pointer overflow-hidden  break-words rounded-lg bg-blue-500 px-1 py-0.5 font-sans text-xs text-white`,
+            `text-balance relative w-full cursor-pointer overflow-hidden text-ellipsis  whitespace-nowrap rounded-lg bg-blue-500 px-1 py-0.5 font-sans text-xs text-white`,
             isOpen === event.id ? "" : "",
           ].join(" ")}
           {...(isOpen === event.id
@@ -160,6 +160,37 @@ export function EventCalendar() {
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isOpen],
+  );
+  const RenderEvents = useCallback(
+    ({ date, events }: { date: dayjs.Dayjs; events: EventItem[] }) => {
+      const filtered_by_date_events = events;
+      const filtered_events = filtered_by_date_events.filter((_, i) => i < 2);
+      const hasMore = filtered_by_date_events.length > filtered_events.length;
+      return (
+        <>
+          {filtered_events.map((event) => (
+            <RenderEvent date={date} event={event} key={event.id} />
+          ))}
+          {hasMore && (
+            <Popover>
+              <PopoverTrigger
+                className={clsx(
+                  `text-balance relative   cursor-pointer overflow-hidden  text-ellipsis whitespace-nowrap rounded-lg bg-sky-500 px-2 py-0.5 text-center font-sans text-xs text-white`,
+                )}
+              >
+                Show All
+              </PopoverTrigger>
+              <PopoverContent className="max-w-72 w-auto space-y-2 ">
+                {filtered_by_date_events.map((event) => (
+                  <RenderEvent date={date} event={event} key={event.id} />
+                ))}
+              </PopoverContent>
+            </Popover>
+          )}
+        </>
+      );
+    },
+    [RenderEvent],
   );
 
   return (
@@ -200,13 +231,12 @@ export function EventCalendar() {
                   {monthDay.format("DD")}
                 </div>
 
-                {events_data
-                  .filter((event) =>
+                <RenderEvents
+                  date={monthDay}
+                  events={events_data.filter((event) =>
                     dayjs(`${event.interview_date}`).isSame(monthDay, "day"),
-                  )
-                  .map((event) => (
-                    <RenderEvent date={monthDay} event={event} key={event.id} />
-                  ))}
+                  )}
+                />
               </div>
             ))}
             {isLoading && (
@@ -236,8 +266,9 @@ export function EventCalendar() {
                   )
                   .map((hourWeekDay, i) => (
                     <div className="h-[4em] space-y-1 p-1" key={i}>
-                      {events_data
-                        .filter(
+                      <RenderEvents
+                        date={hourWeekDay}
+                        events={events_data.filter(
                           (event) =>
                             dayjs(`${event.interview_date}`).isSame(
                               hourWeekDay,
@@ -247,14 +278,8 @@ export function EventCalendar() {
                               hourWeekDay,
                               "day",
                             ),
-                        )
-                        .map((event) => (
-                          <RenderEvent
-                            date={hourWeekDay}
-                            event={event}
-                            key={event.id}
-                          />
-                        ))}
+                        )}
+                      />
                     </div>
                   ))}
               </div>
