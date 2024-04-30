@@ -187,12 +187,12 @@ export function AdminListCandidatePage() {
       columnHelper.accessor("city", {
         header: "City",
       }),
-      columnHelper.accessor("platform", {
-        header: "Platform",
-        cell: (info) => {
-          return <div className="w-auto">{info.getValue()}</div>;
-        },
-      }),
+      // columnHelper.accessor("platform", {
+      //   header: "Platform",
+      //   cell: (info) => {
+      //     return <div className="w-auto">{info.getValue()}</div>;
+      //   },
+      // }),
       columnHelper.display({
         header: "Action",
         id: "action",
@@ -435,27 +435,30 @@ export function AdminListCandidatePage() {
                     ["Phone", selectedUser?.phone],
                     ["Profile url", selectedUser?.profile_url],
                     ["Resume file", selectedUser?.resume_file],
-                  ].map(([key, value]) => (
-                    <div
-                      key={key}
-                      className="flex flex-col justify-between px-4 py-2 text-sm md:flex-row"
-                    >
-                      <div className="font-medium">{key}</div>
-                      {value?.startsWith("https://") ? (
-                        <a
-                          href={value}
-                          target="_blank"
-                          referrerPolicy="no-referrer"
-                          className="truncate text-blue-500"
-                          rel="noreferrer"
-                        >
-                          {value}
-                        </a>
-                      ) : (
-                        <div className="truncate ">{value}</div>
-                      )}
-                    </div>
-                  ))}
+                    ["Platform", selectedUser?.platform],
+                  ]
+                    .filter((e) => !!e[1])
+                    .map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex flex-col justify-between px-4 py-2 text-sm md:flex-row"
+                      >
+                        <div className="font-medium">{key}</div>
+                        {value?.startsWith("https://") ? (
+                          <a
+                            href={value}
+                            target="_blank"
+                            referrerPolicy="no-referrer"
+                            className="truncate text-blue-500"
+                            rel="noreferrer"
+                          >
+                            {value}
+                          </a>
+                        ) : (
+                          <div className="truncate ">{value}</div>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>

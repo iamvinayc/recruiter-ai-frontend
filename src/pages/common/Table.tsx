@@ -1,12 +1,7 @@
-import {
-  Column,
-  flexRender,
-  Table as ITable,
-  Table,
-} from "@tanstack/react-table";
+import { Column, flexRender, Table as ITable } from "@tanstack/react-table";
 
-import { cn } from "@/utils";
 import { DebouncedInput } from "@/components/common/Input";
+import { cn } from "@/utils";
 import { useState } from "react";
 
 export function Table<T>({
@@ -47,7 +42,7 @@ export function Table<T>({
       </thead>
       <tbody className="relative">
         {table.getRowModel().rows.map((row) => (
-          <tr key={`tr-${row.id}`}>
+          <tr key={`tr-${row.id}`} className="relative">
             {row.getVisibleCells().map((cell) => (
               <td
                 className={cn(
@@ -73,7 +68,7 @@ const Filter = <T,>({
   column,
 }: {
   column: Column<T, unknown>;
-  table: Table<T>;
+  table: ITable<T>;
 }) => {
   const { setFilterValue, id } = column;
   const [value, setValue] = useState("");

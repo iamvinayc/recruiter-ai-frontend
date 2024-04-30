@@ -182,12 +182,12 @@ export function AdminListJobPage() {
           return <div className="w-auto">{info.getValue()}</div>;
         },
       }),
-      columnHelper.accessor("platform", {
-        header: "Platform",
-        cell: (info) => {
-          return <div className="w-auto">{info.getValue()}</div>;
-        },
-      }),
+      // columnHelper.accessor("platform", {
+      //   header: "Platform",
+      //   cell: (info) => {
+      //     return <div className="w-auto">{info.getValue()}</div>;
+      //   },
+      // }),
       columnHelper.display({
         header: "Action",
         id: "action",
@@ -413,6 +413,7 @@ export function AdminListJobPage() {
                       ["Email", selectedUser?.employer?.email],
                       ["Phone 1", selectedUser?.employer?.phone1],
                       ["Phone 2", selectedUser?.employer?.phone2],
+                      ["Platform", selectedUser?.platform],
                     ].map(([key, value]) => (
                       <div
                         key={key}

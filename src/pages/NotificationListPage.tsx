@@ -1,15 +1,17 @@
 import { axiosApi } from "@/api/api";
 import { PopupDialog } from "@/components/PopupDialog";
+import { SpinnerIcon } from "@/components/common/SvgIcons";
+import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { InfoIcon } from "lucide-react";
+import { EyeIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
@@ -22,6 +24,7 @@ export function NotificationListPage() {
   const [{ from_date, status, to_date, employer }] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_REPORT,
   );
+  const { isRecruiter } = useLogin();
   const [showDetailsId, setShowDetailsId] = useState("");
 
   const reportListingQuery = useInfiniteQuery({
@@ -49,11 +52,30 @@ export function NotificationListPage() {
     },
     initialPageParam: "",
   });
+
+  const readNotificationsMutation = useMutation({
+    mutationKey: ["readNotifications"],
+    mutationFn: async ({ id }: { id: number }) => {
+      return axiosApi({
+        url: "notification/:id/".replace(":id", "" + id) as "notification/:id/",
+        method: "PUT",
+      }).then((e) => e.data);
+    },
+  });
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
         header: "Id",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div>
+            {info.getValue()}
+            {info.row.original.hasRead ? null : (
+              <div className="absolute left-0 top-0 z-0  h-full w-full bg-graydark bg-opacity-10" />
+            )}
+          </div>
+        ),
+
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("name", {
@@ -68,7 +90,14 @@ export function NotificationListPage() {
 
       columnHelper.accessor("title", {
         header: "Title",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div className="relative">
+            {info.getValue()}
+            {!info.row.original.hasRead && (
+              <div className="absolute -right-1 -top-1 h-1 w-1 rounded-full bg-primary" />
+            )}
+          </div>
+        ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("date", {
@@ -85,19 +114,39 @@ export function NotificationListPage() {
         id: "Action",
         header: "Action",
         cell: (info) => {
+          const isLoading =
+            readNotificationsMutation.variables?.id === info.row.original.id &&
+            readNotificationsMutation.isPending;
           return (
             <div className="flex items-center justify-center space-x-3 truncate">
               <button
-                onClick={() => setShowDetailsId("" + info.row.original.id)}
+                onClick={() => {
+                  setShowDetailsId("" + info.row.original.id);
+                  readNotificationsMutation
+                    .mutateAsync({
+                      id: info.row.original.id,
+                    })
+                    .then((e) => {
+                      if (e.isSuccess) {
+                        reportListingQuery.refetch();
+                      }
+                    });
+                }}
+                className="z-10 rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
+                disabled={isLoading}
               >
-                <InfoIcon className="h-6 w-6" />
+                {isLoading ? (
+                  <SpinnerIcon className="ml-0 mr-0 h-4 w-4 " />
+                ) : (
+                  <EyeIcon className="h-4 w-4 " />
+                )}
               </button>
             </div>
           );
         },
       }),
     ],
-    [],
+    [readNotificationsMutation.isPending, readNotificationsMutation.variables],
   );
 
   const reportList = useMemo(
@@ -105,13 +154,14 @@ export function NotificationListPage() {
       reportListingQuery.data?.pages
         ?.map((e) => e.data)
         ?.flat()
-        ?.map((e) => ({
+        ?.map<ReportListItem>((e) => ({
           id: e.id,
           name: e.to_name,
           title: e.subject,
           date: e.created_at,
+          hasRead: isRecruiter ? e.is_user_read : e.is_admin_read,
         })) || [],
-    [reportListingQuery.data],
+    [reportListingQuery.data, isRecruiter],
   );
 
   const table = useReactTable({
@@ -191,4 +241,5 @@ interface ReportListItem {
   name: string;
   title: string;
   date: string;
+  hasRead: boolean;
 }
