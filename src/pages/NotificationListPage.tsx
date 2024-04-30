@@ -1,4 +1,5 @@
 import { axiosApi } from "@/api/api";
+import { PopupDialog } from "@/components/PopupDialog";
 import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -8,7 +9,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { useMemo } from "react";
+import { InfoIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
@@ -20,6 +22,7 @@ export function NotificationListPage() {
   const [{ from_date, status, to_date, employer }] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_REPORT,
   );
+  const [showDetailsId, setShowDetailsId] = useState("");
 
   const reportListingQuery = useInfiniteQuery({
     queryKey: ["notificationListPage", from_date, status, to_date, employer],
@@ -78,6 +81,21 @@ export function NotificationListPage() {
           );
         },
       }),
+      columnHelper.display({
+        id: "Action",
+        header: "Action",
+        cell: (info) => {
+          return (
+            <div className="flex items-center justify-center space-x-3 truncate">
+              <button
+                onClick={() => setShowDetailsId("" + info.row.original.id)}
+              >
+                <InfoIcon className="h-6 w-6" />
+              </button>
+            </div>
+          );
+        },
+      }),
     ],
     [],
   );
@@ -102,13 +120,23 @@ export function NotificationListPage() {
     getCoreRowModel: getCoreRowModel(),
     enableFilters: false,
   });
+  const url = `data:text/html;base64,${btoa(
+    unescape(
+      encodeURIComponent(
+        reportListingQuery.data?.pages
+          .map((e) => e.data)
+          .flat()
+          .find((e) => e.id === +showDetailsId)?.content || "",
+      ),
+    ),
+  )}`;
+  console.log(url);
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Notification
-            {reportListingQuery.hasNextPage ? "true" : "false"}
           </h2>
         </div>
 
@@ -144,6 +172,15 @@ export function NotificationListPage() {
             </InfinityLoaderComponent>
           </div>
         </div>
+        <PopupDialog
+          isOpen={!!showDetailsId}
+          setIsOpen={() => setShowDetailsId("")}
+          title="Notification Details"
+          containerClassName="relative h-[70vh]"
+          showXMarkIcon
+        >
+          <iframe src={url} className="h-full w-full py-4" />
+        </PopupDialog>
       </div>
     </main>
   );

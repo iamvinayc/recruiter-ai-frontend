@@ -5,22 +5,17 @@ import { Link } from "react-router-dom";
 
 import { EventCalendar, EventItem } from "@/components/EventCalendar";
 import { EventTodo } from "@/components/EventTodo";
-import { ChipGroup } from "@/components/common/ChipGroup";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { useMemo } from "react";
+import dayjs from "dayjs";
+import { useState } from "react";
 import { axiosApi } from "../api/api";
 import { cn, emptyArray } from "../utils";
-import { Table } from "./common/Table";
-import { TableLoader } from "./common/TableLoader";
 
 export function AdminDashboardPage() {
   const { isRecruiter } = useLogin();
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const selectedDateFormat = selectedDate.format("DD-MM-YYYY");
   const dashboardOverviewQuery = useQuery({
     queryKey: ["DashboardPage"],
     queryFn: async () => {
@@ -35,11 +30,14 @@ export function AdminDashboardPage() {
     isLoading,
     isRefetching,
   } = useQuery({
-    queryKey: [],
+    queryKey: ["user/recruiter/actions", selectedDateFormat],
     queryFn: async () => {
       return axiosApi({
         url: "user/recruiter/actions/",
         method: "GET",
+        params: {
+          date: selectedDateFormat,
+        },
       }).then((e) => e.data.data);
     },
     select(data) {
@@ -72,6 +70,8 @@ export function AdminDashboardPage() {
           <EventTodo
             events_data={listRecruiterActions}
             isLoading={isLoading || isRefetching}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
           />
         </div>
 
@@ -206,108 +206,3 @@ const Card = ({
     </div>
   );
 };
-const columnHelper = createColumnHelper<PendingItem>();
-
-export const ListRecruiterActions = () => {
-  const {
-    data: listRecruiterActions = emptyArray,
-    isLoading,
-    isRefetching,
-  } = useQuery({
-    queryKey: [],
-    queryFn: async () => {
-      return axiosApi({
-        url: "user/recruiter/actions/",
-        method: "GET",
-      }).then((e) => e.data.data);
-    },
-    select(data) {
-      return data.map<PendingItem>((e) => ({
-        candidate_name: e.candidate.name,
-        interview_date: [
-          e.action?.interview?.date,
-          e.action?.interview?.time,
-        ].join(" "),
-        job_title: e.job.title,
-        pending_action: e.type,
-        id: e.action.interview.onboarding_id,
-        title: e.type,
-      }));
-    },
-  });
-
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor("pending_action", {
-        header: "Pending Action",
-        cell: (info) => (
-          <div className=" truncate" title={info.getValue()}>
-            <ChipGroup items={[{ id: 1, name: info.getValue() }]} />
-            {}
-          </div>
-        ),
-        footer: (info) => info.column.id,
-      }),
-      columnHelper.accessor("job_title", {
-        header: "Job Title",
-        cell: (info) => (
-          <div className="max-w-[150px] truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
-        ),
-        footer: (info) => info.column.id,
-      }),
-      columnHelper.accessor("candidate_name", {
-        header: "Candidate Name",
-        cell: (info) => (
-          <div className="max-w-[150px] truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
-        ),
-        footer: (info) => info.column.id,
-      }),
-      columnHelper.accessor("interview_date", {
-        header: "Interview Date",
-        cell: (info) => (
-          <div className=" truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
-          // return <ChipGroup items={info.getValue()} />;
-        ),
-      }),
-    ],
-    [],
-  );
-
-  const table = useReactTable({
-    columns: columns,
-    data: listRecruiterActions,
-    getCoreRowModel: getCoreRowModel(),
-    enableFilters: false,
-  });
-  return (
-    <div className="relative mb-4 overflow-x-auto rounded-lg border bg-white shadow-md">
-      <Table
-        flat
-        table={table}
-        loader={
-          <TableLoader
-            colSpan={columns.length}
-            dataList={listRecruiterActions}
-            isLoading={isLoading}
-            isUpdateLoading={isLoading || isRefetching}
-          />
-        }
-      />
-    </div>
-  );
-};
-
-interface PendingItem {
-  pending_action: string;
-  job_title: string;
-  candidate_name: string;
-  interview_date: string;
-  id: number;
-  title: string;
-}

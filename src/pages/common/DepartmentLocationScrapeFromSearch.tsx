@@ -6,6 +6,7 @@ import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 import { axiosApi } from "@/api/api";
 import { Combobox } from "@/components/Combobox";
+import { SkillSelector } from "@/components/SkillSelector";
 import { Input } from "@/components/common/Input";
 import { ROUTES } from "@/routes/routes";
 
@@ -17,13 +18,14 @@ export function DepartmentLocationScrapeFromSearch({
   onSearch: VoidFunction;
 }) {
   const [
-    { skill: department, location, scrape_from, scrape_to },
+    { skill: department, location, scrape_from, scrape_to, search },
     setTypedParams,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedScrapeForm, setSelectedScrapeForm] = useState("");
   const [selectedScrapeTo, setSelectedScrapeTo] = useState("");
+  const [selectedSearch, setSelectedSearch] = useState("");
   // console.log("department", department, location);
   useEffect(() => {
     setSelectedDepartment(department);
@@ -37,17 +39,10 @@ export function DepartmentLocationScrapeFromSearch({
   useEffect(() => {
     setSelectedScrapeTo(scrape_to);
   }, [scrape_to]);
-  const departmentListQuery = useQuery({
-    queryKey: ["AdminListDepartmentPage"],
-    queryFn: async () =>
-      axiosApi({
-        url: "data-sourcing/department/",
-        method: "GET",
-        params: { type: 1 },
-      })
-        .then((e) => e.data.data)
-        .then((e) => e.map((e) => ({ value: e.name, label: e.name }))),
-  });
+  useEffect(() => {
+    setSelectedSearch(search);
+  }, [search]);
+
   const locationListQuery = useQuery({
     queryKey: ["AdminListLocationPage"],
     queryFn: async () =>
@@ -65,11 +60,9 @@ export function DepartmentLocationScrapeFromSearch({
       <div className="border-gray-200 dark:border-strokedark rounded-sm border border-stroke bg-white p-4 shadow-default">
         <h2 className="text-xl font-bold text-stone-700">Apply filters</h2>
         <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <Combobox
-            label="Skill"
-            items={departmentListQuery.data || []}
-            selectedValue={selectedDepartment}
-            setSelectedValue={setSelectedDepartment}
+          <SkillSelector
+            selectedItem={selectedDepartment}
+            setSelectedItem={setSelectedDepartment}
           />
           <Combobox
             label="Location"
@@ -111,6 +104,15 @@ export function DepartmentLocationScrapeFromSearch({
               );
             }}
           />
+          <Input
+            label="Search"
+            placeholder="Search"
+            type="text"
+            value={selectedSearch}
+            onChange={(e) => {
+              setSelectedSearch(e.currentTarget.value);
+            }}
+          />
         </div>
 
         <div className="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
@@ -121,6 +123,7 @@ export function DepartmentLocationScrapeFromSearch({
                 location: "",
                 scrape_from: "",
                 scrape_to: "",
+                search: "",
               });
             }}
             className="bg-gray-200 text-gray-600 rounded-lg px-8 py-2 font-medium outline-none hover:opacity-90 focus:ring active:scale-95"
@@ -140,6 +143,7 @@ export function DepartmentLocationScrapeFromSearch({
                 location: selectedLocation,
                 scrape_from: selectedScrapeForm,
                 scrape_to: selectedScrapeTo,
+                search: selectedSearch,
               });
             }}
             className="rounded-lg bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"

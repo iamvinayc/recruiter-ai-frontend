@@ -1,6 +1,8 @@
 import React from "react";
 
 import { axiosApi } from "@/api/api";
+import { useLogin } from "@/hooks/useLogin";
+import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
 import {
   FloatingArrow,
@@ -21,6 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import { clsx } from "clsx";
 import dayjs from "dayjs";
 import { useCallback, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { match } from "ts-pattern";
 import { SpinnerIcon } from "./common/SvgIcons";
 
@@ -34,6 +37,7 @@ export interface EventItem {
 }
 const date_format = "DD-MM-YYYY";
 export function EventCalendar() {
+  const { isRecruiter } = useLogin();
   const [isOpen, setIsOpen] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [calendarType, setCalendarType] = useState<"day" | "week" | "month">(
@@ -51,10 +55,14 @@ export function EventCalendar() {
           from_date: selectedDate.startOf("week").format(date_format),
           to_date: selectedDate.endOf("week").format(date_format),
         }))
-        .with("month", () => ({
-          from_date: selectedDate.startOf("month").format(date_format),
-          to_date: selectedDate.endOf("month").format(date_format),
-        }))
+        .with("month", () => {
+          const dates = getCalendarByDate(selectedDate);
+          const [from_date, to_date] = [dates[0], dates[dates.length - 1]];
+          return {
+            from_date: from_date.format(date_format),
+            to_date: to_date.format(date_format),
+          };
+        })
         .exhaustive();
 
       return axiosApi({
@@ -121,6 +129,7 @@ export function EventCalendar() {
     () => getCalendarByDate(selectedDate).map((e) => e),
     [selectedDate],
   );
+  console.log("monthDays", monthDays);
 
   const selectedEvent = events_data.find((e) => e.id === isOpen);
 
@@ -156,15 +165,10 @@ export function EventCalendar() {
   return (
     <div
       className={cn(
-        "relative box-border max-h-[560px]  border",
-        !isLoading && "overflow-y-scroll",
+        "relative box-border max-h-[660px]  border",
+        isLoading ? "overflow-hidden" : "overflow-y-scroll",
       )}
     >
-      {isLoading && (
-        <div className="absolute left-0 top-0 z-20 flex h-full w-full items-center justify-center bg-slate-700 bg-opacity-40">
-          <SpinnerIcon className="mt-4 h-6 w-6 " />
-        </div>
-      )}
       <CalendarHeader
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
@@ -176,15 +180,15 @@ export function EventCalendar() {
       />
       {match(calendarType)
         .with("month", () => (
-          <div className="grid grid-cols-7  divide-x divide-y border-b ">
-            {monthDays.map((monthDay, i) => (
+          <div className=" relative grid  grid-cols-7 divide-x divide-y  border-b">
+            {monthDays.map((monthDay) => (
               <div
                 className={clsx(
                   "min-h-[7em] space-y-1 p-1 text-left text-sm",
                   !selectedDate.isSame(monthDay, "month") &&
                     "bg-slate-100 text-slate-500",
                 )}
-                key={i}
+                key={monthDay.format("YYYY-MM-DD")}
               >
                 <div
                   className={clsx(
@@ -205,10 +209,15 @@ export function EventCalendar() {
                   ))}
               </div>
             ))}
+            {isLoading && (
+              <div className="absolute left-0 top-0 z-20 flex h-full w-full items-center justify-center bg-slate-700 bg-opacity-40">
+                <SpinnerIcon className="mt-4 h-6 w-6 " />
+              </div>
+            )}
           </div>
         ))
         .with("week", () => (
-          <div className="grid grid-cols-8  divide-x border-b ">
+          <div className="relative grid  grid-cols-8 divide-x border-b">
             <div className="space-y-1 divide-y">
               {hours.map((h) => (
                 <div
@@ -250,10 +259,15 @@ export function EventCalendar() {
                   ))}
               </div>
             ))}
+            {isLoading && (
+              <div className="absolute left-0 top-0 z-20 flex h-full w-full items-center justify-center bg-slate-700 bg-opacity-40">
+                <SpinnerIcon className="mt-4 h-6 w-6 " />
+              </div>
+            )}
           </div>
         ))
         .with("day", () => (
-          <div className="grid grid-cols-8  divide-x border-b ">
+          <div className="relative grid  grid-cols-8 divide-x border-b">
             <div className="space-y-1 divide-y">
               {hours.map((h) => (
                 <div
@@ -295,6 +309,11 @@ export function EventCalendar() {
                   ))}
               </div>
             ))}
+            {isLoading && (
+              <div className="absolute left-0 top-0 z-20 flex h-full w-full items-center justify-center bg-slate-700 bg-opacity-40">
+                <SpinnerIcon className="mt-4 h-6 w-6 " />
+              </div>
+            )}
           </div>
         ))
         .exhaustive()}
@@ -319,12 +338,29 @@ export function EventCalendar() {
 
             <br />
             <div className="flex justify-between">
-              <button
-                onClick={() => {
-                  console.log("Added review.");
-                  setIsOpen(null);
-                }}
-              ></button>
+              <Link
+                to={
+                  isRecruiter
+                    ? ROUTES.RECRUITER.ONBOARDING.buildPath(
+                        {},
+                        { id: "" + selectedEvent?.id },
+                      )
+                    : ROUTES.ADMIN.ONBOARDING.buildPath(
+                        {},
+                        { id: "" + selectedEvent?.id },
+                      )
+                }
+              >
+                <button
+                  className="text-xs font-bold text-primary"
+                  onClick={() => {
+                    console.log("Added review.");
+                    setIsOpen(null);
+                  }}
+                >
+                  View
+                </button>
+              </Link>
               <span className="text-slate-600">
                 {dayjs(`${selectedEvent?.interview_date}`).format(
                   "DD MMM YY (HH:mm a)",
@@ -372,10 +408,14 @@ function CalendarHeader({
                     setSelectedDate((prev) => prev.subtract(1, "day")),
                   )
                   .with("week", () =>
-                    setSelectedDate((prev) => prev.subtract(1, "week")),
+                    setSelectedDate((prev) =>
+                      prev.subtract(1, "week").set("day", 1),
+                    ),
                   )
                   .with("month", () =>
-                    setSelectedDate((prev) => prev.subtract(1, "month")),
+                    setSelectedDate((prev) =>
+                      prev.subtract(1, "month").set("day", 1),
+                    ),
                   )
                   .exhaustive();
               }}
@@ -401,10 +441,14 @@ function CalendarHeader({
                     setSelectedDate((prev) => prev.add(1, "day")),
                   )
                   .with("week", () =>
-                    setSelectedDate((prev) => prev.add(1, "week")),
+                    setSelectedDate((prev) =>
+                      prev.add(1, "week").set("day", 1),
+                    ),
                   )
                   .with("month", () =>
-                    setSelectedDate((prev) => prev.add(1, "month")),
+                    setSelectedDate((prev) =>
+                      prev.add(1, "month").set("day", 1),
+                    ),
                   )
                   .exhaustive();
               }}
@@ -489,24 +533,22 @@ const WeekHeader = ({
 };
 
 function getCalendarByDate(date: dayjs.Dayjs) {
-  const dates: dayjs.Dayjs[] = new Array(5 * 7).fill(0);
+  const dates: dayjs.Dayjs[] = [];
   const dt = date.startOf("month");
   const startOfDayInWeek = dt.get("day");
-  dates[startOfDayInWeek] = dt;
-  let now = dt.clone();
-  while (now.get("month") === dt.get("month")) {
-    now = now.add(1, "day");
-    dates[now.get("date")] = now;
+  console.log(startOfDayInWeek);
+  for (let i = 0; i < startOfDayInWeek; i++) {
+    dates.push(dt.subtract(startOfDayInWeek - i, "day"));
   }
-  for (let i = startOfDayInWeek - 1; i >= 0; i--) {
-    dates[i] = dt.subtract(1, "day");
+  for (let i = 0; i < date.daysInMonth(); i++) {
+    dates.push(dt.add(i, "day"));
+  }
+  const remainingDays = 7 - (dates.length % 7);
+  for (let i = 0; i < remainingDays; i++) {
+    dates.push(dt.add(date.daysInMonth() + i, "day"));
   }
 
-  return dates.map((e, i) => {
-    if (e) return e;
-    const totalLen = dates.filter((e) => !!e).length;
-    return now.add(i - totalLen, "day");
-  });
+  return dates;
 }
 export function getCalendarByWeek(date: dayjs.Dayjs) {
   const dates: dayjs.Dayjs[] = new Array(7).fill(0);

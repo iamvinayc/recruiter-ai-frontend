@@ -6,10 +6,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Column,
   ColumnFilter,
+  Table,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  Table,
   useReactTable,
 } from "@tanstack/react-table";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -20,11 +20,11 @@ import { z } from "zod";
 import { DepartmentSelector } from "@/components/DepartmentSelector";
 import { LocationSelectorMultiple } from "@/components/LocationSelector";
 import { axiosApi } from "../api/api";
+import { PopupDialog } from "../components/PopupDialog";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { DebouncedInput, Input } from "../components/common/Input";
 import { SpinnerIcon } from "../components/common/SvgIcons";
-import { PopupDialog } from "../components/PopupDialog";
 import { cn, emptyArray } from "../utils";
 
 const defaultArr: [] = [];
@@ -124,6 +124,11 @@ export function AdminListRecruiterPage() {
 
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: "SLNo",
+        header: "Sr. No",
+        cell: (info) => info.row.index + 1,
+      }),
       columnHelper.accessor("first_name", {
         header: "First Name",
         cell: (info) => info.getValue(),

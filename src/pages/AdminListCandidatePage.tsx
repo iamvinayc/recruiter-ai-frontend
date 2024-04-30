@@ -16,21 +16,21 @@ import { z } from "zod";
 import { Combobox } from "@/components/Combobox";
 import { LineClamp } from "@/components/LineClamp";
 import { LocationSelector } from "@/components/LocationSelector";
+import { BlockButton } from "@/components/common/BlockButton";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES, SortBy } from "@/routes/routes";
 import { axiosApi } from "../api/api";
+import { DepartmentSelector } from "../components/DepartmentSelector";
+import { PopupDialog } from "../components/PopupDialog";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { Input, TextArea } from "../components/common/Input";
-import { DepartmentSelector } from "../components/DepartmentSelector";
-import { PopupDialog } from "../components/PopupDialog";
 import { cn, emptyArray, replaceWith } from "../utils";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
-import { BlockButton } from "@/components/common/BlockButton";
 
 const defaultArr: [] = [];
 
@@ -38,7 +38,15 @@ const columnHelper = createColumnHelper<CandidateListItem>();
 
 export function AdminListCandidatePage() {
   const [
-    { skill: department, location, scrape_from, sort_by, scrape_to, common },
+    {
+      skill: department,
+      location,
+      scrape_from,
+      sort_by,
+      scrape_to,
+      common,
+      search,
+    },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
@@ -46,10 +54,12 @@ export function AdminListCandidatePage() {
   );
   const [showAddCandidatePopup, _setShowAddCandidatePopup] = useState(false);
 
-  const handleFilterCommonCandidates = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTypeSearch(prevParams => ({
+  const handleFilterCommonCandidates = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setTypeSearch((prevParams) => ({
       ...prevParams,
-      common: event.target.checked ? 'True' : '',
+      common: event.target.checked ? "True" : "",
     }));
   };
 
@@ -62,7 +72,8 @@ export function AdminListCandidatePage() {
       location,
       scrape_from,
       sort_by,
-      common
+      common,
+      search,
     ],
     queryFn: async ({ pageParam }) =>
       axiosApi({
@@ -77,6 +88,7 @@ export function AdminListCandidatePage() {
           to_date: scrape_to || undefined,
           sort: sort_by || undefined,
           common: common || undefined,
+          search: search || undefined,
         },
       }).then((e) => e.data),
     getNextPageParam(e) {
@@ -140,6 +152,11 @@ export function AdminListCandidatePage() {
 
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: "SLNo",
+        header: "Sr. No",
+        cell: (info) => info.row.index + 1,
+      }),
       columnHelper.accessor("title", {
         header: "Title",
         cell: (info) => info.getValue(),
@@ -282,13 +299,16 @@ export function AdminListCandidatePage() {
               }}
             />
 
-            <label htmlFor="common-filter" className="inline-flex items-center text-lg font-semibold">
+            <label
+              htmlFor="common-filter"
+              className="inline-flex items-center text-lg font-semibold"
+            >
               <input
                 type="checkbox"
                 id="common-filter"
-                checked={common === 'True'}
+                checked={common === "True"}
                 onChange={handleFilterCommonCandidates}
-                className="form-checkbox h-6 w-6 text-primary border-primary rounded focus:ring-primary"
+                className="form-checkbox h-6 w-6 rounded border-primary text-primary focus:ring-primary"
               />
               <span className="ml-2">Common Candidates</span>
             </label>

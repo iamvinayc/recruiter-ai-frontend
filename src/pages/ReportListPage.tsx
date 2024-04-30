@@ -1,18 +1,18 @@
+import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
+import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
-import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
-import { Table } from "./common/Table";
-import { TableLoader } from "./common/TableLoader";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { ReportListFilter } from "./common/ReportListFilter";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
-import { ROUTES } from "@/routes/routes";
+import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
+import { ReportListFilter } from "./common/ReportListFilter";
+import { Table } from "./common/Table";
+import { TableLoader } from "./common/TableLoader";
 
 const columnHelper = createColumnHelper<ReportListItem>();
 
@@ -41,6 +41,11 @@ export function ReportListPage() {
   });
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: "SLNo",
+        header: "Sr. No",
+        cell: (info) => info.row.index + 1,
+      }),
       columnHelper.accessor("candidate_name", {
         header: "Candidate name",
         cell: (info) => info.getValue(),

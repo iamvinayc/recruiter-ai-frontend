@@ -93,3 +93,6 @@
   border-radius: 4px;
   text-align: left;
 }
+html {
+  padding-right: 0px !important;
+}

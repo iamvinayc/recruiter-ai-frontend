@@ -1,15 +1,17 @@
 import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
+import { PopupDialog } from "@/components/PopupDialog";
 import { Button } from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
-import { PopupDialog } from "@/components/PopupDialog";
+import { emptyArray } from "@/utils";
 import { axiosApi } from "../api/api";
+import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 
 export function AdminListDepartmentPage() {
   const [showAddDepartmentPopup, setShowAddDepartmentPopup] = useState(false);
@@ -22,14 +24,20 @@ export function AdminListDepartmentPage() {
   } = useForm<z.TypeOf<typeof formState>>({
     resolver: zodResolver(formState),
   });
-  const departmentListQuery = useQuery({
+  const departmentListQuery = useInfiniteQuery({
     queryKey: ["AdminListDepartmentPage", showAddDepartmentPopup],
-    queryFn: async () =>
+    queryFn: async ({ pageParam }) =>
       axiosApi({
-        url: "data-sourcing/department/",
+        url: (pageParam
+          ? pageParam
+          : "data-sourcing/department/") as "data-sourcing/department/",
         method: "GET",
-        params: { type: 1 },
-      }).then((e) => e.data.data),
+        params: { type: 1, page_size: 200 },
+      }).then((e) => e.data),
+    getNextPageParam(lastPage) {
+      return lastPage?.next;
+    },
+    initialPageParam: "",
   });
 
   const addDepartmentMutation = useMutation({
@@ -70,6 +78,8 @@ export function AdminListDepartmentPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showAddDepartmentPopup]);
 
+  const skillList =
+    departmentListQuery.data?.pages?.map((e) => e.data).flat() || emptyArray;
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -93,26 +103,25 @@ export function AdminListDepartmentPage() {
             Loading....
           </div>
         ) : null}
-        <div className="flex flex-wrap items-center gap-2 text-xs sm:gap-2">
-          {departmentListQuery.data?.map(({ id, name }) => (
-            <span
-              key={id}
-              className=" inline-flex  text-ellipsis  rounded  bg-[#3BA2B8]  px-2 py-1 text-lg font-medium text-white hover:bg-opacity-90"
-            >
-              {name}
-            </span>
-          ))}
-        </div>
-        {/* <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
-          <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white shadow-default">
-            <DataTable
-              columns={columns}
-              data={departmentListQuery.data || emptyArr}
-
-              progressPending={departmentListQuery.isLoading}
-            />
+        <InfinityLoaderComponent
+          dataLength={skillList.length}
+          hasMore={departmentListQuery.hasNextPage}
+          next={() => {
+            departmentListQuery.fetchNextPage();
+            console.log("fetching next page", departmentListQuery.hasNextPage);
+          }}
+        >
+          <div className="flex flex-wrap items-center gap-2 text-xs sm:gap-2">
+            {skillList?.map(({ id, name }) => (
+              <span
+                key={id}
+                className=" inline-flex  text-ellipsis  rounded  bg-[#3BA2B8]  px-2 py-1 text-lg font-medium text-white hover:bg-opacity-90"
+              >
+                {name}
+              </span>
+            ))}
           </div>
-        </div> */}
+        </InfinityLoaderComponent>
       </div>
       <PopupDialog
         isOpen={showAddDepartmentPopup}

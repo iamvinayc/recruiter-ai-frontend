@@ -30,6 +30,7 @@ export const ROUTES = {
           scrape_to: string().default(""),
           sort_by: string().default(SortBy.Latest),
           common: string().default(""),
+          search: string().default(""),
         },
       }),
       LIST_CANDIDATE: route("list-candidate"),
@@ -39,7 +40,11 @@ export const ROUTES = {
           location: string().default(""),
         },
       }),
-      ONBOARDING: route("onboarding"),
+      ONBOARDING: route("onboarding", {
+        searchParams: {
+          id: string().default(""),
+        },
+      }),
       LIST_REPORT: route("list-report", {
         searchParams: {
           status: string().default(""),
@@ -69,7 +74,11 @@ export const ROUTES = {
           location: string().default(""),
         },
       }),
-      ONBOARDING: route("onboarding"),
+      ONBOARDING: route("onboarding", {
+        searchParams: {
+          id: string().default(""),
+        },
+      }),
       LIST_REPORT: route("list-report", {
         searchParams: {
           status: string().default(""),

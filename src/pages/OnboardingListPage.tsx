@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useLogin } from "@/hooks/useLogin";
+import { ROUTES } from "@/routes/routes";
 import { cn, replaceWith } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
@@ -29,6 +30,7 @@ import { Check, ChevronsUpDown, Edit2Icon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { P, match } from "ts-pattern";
 import { z } from "zod";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
@@ -42,6 +44,7 @@ interface OnboardingList {
   status: string;
   updated_at: string;
   is_editable: boolean;
+  followup: boolean;
 }
 const columnHelper = createColumnHelper<OnboardingList>();
 
@@ -86,12 +89,19 @@ export default function OnboardingListPage() {
     number | null
   >(null);
   const { isRecruiter } = useLogin();
+  const [{ id: onboardingId }] = useTypedSearchParams(
+    isRecruiter ? ROUTES.RECRUITER.ONBOARDING : ROUTES.ADMIN.ONBOARDING,
+  );
+
   const onboardingListingQuery = useInfiniteQuery({
     queryKey: ["onboardingListingQuery"],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: replaceWith("onboarding/employee_onboarding/", pageParam),
         method: "GET",
+        params: {
+          id: onboardingId,
+        },
       }).then((e) => e.data),
     getNextPageParam(e) {
       return e.next;
@@ -112,11 +122,17 @@ export default function OnboardingListPage() {
           status: e.status,
           updated_at: e.updated_at,
           is_editable: e.is_editable,
+          followup: e.followup ?? false,
         })) || [],
     [onboardingListingQuery.data],
   );
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: "SLNo",
+        header: "Sr. No",
+        cell: (info) => info.row.index + 1,
+      }),
       columnHelper.accessor("job_name", {
         header: "Job Title",
         cell: (info) => (
@@ -161,7 +177,8 @@ export default function OnboardingListPage() {
                   : "bg-blue-500",
               )}
             >
-              {formatOnboardingStatus(info.getValue())}
+              {formatOnboardingStatus(info.getValue())}{" "}
+              {info.row.original.followup ? " (Follow Up)" : ""}
             </span>
             {match(info.row.original.status)
               .with(
@@ -257,6 +274,10 @@ export default function OnboardingListPage() {
               refresh={() => onboardingListingQuery.refetch()}
               selectedValue={selectedValue}
               onDismiss={() => setSelectedOnboardingId(null)}
+              followup={
+                onboardingList.find((e) => selectedOnboardingId == e.id)
+                  ?.followup ?? false
+              }
             />
           </div>
         </PopupDialog>
@@ -270,11 +291,13 @@ export function UpdateStatusModal({
   refresh,
   selectedValue: _selectedValue,
   onDismiss,
+  followup,
 }: {
   selectedOnboardingId: number | null;
   refresh: VoidFunction;
   selectedValue?: string;
   onDismiss: VoidFunction;
+  followup: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
@@ -305,6 +328,9 @@ export function UpdateStatusModal({
     return () => setSelectedValue("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_selectedValue]);
+  useEffect(() => {
+    setFollowUpChecked(!!followup);
+  }, [followup]);
 
   const updateStatusMutation = useMutation({
     mutationKey: ["updateStatus", selectedOnboardingId],

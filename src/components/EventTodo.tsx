@@ -1,19 +1,26 @@
-import { useMemo, useState } from "react";
-import { EventItem, getCalendarByWeek } from "./EventCalendar";
-import dayjs from "dayjs";
+import { useLogin } from "@/hooks/useLogin";
+import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
+import dayjs from "dayjs";
 import { CheckCircle2Icon, ListTodoIcon } from "lucide-react";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
+import { EventItem, getCalendarByWeek } from "./EventCalendar";
 import { SpinnerIcon } from "./common/SvgIcons";
 
 export function EventTodo({
   events_data,
   isLoading,
+  selectedDate,
+  setSelectedDate,
 }: {
   events_data: EventItem[];
   isLoading: boolean;
+  selectedDate: dayjs.Dayjs;
+  setSelectedDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>;
 }) {
+  const { isRecruiter } = useLogin();
   const dates = useMemo(() => getCalendarByWeek(dayjs()), []);
-  const [selectedDate, setSelectedDate] = useState(dayjs());
   const events = events_data.filter((e) =>
     dayjs(e.interview_date).isSame(selectedDate, "day"),
   );
@@ -49,31 +56,44 @@ export function EventTodo({
         )}
       >
         {events.map((event) => (
-          <div
-            key={event.id}
-            className="flex items-center gap-x-3 rounded-lg border p-2 shadow-md"
-          >
-            <div>
-              <CheckCircle2Icon size={24} className="text-green-500" />
-            </div>
-            <div className="flex flex-grow flex-col">
-              <div className="text-sm font-medium">Reminder</div>
-              <div className="text-sm">
-                <h2>
-                  <b className="font-medium text-red-500">{event?.title}</b> -{" "}
-                  <b className="font-medium">{event?.candidate_name}</b>{" "}
-                  <b className="font-bold">for</b>{" "}
-                  <b className="font-medium">{event?.job_title}</b>{" "}
-                  <b className="font-bold">Position</b>
-                </h2>
-              </div>
-            </div>
+          <div key={event.id}>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.ONBOARDING.buildPath(
+                      {},
+                      { id: "" + event?.id },
+                    )
+                  : ROUTES.ADMIN.ONBOARDING.buildPath(
+                      {},
+                      { id: "" + event?.id },
+                    )
+              }
+            >
+              <div className="flex items-center gap-x-3 rounded-lg border p-2 shadow-md">
+                <div>
+                  <CheckCircle2Icon size={24} className="text-green-500" />
+                </div>
+                <div className="flex flex-grow flex-col">
+                  <div className="text-sm font-medium">Reminder</div>
+                  <div className="text-sm">
+                    <h2>
+                      <b className="font-medium text-red-500">{event?.title}</b>{" "}
+                      - <b className="font-medium">{event?.candidate_name}</b>{" "}
+                      <b className="font-bold">for</b>{" "}
+                      <b className="font-medium">{event?.job_title}</b>{" "}
+                      <b className="font-bold">Position</b>
+                    </h2>
+                  </div>
+                </div>
 
-            <div>
-              <div className="whitespace-nowrap text-xs">
-                {dayjs(selectedDate).format("HH:mm A")}
+                <div>
+                  <div className="whitespace-nowrap text-xs">
+                    {dayjs(selectedDate).format("HH:mm A")}
+                  </div>
+                </div>
               </div>
-            </div>
+            </Link>
           </div>
         ))}
         {events.length === 0 && (

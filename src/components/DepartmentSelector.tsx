@@ -5,6 +5,7 @@ import React, { Fragment, useState } from "react";
 
 import { axiosApi } from "../api/api";
 import { cn, emptyArray } from "../utils";
+import { SpinnerIcon } from "./common/SvgIcons";
 import { useAutoOpenOnMount } from "./common/useAutoOpenOnMount";
 
 export function DepartmentSelector({
@@ -20,25 +21,16 @@ export function DepartmentSelector({
   const [query, setQuery] = useState("");
 
   const departmentListQuery = useQuery({
-    queryKey: ["departmentListQuery"],
+    queryKey: ["departmentListQuery", query],
     queryFn: async () =>
       axiosApi({
         url: "data-sourcing/department/",
         method: "GET",
-        params: { type: 1 },
+        params: { type: 1, page_size: 50, name: query },
       }).then((e) => e.data.data),
   });
   const items = departmentListQuery.data || emptyArray;
-  const filteredItems =
-    query === ""
-      ? items
-      : items.filter(
-          (person) =>
-            person?.name
-              ?.toLowerCase()
-              ?.replace(/\s+/g, "")
-              ?.includes(query.toLowerCase().replace(/\s+/g, "")),
-        );
+
   const { btnRef, inpRef } = useAutoOpenOnMount();
 
   return (
@@ -93,10 +85,14 @@ export function DepartmentSelector({
                 ref={btnRef}
                 className="absolute inset-y-0 right-0 flex items-center pr-2"
               >
-                <ChevronUpDownIcon
-                  className="text-gray-400 h-5 w-5"
-                  aria-hidden="true"
-                />
+                {departmentListQuery.isPending ? (
+                  <SpinnerIcon className="text-black" />
+                ) : (
+                  <ChevronUpDownIcon
+                    className="text-gray-400 h-5 w-5"
+                    aria-hidden="true"
+                  />
+                )}
               </Combobox.Button>
             </div>
           </div>
@@ -108,7 +104,7 @@ export function DepartmentSelector({
             afterLeave={() => setQuery("")}
           >
             <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-              {filteredItems.length === 0 && query !== "" ? (
+              {items.length === 0 && query !== "" ? (
                 <Combobox.Option
                   className={({ active }) =>
                     `relative cursor-default select-none py-2 pl-10 pr-4 ${
@@ -122,7 +118,7 @@ export function DepartmentSelector({
                   </span>
                 </Combobox.Option>
               ) : (
-                filteredItems
+                items
                   .filter((e) => !selectedItems.map((e) => e.id).includes(e.id))
                   .map((item, i) => (
                     <Combobox.Option

@@ -9,16 +9,16 @@ import { useMemo, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 import { axiosApi } from "@/api/api";
-import { ChipGroup } from "@/components/common/ChipGroup";
 import { LineClamp } from "@/components/LineClamp";
 import { PopupDialog } from "@/components/PopupDialog";
+import { ReasonRenderer } from "@/components/ReasonRenderer";
+import { ChipGroup } from "@/components/common/ChipGroup";
 import { ROUTES } from "@/routes/routes";
 import { cn, emptyArray, replaceWith } from "@/utils";
+import { Switch } from "@headlessui/react";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
-import { Switch } from "@headlessui/react";
-import { ReasonRenderer } from "@/components/ReasonRenderer";
 
 const jobColumnHelper = createColumnHelper<ScoringJobItem>();
 const candidateColumnHelper = createColumnHelper<ScoringCandidateItem>();
@@ -82,6 +82,11 @@ export function ListScoringPage() {
   //#region memo states
   const jobListColumns = useMemo(
     () => [
+      jobColumnHelper.display({
+        id: "SLNo",
+        header: "Sr. No",
+        cell: (info) => info.row.index + 1,
+      }),
       jobColumnHelper.accessor("job_title", {
         header: "Job Title",
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
@@ -124,6 +129,11 @@ export function ListScoringPage() {
   );
   const candidateListColumns = useMemo(
     () => [
+      candidateColumnHelper.display({
+        id: "SLNo",
+        header: "Sr. No",
+        cell: (info) => info.row.index + 1,
+      }),
       candidateColumnHelper.accessor("candidate_name", {
         header: "Candidate Name",
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
@@ -262,7 +272,7 @@ export function ListScoringPage() {
         <div className="mb-2">
           <div className="border-gray-200 dark:border-strokedark rounded-sm border border-stroke bg-white p-4 shadow-default">
             {/* <h2 className="text-xl font-bold text-stone-700">Selected Job</h2> */}
-            <div className="flex gap-x-12">
+            <div className="flex flex-wrap gap-x-12 gap-y-4">
               {[
                 { title: "Job Title", value: selectedJob.title },
                 { title: "Job Location", value: selectedJob.location.name },
@@ -299,6 +309,18 @@ export function ListScoringPage() {
                   />
                 </Switch>
               </div>
+              {[
+                {
+                  title: "Employer Name",
+                  value: selectedJob.employer.employer_label,
+                },
+                { title: "Employer Email", value: selectedJob.employer.email },
+              ].map(({ title, value }) => (
+                <div key={title}>
+                  <div className="font-medium">{title}:</div>
+                  <div className="text-sm">{value}</div>
+                </div>
+              ))}
             </div>
             {/* <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> */}
             {/* </div> */}

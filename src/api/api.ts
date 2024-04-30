@@ -180,6 +180,7 @@ interface AllApiEndpoints {
         to_date?: string;
         sort?: string;
         common?: string;
+        search?: string;
       };
       data?: undefined;
     };
@@ -238,6 +239,7 @@ interface AllApiEndpoints {
         to_date?: string;
         sort?: string;
         common?: string;
+        search?: string;
       };
       data?: undefined;
     };
@@ -273,27 +275,7 @@ interface AllApiEndpoints {
       params?: undefined;
       data?: undefined;
     };
-    response: {
-      data: {
-        id: number;
-        title: string;
-        departments: {
-          id: number;
-          name: string;
-          description: string;
-        }[];
-        location: {
-          id: number;
-          name: string;
-        };
-      }[];
-      status: number;
-      is_success: boolean;
-      message: string;
-      next: string;
-      previous?: string;
-      count: number;
-    };
+    response: ScoredJobsResponse;
   };
   "onboarding/questionnaire/": {
     request: {
@@ -410,7 +392,9 @@ interface AllApiEndpoints {
   "onboarding/employee_onboarding/": {
     request: {
       method: "GET";
-      params?: undefined;
+      params?: {
+        id?: string;
+      };
       data?: undefined;
     };
     response: OnboardingListingResponse;
@@ -475,7 +459,9 @@ interface AllApiEndpoints {
   "user/recruiter/actions/": {
     request: {
       method: "GET";
-      params?: undefined;
+      params: {
+        date: string;
+      };
       data?: undefined;
     };
     response: {
@@ -591,6 +577,46 @@ interface AllApiEndpoints {
 
 //#region
 
+interface ScoredJobsResponse {
+  data: ScoredJobsResponseData[];
+  status: number;
+  is_success: boolean;
+  message: string;
+  next: string;
+  previous: null;
+  count: number;
+}
+
+interface ScoredJobsResponseData {
+  id: number;
+  title: string;
+  departments: ScoredJobsDepartment[];
+  employer: ScoredJobsEmployer;
+  location: ScoredJobsLocation;
+}
+
+interface ScoredJobsLocation {
+  id: number;
+  name: string;
+}
+
+interface ScoredJobsEmployer {
+  id: number;
+  employer_label: string;
+  email: string;
+  phone1: string;
+  phone2: string;
+  is_interested: boolean;
+  is_final_followup_sent: boolean;
+  is_unsubscribed: boolean;
+  is_blocked: boolean;
+}
+
+interface ScoredJobsDepartment {
+  id: number;
+  name: string;
+  description: string;
+}
 interface SuccessLoginResponse {
   data: SuccessLoginResponseData;
   message: string;
@@ -613,9 +639,12 @@ interface SuccessLoginResponseUser {
 }
 interface DepartmentListingResponse {
   data: DepartmentListingResponseData[];
-  message: string;
-  isSuccess: boolean;
   status: number;
+  is_success: boolean;
+  message: string;
+  next: string;
+  previous: null;
+  count: number;
 }
 
 interface DepartmentListingResponseData {
@@ -628,6 +657,8 @@ interface DepartmentListingResponseParams {
    * @type type = 0|1
    */
   type: number;
+  page_size: number;
+  name?: string;
 }
 
 interface DashboardOverviewResponse {
@@ -999,6 +1030,11 @@ interface OnboardingListingResponseData {
   employer_feedback?: string;
   candidate_feedback?: string;
   reason_for_rejection?: string;
+  followup?: boolean;
+  followup_on?: string;
+  followup_reason?: string;
+  interview_rescheduled_recruiter_video?: string;
+  interview_rescheduled_recruiter_f2f?: string;
   updated_at: string;
   is_editable: boolean;
 }

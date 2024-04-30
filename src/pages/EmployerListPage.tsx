@@ -1,4 +1,5 @@
 import { axiosApi } from "@/api/api";
+import { BlockButton } from "@/components/common/BlockButton";
 import { cn, replaceWith } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
@@ -9,9 +10,8 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
-import { TableLoader } from "./common/TableLoader";
 import { Table } from "./common/Table";
-import { BlockButton } from "@/components/common/BlockButton";
+import { TableLoader } from "./common/TableLoader";
 
 const columnHelper = createColumnHelper<EmployerListItem>();
 
@@ -81,6 +81,11 @@ export default function EmployerListPage() {
 
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: "SLNo",
+        header: "Sr. No",
+        cell: (info) => info.row.index + 1,
+      }),
       columnHelper.accessor("employer_label", {
         header: "Employer Name",
         cell: (info) => (

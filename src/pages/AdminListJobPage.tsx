@@ -18,12 +18,12 @@ import { Combobox } from "@/components/Combobox";
 import { LocationSelector } from "@/components/LocationSelector";
 import { useLogin } from "@/hooks/useLogin";
 import { axiosApi } from "../api/api";
-import { Button } from "../components/common/Button";
-import { ChipGroup } from "../components/common/ChipGroup";
-import { Input, TextArea } from "../components/common/Input";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { LineClamp } from "../components/LineClamp";
 import { PopupDialog } from "../components/PopupDialog";
+import { Button } from "../components/common/Button";
+import { ChipGroup } from "../components/common/ChipGroup";
+import { Input, TextArea } from "../components/common/Input";
 import { ROUTES, SortBy } from "../routes/routes";
 import { cn, emptyArray } from "../utils";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
@@ -42,14 +42,24 @@ export function AdminListJobPage() {
     null,
   );
   const [
-    { skill: department, location, scrape_from, scrape_to, sort_by, common },
+    {
+      skill: department,
+      location,
+      scrape_from,
+      scrape_to,
+      sort_by,
+      common,
+      search,
+    },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
-  
-  const handleFilterCommonJobs = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTypeSearch(prevParams => ({
+
+  const handleFilterCommonJobs = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setTypeSearch((prevParams) => ({
       ...prevParams,
-      common: event.target.checked ? 'True' : '',
+      common: event.target.checked ? "True" : "",
     }));
   };
 
@@ -64,6 +74,7 @@ export function AdminListJobPage() {
       scrape_to,
       sort_by,
       common,
+      search,
     ],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
@@ -76,6 +87,7 @@ export function AdminListJobPage() {
           to_date: scrape_to || undefined,
           sort: sort_by || undefined,
           common: common || undefined,
+          search: search || undefined,
         },
       }).then((e) => e.data);
     },
@@ -120,6 +132,11 @@ export function AdminListJobPage() {
 
   const columns = useMemo(
     () => [
+      columnHelper.display({
+        id: "SLNo",
+        header: "Sr. No",
+        cell: (info) => info.row.index + 1,
+      }),
       columnHelper.accessor("title", {
         header: "Title",
         cell: (info) => (
@@ -266,14 +283,17 @@ export function AdminListJobPage() {
                 }
               }}
             />
-            
-            <label htmlFor="common-filter" className="inline-flex items-center text-lg font-semibold">
+
+            <label
+              htmlFor="common-filter"
+              className="inline-flex items-center text-lg font-semibold"
+            >
               <input
                 type="checkbox"
                 id="common-filter"
-                checked={common === 'True'}
+                checked={common === "True"}
                 onChange={handleFilterCommonJobs}
-                className="form-checkbox h-6 w-6 text-primary border-primary rounded focus:ring-primary"
+                className="form-checkbox h-6 w-6 rounded border-primary text-primary focus:ring-primary"
               />
               <span className="ml-2">Common Jobs</span>
             </label>
