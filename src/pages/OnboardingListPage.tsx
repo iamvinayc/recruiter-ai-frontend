@@ -1,7 +1,12 @@
 import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
 import { PopupDialog } from "@/components/PopupDialog";
 import { Button as Btn } from "@/components/common/Button";
-import { DebouncedInput, Input, TextArea } from "@/components/common/Input";
+import {
+  DateTimeInput,
+  DebouncedInput,
+  Input,
+  TextArea,
+} from "@/components/common/Input";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -18,6 +23,7 @@ import {
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
 import { cn, replaceWith } from "@/utils";
+import { isChrome } from "@/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
@@ -28,6 +34,7 @@ import {
 import dayjs from "dayjs";
 import { Check, ChevronsUpDown, Edit2Icon, InfoIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
@@ -579,35 +586,71 @@ export function UpdateStatusModal({
           OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F,
           OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
           OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
-          () => (
-            <Input
-              disabled={updateStatusMutation.isPending}
-              containerClassName="mb-4"
-              name="f2f_interview_on"
-              label="F2F interview on"
-              type="datetime-local"
-              key={selectedValue}
-              error={errors.f2f_interview_on?.message}
-              register={register}
-            />
-          ),
+          () =>
+            isChrome ? (
+              <Input
+                disabled={updateStatusMutation.isPending}
+                containerClassName="mb-4"
+                name="f2f_interview_on"
+                label="F2F interview on"
+                type="datetime-local"
+                key={selectedValue}
+                error={errors.f2f_interview_on?.message}
+                register={register}
+              />
+            ) : (
+              <Controller
+                control={control}
+                name="f2f_interview_on"
+                render={({
+                  field: { value, onChange },
+                  fieldState: { error },
+                }) => (
+                  <DateTimeInput
+                    label="F2F interview on"
+                    onChange={onChange}
+                    error={error?.message}
+                    containerClassName="mb-4 w-full"
+                    value={value as unknown as Date}
+                  />
+                )}
+              />
+            ),
         )
         .with(
           OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO,
           OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
           OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
-          () => (
-            <Input
-              key={selectedValue}
-              disabled={updateStatusMutation.isPending}
-              containerClassName="mb-4"
-              name="video_interview_on"
-              label="Video interview on"
-              type="datetime-local"
-              error={errors.video_interview_on?.message}
-              register={register}
-            />
-          ),
+          () =>
+            isChrome ? (
+              <Input
+                key={selectedValue}
+                disabled={updateStatusMutation.isPending}
+                containerClassName="mb-4"
+                name="video_interview_on"
+                label="Video interview on"
+                type="datetime-local"
+                error={errors.video_interview_on?.message}
+                register={register}
+              />
+            ) : (
+              <Controller
+                control={control}
+                name="video_interview_on"
+                render={({
+                  field: { value, onChange },
+                  fieldState: { error },
+                }) => (
+                  <DateTimeInput
+                    label="Video interview on"
+                    onChange={onChange}
+                    error={error?.message}
+                    containerClassName="mb-4 w-full"
+                    value={value as unknown as Date}
+                  />
+                )}
+              />
+            ),
         )
         .otherwise(() => null)}
       <Controller
@@ -632,20 +675,40 @@ export function UpdateStatusModal({
       />
       {followUpChecked && (
         <>
-          <Input
-            min={dayjs().format("YYYY-MM-DDTHH:mm")}
-            containerClassName="mb-4"
-            register={followUpForm.register}
-            name="followUpOn"
-            label="Followup On"
-            type="datetime-local"
-          />
+          {isChrome ? (
+            <Input
+              min={dayjs().format("YYYY-MM-DDTHH:mm")}
+              containerClassName="mb-4"
+              register={followUpForm.register}
+              name="followUpOn"
+              label="Followup On"
+              type="datetime-local"
+            />
+          ) : (
+            <Controller
+              control={followUpForm.control}
+              name="followUpOn"
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => (
+                <DateTimeInput
+                  label="Followup On"
+                  onChange={onChange}
+                  error={error?.message}
+                  containerClassName="mb-4 w-full"
+                  value={value as unknown as Date}
+                />
+              )}
+            />
+          )}
 
           <TextArea
             containerClassName="mb-4"
             register={followUpForm.register}
             name="followUpReason"
             label="Followup Reason"
+            className="h-24"
           />
         </>
       )}
@@ -714,6 +777,6 @@ const STATUSES = Object.entries(OnboardingStatus).map(([key, value]) => ({
 }));
 
 const followUpState = z.object({
-  followUpOn: z.string().min(1, "Required"),
+  followUpOn: z.coerce.string().min(1, "Required"),
   followUpReason: z.string().min(1, "Required"),
 });

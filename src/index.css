@@ -96,3 +96,15 @@
 html {
   padding-right: 0px !important;
 }
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__tab-loop {
+  z-index: 100000;
+  opacity: 1;
+  inset: 0px;
+
+  position: fixed;
+}

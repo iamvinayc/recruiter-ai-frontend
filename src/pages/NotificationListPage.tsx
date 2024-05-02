@@ -180,17 +180,12 @@ export function NotificationListPage() {
     getCoreRowModel: getCoreRowModel(),
     enableFilters: false,
   });
-  const url = `data:text/html;base64,${btoa(
-    unescape(
-      encodeURIComponent(
-        reportListingQuery.data?.pages
-          .map((e) => e.data)
-          .flat()
-          .find((e) => e.id === +showDetailsId)?.content || "",
-      ),
-    ),
-  )}`;
-  console.log(url);
+
+  const content =
+    reportListingQuery.data?.pages
+      .map((e) => e.data)
+      .flat()
+      .find((e) => e.id === +showDetailsId)?.content || "";
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -239,7 +234,12 @@ export function NotificationListPage() {
           containerClassName="relative h-[70vh]"
           showXMarkIcon
         >
-          <iframe src={url} className="h-full w-full py-4" />
+          <iframe
+            src={`data:text/html;base64,${btoa(
+              unescape(encodeURIComponent(content)),
+            )}`}
+            className="h-full w-full py-4"
+          />
         </PopupDialog>
       </div>
     </main>
