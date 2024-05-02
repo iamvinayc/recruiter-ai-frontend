@@ -164,7 +164,7 @@ export const Header = ({
               <Menu.Button className="relative">
                 <BellIcon className="h-6 w-6 text-slate-600" />
                 <div className="dark:border-gray-900 min-w-6 absolute  right-0 top-0 inline-flex h-6 -translate-y-1/2 translate-x-1/2 transform items-center justify-center rounded-full border-2 border-white bg-red-500 px-2 text-xs font-medium text-white">
-                  {unreadCount > 100 ? "99+" : unreadCount}
+                  {unreadCount}
                 </div>
               </Menu.Button>
             </div>
@@ -187,7 +187,7 @@ export const Header = ({
                             active
                               ? "bg-violet-500 text-white"
                               : "text-gray-900"
-                          } relative w-full cursor-pointer rounded-md px-2 py-2 text-sm`}
+                          } relative w-full cursor-pointer whitespace-pre-wrap break-words rounded-md px-2 py-2 text-sm`}
                           onClick={() => {
                             readNotificationsMutation
                               .mutateAsync({ id: e.id })

@@ -162,7 +162,7 @@ export function AppRouter() {
 }
 
 //#region provider
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 const WithProvider = ({ children }: { children: JSX.Element | string }) => {
   return (
     <QueryClientProvider client={queryClient}>

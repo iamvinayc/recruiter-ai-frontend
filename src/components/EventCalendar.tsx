@@ -79,10 +79,9 @@ export function EventCalendar() {
     select(data) {
       return data.map<EventItem>((e) => ({
         candidate_name: e.candidate.name,
-        interview_date: [
-          e.action?.interview?.date,
-          e.action?.interview?.time,
-        ].join(" "),
+        interview_date:
+          [e.action?.interview?.date, e.action?.interview?.time].join("T") +
+          "Z",
         job_title: e.job.title?.replace(/Followup/, "Follow up"),
         pending_action: e.type,
         id: e.action.interview.onboarding_id,

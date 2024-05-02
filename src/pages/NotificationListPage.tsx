@@ -2,6 +2,7 @@ import { axiosApi } from "@/api/api";
 import { PopupDialog } from "@/components/PopupDialog";
 import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { useLogin } from "@/hooks/useLogin";
+import { queryClient } from "@/routes";
 import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
@@ -59,7 +60,17 @@ export function NotificationListPage() {
       return axiosApi({
         url: "notification/:id/".replace(":id", "" + id) as "notification/:id/",
         method: "PUT",
-      }).then((e) => e.data);
+      })
+        .then((e) => e.data)
+        .then((e) => {
+          if (e.isSuccess) {
+            // invalidate and force refetch a query
+            queryClient.invalidateQueries({
+              queryKey: ["notificationList"],
+              refetchType: "all",
+            });
+          }
+        });
     },
   });
 
