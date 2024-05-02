@@ -1,13 +1,12 @@
-import EnvelopeIcon from "@heroicons/react/24/outline/EnvelopeIcon";
-import LockClosedIcon from "@heroicons/react/24/outline/LockClosedIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { Input } from "../components/common/Input";
@@ -62,7 +61,8 @@ export function ChangePasswordPage() {
     if (!login.user) navigate(ROUTES.LOGIN.path);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [login.user]);
-
+  const [showOldPasswordVisible, setShowOldPasswordVisible] = useState(false);
+  const [showNewPasswordVisible, setShowNewPasswordVisible] = useState(false);
   return (
     <FromLayout className="w-full p-4 sm:p-12.5 xl:p-17.5">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -73,17 +73,39 @@ export function ChangePasswordPage() {
           placeholder="Enter your old password"
           error={errors.old_password?.message}
           name="old_password"
-          type="password"
+          type={showOldPasswordVisible ? "text" : "password"}
           register={register}
-          icon={<EnvelopeIcon className="h-6 w-6 opacity-50" />}
+          icon={
+            <button
+              type="button"
+              onClick={() => setShowOldPasswordVisible(!showOldPasswordVisible)}
+            >
+              {showOldPasswordVisible ? (
+                <EyeOffIcon className="h-6 w-6 opacity-50" />
+              ) : (
+                <EyeIcon className="h-6 w-6 opacity-50" />
+              )}
+            </button>
+          }
         />
 
         <Input
           disabled={loginApi.isPending}
           containerClassName="mb-4"
           label="New Password"
-          type="password"
-          icon={<LockClosedIcon className="h-6 w-6 opacity-50" />}
+          type={showNewPasswordVisible ? "text" : "password"}
+          icon={
+            <button
+              type="button"
+              onClick={() => setShowNewPasswordVisible(!showNewPasswordVisible)}
+            >
+              {showNewPasswordVisible ? (
+                <EyeOffIcon className="h-6 w-6 opacity-50" />
+              ) : (
+                <EyeIcon className="h-6 w-6 opacity-50" />
+              )}
+            </button>
+          }
           placeholder="Enter your new password"
           error={errors.new_password?.message}
           register={register}
@@ -112,7 +134,7 @@ const FromLayout = ({ children }: React.ComponentProps<"div">) => (
           Change Password
         </h2>
       </div>
-      <div className="dark:bg-boxdark rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark">
+      <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white shadow-default">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="px-26 py-17.5 text-center">
@@ -122,7 +144,7 @@ const FromLayout = ({ children }: React.ComponentProps<"div">) => (
               </span>
             </div>
           </div>
-          <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+          <div className="dark:border-strokedark w-full border-stroke xl:w-1/2 xl:border-l-2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">{children}</div>
           </div>
         </div>

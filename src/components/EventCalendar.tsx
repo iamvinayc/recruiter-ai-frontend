@@ -19,6 +19,7 @@ import {
   useInteractions,
   useRole,
 } from "@floating-ui/react";
+import { PopoverClose } from "@radix-ui/react-popover";
 import { useQuery } from "@tanstack/react-query";
 import { clsx } from "clsx";
 import dayjs from "dayjs";
@@ -180,7 +181,13 @@ export function EventCalendar() {
               >
                 Show All
               </PopoverTrigger>
-              <PopoverContent className="max-w-72 w-auto space-y-2 ">
+              <PopoverContent className="max-w-72 relative w-auto space-y-2">
+                <div className="flex items-center">
+                  <div className="w-full flex-1 whitespace-nowrap text-center text-sm">
+                    All Items
+                  </div>
+                  <PopoverClose className="-pt-2  text-right">x</PopoverClose>
+                </div>
                 {filtered_by_date_events.map((event) => (
                   <RenderEvent date={date} event={event} key={event.id} />
                 ))}
@@ -345,7 +352,7 @@ export function EventCalendar() {
       {isOpen && (
         <FloatingFocusManager context={context} modal={false}>
           <div
-            className="Popover z-30 max-w-[200px]"
+            className="Popover relative z-30 max-w-[250px]"
             ref={refs.setFloating}
             style={floatingStyles}
             aria-labelledby={headingId}
@@ -354,10 +361,22 @@ export function EventCalendar() {
             <FloatingArrow ref={arrowRef} context={context} fill="#ddd" />
 
             <h2 id={headingId}>
-              <b className="font-medium text-red-500">{selectedEvent?.title}</b>{" "}
-              - <b className="font-medium">{selectedEvent?.candidate_name}</b>{" "}
-              <b className="font-bold">for</b>{" "}
-              <b className="font-medium">{selectedEvent?.job_title}</b>{" "}
+              <div className="flex items-start space-x-2">
+                <b className="font-medium text-red-500">
+                  {selectedEvent?.title}
+                </b>
+                <button
+                  className="bg-white p-2 pt-1 font-medium"
+                  onClick={() => {
+                    setIsOpen(null);
+                  }}
+                >
+                  x
+                </button>
+              </div>
+              - <b className="font-medium">{selectedEvent?.candidate_name}</b>
+              <b className="font-bold">for</b>
+              <b className="font-medium">{selectedEvent?.job_title}</b>
               <b className="font-bold">Position</b>
             </h2>
 

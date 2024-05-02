@@ -89,7 +89,7 @@ export function EventTodo({
 
                 <div>
                   <div className="whitespace-nowrap text-xs">
-                    {dayjs(selectedDate).format("HH:mm A")}
+                    {dayjs(event.interview_date).format("HH:mm A")}
                   </div>
                 </div>
               </div>
