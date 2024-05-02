@@ -137,10 +137,8 @@ export function NotificationListPage() {
                     .mutateAsync({
                       id: info.row.original.id,
                     })
-                    .then((e) => {
-                      if (e.isSuccess) {
-                        reportListingQuery.refetch();
-                      }
+                    .then(() => {
+                      reportListingQuery.refetch();
                     });
                 }}
                 className="z-10 rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
@@ -157,6 +155,7 @@ export function NotificationListPage() {
         },
       }),
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [readNotificationsMutation.isPending, readNotificationsMutation.variables],
   );
 
