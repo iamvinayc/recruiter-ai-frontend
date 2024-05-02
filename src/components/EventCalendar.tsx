@@ -83,10 +83,10 @@ export function EventCalendar() {
           e.action?.interview?.date,
           e.action?.interview?.time,
         ].join(" "),
-        job_title: e.job.title,
+        job_title: e.job.title?.replace(/Followup/, "Follow up"),
         pending_action: e.type,
         id: e.action.interview.onboarding_id,
-        title: e.type,
+        title: e.type?.replace(/Followup/, "Follow up"),
       }));
     },
   });

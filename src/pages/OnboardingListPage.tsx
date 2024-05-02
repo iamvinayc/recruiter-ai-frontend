@@ -378,13 +378,6 @@ export function UpdateStatusModal({
     return () => setSelectedValue("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_selectedValue]);
-  useEffect(() => {
-    if (followup) {
-      setValue("status", OnboardingStatus.RECRUITER_INTERVIEWED);
-      trigger("status");
-      setSelectedValue(OnboardingStatus.RECRUITER_INTERVIEWED);
-    }
-  }, [followup]);
 
   const updateStatusMutation = useMutation({
     mutationKey: ["updateStatus", selectedOnboardingId],
