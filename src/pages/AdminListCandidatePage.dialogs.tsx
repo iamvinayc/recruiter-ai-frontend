@@ -147,30 +147,32 @@ export const EditCandidateDialog = ({
                   ))}
               </div>
             </div>
-          </div>
-          <div className="space-y-4">
-            {([["Location", selectedUser?.location?.name]] as const).map(
-              ([key, value]) => (
-                <div key={key} className="space-y-1">
-                  <div className="font-medium">{key}</div>
-                  <div className="text-sm text-slate-700">{value}</div>
+            <div className="mt-4 space-y-4">
+              {([["Location", selectedUser?.location?.name]] as const).map(
+                ([key, value]) => (
+                  <div key={key} className="space-y-1">
+                    <div className="font-medium">{key}</div>
+                    <div className="text-sm text-slate-700">{value}</div>
+                  </div>
+                ),
+              )}
+              <div className="space-y-1">
+                <div className="font-medium">Skills</div>
+                <div className="text-sm ">
+                  <ChipGroup
+                    items={selectedUser?.departments || emptyArray}
+                    showAll
+                  />
                 </div>
-              ),
-            )}
-            <div className="space-y-1">
-              <div className="font-medium">Skills</div>
-              <div className="text-sm ">
-                <ChipGroup
-                  items={selectedUser?.departments || emptyArray}
-                  showAll
-                />
               </div>
             </div>
+          </div>
+          <div className="space-y-4">
             <form className="space-y-1" onSubmit={onSubmit}>
               <TextArea
                 label="Description"
                 placeholder="Description"
-                className=" px-3 py-3"
+                className=" h-60 px-3 py-3"
                 name="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
