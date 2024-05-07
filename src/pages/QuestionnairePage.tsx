@@ -1,3 +1,11 @@
+import { Button } from "@/components/common/Button";
+import { Input } from "@/components/common/Input";
+import { SpinnerIcon } from "@/components/common/SvgIcons";
+import { ROUTES } from "@/routes/routes";
+import { emptyArray } from "@/utils";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { FileIcon, Trash2Icon } from "lucide-react";
 import React, {
   Dispatch,
   ElementRef,
@@ -5,26 +13,18 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Document, Page } from "react-pdf";
-import { axiosApi } from "../api/api";
-import { ROUTES } from "@/routes/routes";
-import { Button } from "@/components/common/Button";
-import { emptyArray } from "@/utils";
-import { Input } from "@/components/common/Input";
-import { FileIcon, Trash2Icon } from "lucide-react";
-import { SpinnerIcon } from "@/components/common/SvgIcons";
-import dayjs from "dayjs";
-import { pdfjs } from "react-pdf";
+import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { useNavigate } from "react-router-dom";
+import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
+import { axiosApi } from "../api/api";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `/js/pdf.worker.min.js`;
 
 export const QuestionnairePage: React.FC = () => {
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedOptions, setSelectedOptions] = useState<{
     [key: number]: number;
   }>({});
@@ -77,6 +77,7 @@ export const QuestionnairePage: React.FC = () => {
       };
       prefer_contract: boolean;
       file_token: string;
+      phone_number: string;
     }) =>
       axiosApi({
         url: "onboarding/questionnaire_submit/",
@@ -117,6 +118,10 @@ export const QuestionnairePage: React.FC = () => {
 
   const handleSubmit = async () => {
     console.log(preferContract, available, file);
+    if (!phoneNumber) {
+      toast.error("Please enter your mobile number.");
+      return;
+    }
     if (!acceptAgreement) {
       toast.error("Please accept the terms & agreement");
       return;
@@ -161,6 +166,7 @@ export const QuestionnairePage: React.FC = () => {
       },
       file_token: file_token,
       prefer_contract: preferContract,
+      phone_number: phoneNumber,
     });
   };
 
@@ -176,6 +182,16 @@ export const QuestionnairePage: React.FC = () => {
             <h1 className="mb-4 text-center text-2xl font-bold">
               Candidate Questionnaire
             </h1>
+            <Input
+              type="number"
+              label="Mobile Number"
+              value={phoneNumber}
+              placeholder="Enter your mobile number"
+              className="border-slate-400 bg-slate-100"
+              onInput={(e) => {
+                setPhoneNumber(e.currentTarget.value);
+              }}
+            />
             {questions?.map((question) => (
               <div key={question.id}>
                 <p className="mb-2 font-bold">{question.question}</p>

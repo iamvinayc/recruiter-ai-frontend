@@ -50,6 +50,17 @@ export const axiosApi = <
   });
 };
 
+export interface ResumeFileUploadResponse {
+  resume_email: string;
+  resume_phone: string;
+  resume_file: string;
+  resume_text: string;
+  resume_skills: {
+    name: string;
+    description: string;
+  }[];
+}
+
 //#region
 
 interface AllApiEndpoints {
@@ -306,6 +317,7 @@ interface AllApiEndpoints {
         };
         prefer_contract: boolean;
         file_token: string;
+        phone_number: string;
       };
     };
     response: SuccessResponse;
@@ -380,6 +392,7 @@ interface AllApiEndpoints {
         resume_file?: string | null;
         handle: string;
         platform: string;
+        resume_data?: ResumeFileUploadResponse;
       };
     };
     response: {
@@ -389,6 +402,37 @@ interface AllApiEndpoints {
       message: string;
       isSuccess: boolean;
       status: number;
+    };
+  };
+  "data-sourcing/candidate/:id": {
+    request: {
+      method: "PUT";
+      params?: undefined;
+      data?: {
+        description?: string;
+        resume_data?: ResumeFileUploadResponse;
+      };
+    };
+    response: {
+      data: {
+        id: number;
+      };
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
+  "data-sourcing/candidate/resume_upload/": {
+    request: {
+      method: "POST";
+      params?: undefined;
+      data: FormData;
+    };
+    response: {
+      message: string;
+      isSuccess: boolean;
+      status: number;
+      data: ResumeFileUploadResponse;
     };
   };
   "onboarding/employee_onboarding/": {

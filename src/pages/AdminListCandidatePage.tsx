@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { TrashIcon } from "lucide-react";
+import { Pencil, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -17,15 +17,17 @@ import { Combobox } from "@/components/Combobox";
 import { LineClamp } from "@/components/LineClamp";
 import { LocationSelector } from "@/components/LocationSelector";
 import { BlockButton } from "@/components/common/BlockButton";
+import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES, SortBy } from "@/routes/routes";
-import { axiosApi } from "../api/api";
+import { ResumeFileUploadResponse, axiosApi } from "../api/api";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { PopupDialog } from "../components/PopupDialog";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { Input, TextArea } from "../components/common/Input";
 import { cn, emptyArray, replaceWith } from "../utils";
+import { EditCandidateDialog } from "./AdminListCandidatePage.dialogs";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
@@ -96,6 +98,8 @@ export function AdminListCandidatePage() {
     },
     initialPageParam: "",
   });
+  const [editingUserId, setEditingUserId] = useState(-1);
+
   const [showUserDeleteId, setShowUserDeleteId] = useState<number | null>(null);
 
   const candidateDeleteMutation = useMutation({
@@ -200,6 +204,12 @@ export function AdminListCandidatePage() {
           return (
             <div className="flex flex-wrap items-center gap-2">
               <button
+                onClick={() => setEditingUserId(info.row.original.id)}
+                className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
+              >
+                <Pencil className="h-4 w-4 " />
+              </button>
+              <button
                 onClick={() => setShowUserDetailsId(info.row.original.id)}
                 className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
               >
@@ -257,6 +267,10 @@ export function AdminListCandidatePage() {
   const selectedUser = candidateListQueryData?.find(
     (e) => e.id === showUserDetailsId,
   );
+  const editingUser = candidateListQueryData?.find(
+    (e) => e.id === editingUserId,
+  );
+
   //#endregion
   console.log("re-render");
   const table = useReactTable({
@@ -490,6 +504,13 @@ export function AdminListCandidatePage() {
           </div>
         </div>
       </PopupDialog>
+      <EditCandidateDialog
+        closeDialog={(success) => {
+          setEditingUserId(-1);
+          if (success) candidateListQuery.refetch();
+        }}
+        selectedUser={editingUser}
+      />
     </main>
   );
 }
@@ -525,6 +546,7 @@ const AddCandidatePopup = ({
     control,
     reset,
     setError,
+    setValue,
   } = useForm<z.TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -546,7 +568,11 @@ const AddCandidatePopup = ({
   };
   const addCandidateMutation = useMutation({
     mutationKey: ["addCandidateMutation"],
-    mutationFn: (data: z.TypeOf<typeof formSchema>) =>
+    mutationFn: (
+      data: z.TypeOf<typeof formSchema> & {
+        resume_data?: ResumeFileUploadResponse;
+      },
+    ) =>
       axiosApi({
         url: "data-sourcing/candidate/" as "data-sourcing/candidate",
         method: "POST",
@@ -566,13 +592,55 @@ const AddCandidatePopup = ({
             name: data.city,
           },
           platform: "SYSTEM",
+          resume_data: data.resume_data,
         },
       }).then((e) => e.data),
   });
+
+  const uploadResumeFile = useMutation({
+    mutationKey: ["uploadResumeFile"],
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("resume", file);
+      return axiosApi({
+        url: "data-sourcing/candidate/resume_upload/",
+        method: "POST",
+        data: formData,
+      })
+        .then((e) => e.data.data)
+        .then(async (e) => {
+          console.log(e);
+          const email = e.resume_email;
+          const phone = e.resume_phone;
+          if (email) {
+            setValue("email", email);
+          }
+          if (phone) {
+            setValue("phone", phone);
+          }
+          const skills = e.resume_skills;
+          if (skills) {
+            setValue("department", skills);
+          }
+          setValue("resume_file", e.resume_file);
+          console.log(skills);
+          return e;
+        });
+    },
+  });
   const onSubmit = (data: z.TypeOf<typeof formSchema>) => {
+    const { resume_file, description, ...formData } = data;
+    if (!resume_file && !description) {
+      toast.error("Please upload resume or enter description");
+      return;
+    }
     //
     addCandidateMutation
-      .mutateAsync(data)
+      .mutateAsync({
+        ...formData,
+        description: description || undefined,
+        resume_data: uploadResumeFile.data,
+      })
       .then((data) => {
         if (data.isSuccess) {
           toast.success("Added candidate successfully");
@@ -581,7 +649,7 @@ const AddCandidatePopup = ({
         } else if (data.message) {
           toast.error(data.message);
           if (data.message.toLowerCase().includes("email")) {
-            setError("email", { message: data.message });
+            setError("email", { message: JSON.stringify(data.message) });
           }
         } else throw new Error("Some error ocurred");
       })
@@ -659,13 +727,29 @@ const AddCandidatePopup = ({
                 type="url"
                 error={errors.profile_url?.message}
               />
-              <Input
+              {/* <Input
                 label="Resume url"
                 placeholder="Resume url"
                 className="px-3 py-3"
                 register={register}
                 name="resume_file"
                 type="url"
+                error={errors.resume_file?.message}
+              /> */}
+              <Input
+                type="file"
+                label="Upload Resume"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    uploadResumeFile.mutateAsync(file);
+                  }
+                }}
+                icon={
+                  uploadResumeFile.isPending ? (
+                    <SpinnerIcon className="m-0 mt-1 p-0 text-primary" />
+                  ) : undefined
+                }
                 error={errors.resume_file?.message}
               />
             </div>
@@ -742,11 +826,11 @@ const AddCandidatePopup = ({
 
 const formSchema = z.object({
   name: z.string().min(1, "Please enter candidate name"),
-  description: z.string().min(1, "Please enter description"),
+  description: z.string().optional(),
   email: z.string().email(),
   phone: z.string().min(1, "Please enter phone"),
   profile_url: z.string(),
-  resume_file: z.string(),
+  resume_file: z.string().optional(),
   department: z
     .array(
       z.object({
