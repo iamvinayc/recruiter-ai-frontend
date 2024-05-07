@@ -1169,7 +1169,7 @@ export enum OnboardingStatus {
 }
 export const OnboardingStatusMap = {
   SHORTLISTED: "Shortlisted",
-  RECRUITER_INTERVIEWED: "Recruiter Interview Completed",
+  RECRUITER_INTERVIEWED: "Candidate called by the recruiter",
   EMPLOYER_INTERVIEW_SCHEDULED_VIDEO:
     "Video Conference Scheduled (Recruiter, Candidate, Employer)",
   EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO:

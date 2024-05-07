@@ -94,7 +94,8 @@ export const Header = ({
             <Bars3Icon className="relative block h-5.5 w-5.5 cursor-pointer" />
           </button>
           <div className="block flex-shrink-0">
-            <div className="text-3xl text-black">AI-RECRUIT</div>
+            {/* <div className="text-3xl text-black">AI-RECRUIT</div> */}
+            <img src="/logo.svg" />
           </div>
         </div>
         <div className="hidden sm:block"></div>

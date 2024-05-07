@@ -374,9 +374,9 @@ export function EventCalendar() {
                 </button>
               </div>
               - <b className="font-medium">{selectedEvent?.candidate_name}</b>
-              <b className="font-bold">for</b>
+              <b className="font-bold"> for </b>
               <b className="font-medium">{selectedEvent?.job_title}</b>
-              <b className="font-bold">Position</b>
+              <b className="font-bold"> Position </b>
             </h2>
 
             <br />
