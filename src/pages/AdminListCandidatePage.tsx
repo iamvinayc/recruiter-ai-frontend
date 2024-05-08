@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
+import { Document, Page } from "react-pdf";
 import { z } from "zod";
 
 import { Combobox } from "@/components/Combobox";
@@ -531,6 +532,7 @@ interface CandidateListItem {
 
 //#endregion
 //#region dialog
+
 const AddCandidatePopup = ({
   isOpen,
   setIsOpen,
@@ -538,6 +540,7 @@ const AddCandidatePopup = ({
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const [showPreview, setShowPreview] = useState(false);
   const { isRecruiter } = useLogin();
   const {
     register,
@@ -688,8 +691,8 @@ const AddCandidatePopup = ({
             </div>
             <div className="flex flex-1 flex-col">
               <TextArea
-                label="Description"
-                placeholder="Description"
+                label={uploadResumeFile.data ? "Additional Details" : "Summary"}
+                placeholder={uploadResumeFile.data ? "Additional Details" : "Summary"}
                 className=" px-3 py-3"
                 register={register}
                 name="description"
@@ -752,6 +755,15 @@ const AddCandidatePopup = ({
                 }
                 error={errors.resume_file?.message}
               />
+              {uploadResumeFile.data ? (
+                <button
+                  type="button"
+                  className="ml-2 text-primary underline"
+                  onClick={() => setShowPreview(true)}
+                >
+                  Preview
+                </button>
+              ) : null}
             </div>
           </div>
           <div className="flex flex-col gap-6 md:flex-row">
@@ -806,7 +818,28 @@ const AddCandidatePopup = ({
           </div>
         </div>
 
+        {
+          showPreview && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="max-w-full max-h-full overflow-auto rounded-lg bg-white p-4">
+                <button
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowPreview(false)}
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+                <Document file={uploadResumeFile?.data?.resume_file}>
+                  <Page pageNumber={1} />
+                </Document>
+              </div>
+            </div>
+          )
+        }
+
         <div className="flex justify-end space-x-2">
+          <p className="text-sm text-gray-500 italic">
+            Disclaimer:- Please update {uploadResumeFile.data ? <span className="font-semibold">Additional Details</span> : <span className="font-semibold">Summary</span>} information section if any new information available from candidate. This will be used in scoring and rank calculation
+          </p>
           <Button
             type="reset"
             onClick={resetForm}

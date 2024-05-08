@@ -267,7 +267,8 @@ export const SideBar = ({
       )}
     >
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-        <div className="text-3xl text-white">AI-RECRUIT</div>
+        {/* <div className="text-3xl text-white">AI-RECRUIT</div> */}
+        <img className="w-[80%]" src="/logo.svg" />
         <button
           onClick={() => setSidebarOpen(false)}
           className="block 2xl:hidden"
