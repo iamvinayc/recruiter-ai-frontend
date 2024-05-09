@@ -17,6 +17,11 @@ import toast from "react-hot-toast";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import PhoneInput, {
+  Value as E164Number,
+  isValidPhoneNumber,
+} from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 import { useNavigate } from "react-router-dom";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { axiosApi } from "../api/api";
@@ -24,7 +29,7 @@ import { axiosApi } from "../api/api";
 pdfjs.GlobalWorkerOptions.workerSrc = `/js/pdf.worker.min.js`;
 
 export const QuestionnairePage: React.FC = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState<E164Number>("" as E164Number);
   const [selectedOptions, setSelectedOptions] = useState<{
     [key: number]: number;
   }>({});
@@ -170,6 +175,11 @@ export const QuestionnairePage: React.FC = () => {
     });
   };
 
+  const phoneNumberValidator = phoneNumber
+    ? isValidPhoneNumber(phoneNumber)
+      ? undefined
+      : "Invalid phone number"
+    : "Phone number required";
   return (
     <div className="flex min-h-screen items-center justify-center bg-blue-100">
       <div className="bg-gray-100 w-full max-w-2xl rounded-md bg-gray p-8 shadow-lg">
@@ -182,7 +192,7 @@ export const QuestionnairePage: React.FC = () => {
             <h1 className="mb-4 text-center text-2xl font-bold">
               Candidate Questionnaire
             </h1>
-            <Input
+            {/* <Input
               type="number"
               label="Mobile Number"
               value={phoneNumber}
@@ -191,7 +201,21 @@ export const QuestionnairePage: React.FC = () => {
               onInput={(e) => {
                 setPhoneNumber(e.currentTarget.value);
               }}
+            /> */}
+            <PhoneInput
+              international
+              placeholder="Enter phone number"
+              value={phoneNumber}
+              onChange={(e) => e && setPhoneNumber(e)}
+              className="overflow-hidden rounded-md border border-stroke bg-white pl-4"
+              error={phoneNumberValidator}
             />
+
+            {phoneNumber !== "" && phoneNumberValidator ? (
+              <span className="mt-2 text-sm text-red-500">
+                {phoneNumberValidator}
+              </span>
+            ) : null}
             {questions?.map((question) => (
               <div key={question.id}>
                 <p className="mb-2 font-bold">{question.question}</p>
@@ -295,7 +319,6 @@ export const QuestionnairePage: React.FC = () => {
             >
               <Page pageNumber={1} />
             </Document>
-
             <div className="pt-2">
               <label className="text-lg font-bold">
                 <input
@@ -307,7 +330,6 @@ export const QuestionnairePage: React.FC = () => {
                 I accept the terms and conditions mentioned above
               </label>
             </div>
-
             <Button
               type="submit"
               onClick={handleSubmit}

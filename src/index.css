@@ -108,3 +108,8 @@ html {
 
   position: fixed;
 }
+
+.PhoneInputInput {
+  outline: none;
+  padding: 10px 0;
+}

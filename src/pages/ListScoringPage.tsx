@@ -27,6 +27,8 @@ const candidateColumnHelper = createColumnHelper<ScoringCandidateItem>();
 export function ListScoringPage() {
   const [isEmployerNotified, setIsEmployerNotified] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
+  const [searchCandidateName, setSearchCandidateName] = useState("");
+  const [searchCandidateEmail, setSearchCandidateEmail] = useState("");
   const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(
     null,
   );
@@ -62,6 +64,10 @@ export function ListScoringPage() {
       "listCandidateBasedOnJobQuery",
       selectedJobId,
       isEmployerNotified,
+      searchCandidateName,
+      searchCandidateEmail,
+      department,
+      location,
     ],
     enabled: !!selectedJobId,
     queryFn: ({ pageParam }) => {
@@ -73,6 +79,8 @@ export function ListScoringPage() {
           location,
           job_id: `${selectedJobId}`,
           is_employer_notified: isEmployerNotified ? true : undefined,
+          name: searchCandidateName,
+          email: searchCandidateEmail,
         },
       }).then((e) => e.data);
     },
@@ -152,12 +160,38 @@ export function ListScoringPage() {
         cell: (info) => info.row.index + 1,
       }),
       candidateColumnHelper.accessor("candidate_name", {
-        header: "Candidate Name",
+        header: () => (
+          <div>
+            <div>Candidate Name</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Search"
+              value={searchCandidateName}
+              onChange={(val) => {
+                setSearchCandidateName("" + val);
+              }}
+            />
+          </div>
+        ),
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
       candidateColumnHelper.accessor("candidate_email", {
-        header: "Candidate Email",
+        header: () => (
+          <div>
+            <div>Candidate Email</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Search"
+              value={searchCandidateEmail}
+              onChange={(val) => {
+                setSearchCandidateEmail("" + val);
+              }}
+            />
+          </div>
+        ),
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
@@ -219,7 +253,7 @@ export function ListScoringPage() {
         },
       }),
     ],
-    [],
+    [searchCandidateEmail, searchCandidateName],
   );
 
   const listJobQueryData = useMemo(

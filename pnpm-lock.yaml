@@ -41,6 +41,9 @@ dependencies:
   '@types/react-datepicker':
     specifier: ^6.2.0
     version: 6.2.0(react-dom@18.2.0)(react@18.2.0)
+  '@types/react-phone-number-input':
+    specifier: ^3.1.37
+    version: 3.1.37(react-dom@18.2.0)(react@18.2.0)
   axios:
     specifier: ^1.6.0
     version: 1.6.0
@@ -92,6 +95,9 @@ dependencies:
   react-pdf:
     specifier: ^7.7.0
     version: 7.7.0(@types/react@18.2.34)(react-dom@18.2.0)(react@18.2.0)
+  react-phone-number-input:
+    specifier: ^3.4.1
+    version: 3.4.1(react-dom@18.2.0)(react@18.2.0)
   react-router-dom:
     specifier: ^6.18.0
     version: 6.18.0(react-dom@18.2.0)(react@18.2.0)
@@ -1444,6 +1450,16 @@ packages:
     dependencies:
       '@types/react': 18.2.34
 
+  /@types/react-phone-number-input@3.1.37(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-N5/4VjptmOJWs4g5keMxjAuc8yQFr0fM+OSYfT8h0IQVm5kUiLAGNg+TGHy21Xzb1DB/PhDkiWnKcIREgr5VWA==}
+    deprecated: This is a stub types definition. react-phone-number-input provides its own type definitions, so you do not need this installed.
+    dependencies:
+      react-phone-number-input: 3.4.1(react-dom@18.2.0)(react@18.2.0)
+    transitivePeerDependencies:
+      - react
+      - react-dom
+    dev: false
+
   /@types/react@18.2.34:
     resolution: {integrity: sha512-U6eW/alrRk37FU/MS2RYMjx0Va2JGIVXELTODaTIYgvWGCV4Y4TfTUzG8DdmpDNIT0Xpj/R7GfyHOJJrDttcvg==}
     dependencies:
@@ -1910,6 +1926,10 @@ packages:
       clsx: 2.0.0
     dev: false
 
+  /classnames@2.5.1:
+    resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
+    dev: false
+
   /client-only@0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
     dev: false
@@ -1979,6 +1999,10 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
+
+  /country-flag-icons@1.5.11:
+    resolution: {integrity: sha512-B+mvFywunkRJs270k7kCBjhogvIA0uNn6GAXv6m2cPn3rrwqZzZVr2gBWcz+Cz7OGVWlcbERlYRIX0S6OGr8Bw==}
+    dev: false
 
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -2725,6 +2749,12 @@ packages:
   /inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
+  /input-format@0.3.10:
+    resolution: {integrity: sha512-5cFv/kOZD7Ch0viprVkuYPDkAU7HBZYBx8QrIpQ6yXUWbAQ0+RQ8IIojDJOf/RO6FDJLL099HDSK2KoVZ2zevg==}
+    dependencies:
+      prop-types: 15.8.1
+    dev: false
+
   /internal-slot@1.0.6:
     resolution: {integrity: sha512-Xj6dv+PsbtwyPpEflsejS+oIZxmMlV44zAhG479uYu89MsjcYOhCFnNyKrkJrihbsiasQyY0afoCl/9BLR65bg==}
     engines: {node: '>= 0.4'}
@@ -2970,6 +3000,10 @@ packages:
       prelude-ls: 1.2.1
       type-check: 0.4.0
     dev: true
+
+  /libphonenumber-js@1.11.1:
+    resolution: {integrity: sha512-Wze1LPwcnzvcKGcRHFGFECTaLzxOtujwpf924difr5zniyYv1C2PiW0419qDR7m8lKDxsImu5mwxFuXhXpjmvw==}
+    dev: false
 
   /lie@3.1.1:
     resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
@@ -3611,6 +3645,21 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
+    dev: false
+
+  /react-phone-number-input@3.4.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-guuenZqU/DYvDBFzFdTrppC4rs+q5ybTFHrxEo9VGvX0pPLWM4ZXlRa0llT7LRAvfxX8RjQNnQkkCiTHTzhLZA==}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    dependencies:
+      classnames: 2.5.1
+      country-flag-icons: 1.5.11
+      input-format: 0.3.10
+      libphonenumber-js: 1.11.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /react-remove-scroll-bar@2.3.4(@types/react@18.2.34)(react@18.2.0):

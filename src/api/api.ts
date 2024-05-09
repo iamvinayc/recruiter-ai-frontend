@@ -275,6 +275,8 @@ interface AllApiEndpoints {
         location?: string;
         job_id?: string;
         is_employer_notified?: boolean;
+        name?: string;
+        email?: string;
       };
       data?: undefined;
     };
