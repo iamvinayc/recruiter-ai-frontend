@@ -10,8 +10,8 @@ import { Pencil, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { Document, Page } from "react-pdf";
+import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { z } from "zod";
 
 import { Combobox } from "@/components/Combobox";
@@ -568,6 +568,7 @@ const AddCandidatePopup = ({
       profile_url: "",
       resume_file: "",
     });
+    uploadResumeFile.reset();
   };
   const addCandidateMutation = useMutation({
     mutationKey: ["addCandidateMutation"],
@@ -663,6 +664,7 @@ const AddCandidatePopup = ({
     resetForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+  const [pdfPreviewURL, setPdfPreviewURL] = useState("");
   return (
     <PopupDialog
       isOpen={isOpen}
@@ -692,7 +694,9 @@ const AddCandidatePopup = ({
             <div className="flex flex-1 flex-col">
               <TextArea
                 label={uploadResumeFile.data ? "Additional Details" : "Summary"}
-                placeholder={uploadResumeFile.data ? "Additional Details" : "Summary"}
+                placeholder={
+                  uploadResumeFile.data ? "Additional Details" : "Summary"
+                }
                 className=" px-3 py-3"
                 register={register}
                 name="description"
@@ -746,6 +750,7 @@ const AddCandidatePopup = ({
                   const file = e.target.files?.[0];
                   if (file) {
                     uploadResumeFile.mutateAsync(file);
+                    setPdfPreviewURL(URL.createObjectURL(file));
                   }
                 }}
                 icon={
@@ -818,27 +823,33 @@ const AddCandidatePopup = ({
           </div>
         </div>
 
-        {
-          showPreview && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="max-w-full max-h-full overflow-auto rounded-lg bg-white p-4">
-                <button
-                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                  onClick={() => setShowPreview(false)}
-                >
-                  <XMarkIcon className="h-6 w-6" />
-                </button>
-                <Document file={uploadResumeFile?.data?.resume_file}>
-                  <Page pageNumber={1} />
-                </Document>
-              </div>
+        {showPreview && (
+          <div className="fixed  inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-3">
+            <div className=" relative max-h-full max-w-full overflow-auto rounded-lg bg-white p-4">
+              <button
+                className="text-gray-500 hover:text-gray-700 fixed right-4 top-4 z-10 rounded-full bg-white p-2"
+                onClick={() => setShowPreview(false)}
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+
+              <Document file={pdfPreviewURL}>
+                <Page pageNumber={1} />
+              </Document>
             </div>
-          )
-        }
+          </div>
+        )}
 
         <div className="flex justify-end space-x-2">
-          <p className="text-sm text-gray-500 italic">
-            Disclaimer:- Please update {uploadResumeFile.data ? <span className="font-semibold">Additional Details</span> : <span className="font-semibold">Summary</span>} information section if any new information available from candidate. This will be used in scoring and rank calculation
+          <p className="text-gray-500 text-sm italic">
+            Disclaimer:- Please update{" "}
+            {uploadResumeFile.data ? (
+              <span className="font-semibold">Additional Details</span>
+            ) : (
+              <span className="font-semibold">Summary</span>
+            )}{" "}
+            information section if any new information available from candidate.
+            This will be used in scoring and rank calculation
           </p>
           <Button
             type="reset"
