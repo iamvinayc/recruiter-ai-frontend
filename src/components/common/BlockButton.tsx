@@ -24,7 +24,7 @@ export function BlockButton({
       ) : (
         <CircleSlash className="h-4 w-4 " />
       )}{" "}
-      <span>{is_blocked ? "Un-Block" : "Block"}</span>
+      <span>{is_blocked ? "Unblock" : "Block"}</span>
     </button>
   );
 }

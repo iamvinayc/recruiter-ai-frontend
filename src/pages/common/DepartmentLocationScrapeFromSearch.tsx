@@ -14,8 +14,10 @@ dayjs.extend(customParseFormat);
 
 export function DepartmentLocationScrapeFromSearch({
   onSearch,
+  searchTitle,
 }: {
   onSearch: VoidFunction;
+  searchTitle: string;
 }) {
   const [
     { skill: department, location, scrape_from, scrape_to, search },
@@ -105,8 +107,8 @@ export function DepartmentLocationScrapeFromSearch({
             }}
           />
           <Input
-            label="Search"
-            placeholder="Search"
+            label={searchTitle}
+            placeholder={searchTitle}
             type="text"
             value={selectedSearch}
             onChange={(e) => {

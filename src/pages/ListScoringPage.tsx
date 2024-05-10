@@ -13,7 +13,10 @@ import { LineClamp } from "@/components/LineClamp";
 import { PopupDialog } from "@/components/PopupDialog";
 import { ReasonRenderer } from "@/components/ReasonRenderer";
 import { ChipGroup } from "@/components/common/ChipGroup";
-import { DebouncedInput } from "@/components/common/Input";
+import {
+  DebouncedInput,
+  DebouncedSearchInput,
+} from "@/components/common/Input";
 import { ROUTES } from "@/routes/routes";
 import { cn, emptyArray, replaceWith } from "@/utils";
 import { Switch } from "@headlessui/react";
@@ -100,20 +103,7 @@ export function ListScoringPage() {
         cell: (info) => info.row.index + 1,
       }),
       jobColumnHelper.accessor("job_title", {
-        header: () => (
-          <div>
-            <div>Job Title</div>
-            <DebouncedInput
-              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={(val) => {
-                setSearch("" + val);
-              }}
-            />
-          </div>
-        ),
+        header: () => <div>Job Title</div>,
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
@@ -318,6 +308,15 @@ export function ListScoringPage() {
         <h2 className="text-title-md2 font-semibold text-black dark:text-white">
           {selectedJobId ? "Candidate score list" : "Select a job"}
         </h2>
+        {selectedJobId ? null : (
+          <DebouncedSearchInput
+            placeholder="Search by job title"
+            value={search}
+            onChange={(val) => {
+              setSearch("" + val);
+            }}
+          />
+        )}
       </div>
       {selectedJob ? (
         <div className="mb-2">

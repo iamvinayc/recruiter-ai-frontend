@@ -163,7 +163,7 @@ export function AdminListCandidatePage() {
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("title", {
-        header: "Title",
+        header: "Candidate Name",
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
       }),
@@ -339,6 +339,7 @@ export function AdminListCandidatePage() {
           </div>
         </div>
         <DepartmentLocationScrapeFromSearch
+          searchTitle="Candidate Name"
           onSearch={() => {
             candidateListQuery.refetch();
           }}

@@ -309,6 +309,7 @@ export function AdminListJobPage() {
           </div>
         </div>
         <DepartmentLocationScrapeFromSearch
+          searchTitle="Job Title"
           onSearch={() => {
             jobListQuery.refetch();
           }}
@@ -409,20 +410,33 @@ export function AdminListJobPage() {
                   </div>
                   <div className="divide-y">
                     {[
-                      ["Employee Name", selectedUser?.employer?.employer_label],
+                      ["Employer Name", selectedUser?.employer?.employer_label],
                       ["Email", selectedUser?.employer?.email],
-                      ["Phone 1", selectedUser?.employer?.phone1],
-                      ["Phone 2", selectedUser?.employer?.phone2],
+                      ["Contact Number", selectedUser?.employer?.phone1],
+                      ["Alternate Number", selectedUser?.employer?.phone2],
                       ["Platform", selectedUser?.platform],
-                    ].map(([key, value]) => (
-                      <div
-                        key={key}
-                        className="flex justify-between px-4 py-2 text-sm"
-                      >
-                        <div className="font-medium">{key}</div>
-                        <div>{value}</div>
-                      </div>
-                    ))}
+                    ]
+                      .filter(([key], _, arr) => {
+                        const phone2 = arr.find(
+                          ([key]) => key === "Alternate Number",
+                        )?.[1];
+                        const phone1 = arr.find(
+                          ([key]) => key === "Contact Number",
+                        )?.[1];
+                        if (phone2 === phone1 && key === "Alternate Number") {
+                          return false;
+                        }
+                        return true;
+                      })
+                      .map(([key, value]) => (
+                        <div
+                          key={key}
+                          className="flex justify-between px-4 py-2 text-sm"
+                        >
+                          <div className="font-medium">{key}</div>
+                          <div>{value}</div>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>

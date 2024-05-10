@@ -3,7 +3,7 @@ import { PopupDialog } from "@/components/PopupDialog";
 import { Button as Btn } from "@/components/common/Button";
 import {
   DateTimeInput,
-  DebouncedInput,
+  DebouncedSearchInput,
   Input,
   TextArea,
 } from "@/components/common/Input";
@@ -164,20 +164,7 @@ export default function OnboardingListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("candidate_name", {
-        header: () => (
-          <div>
-            <div>Candidate Name</div>
-            <DebouncedInput
-              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={(val) => {
-                setSearch("" + val);
-              }}
-            />
-          </div>
-        ),
+        header: () => <div>Candidate Name</div>,
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -221,12 +208,12 @@ export default function OnboardingListPage() {
                   <div className="space-y-2 text-sm">
                     {[
                       [
-                        "Followup On:",
+                        "Follow up On:",
                         dayjs(info.row.original.followup_on).format(
                           "DD/MM/YYYY HH:mm:ss",
                         ),
                       ],
-                      ["Followup Reason:", info.row.original.followup_reason],
+                      ["Follow up Reason:", info.row.original.followup_reason],
                     ].map((e) => (
                       <div key={e[0]} className="flex space-x-2">
                         <span className="font-bold">{e[0]}</span>
@@ -267,7 +254,7 @@ export default function OnboardingListPage() {
         ),
       }),
     ],
-    [isRecruiter, search],
+    [isRecruiter],
   );
 
   const table = useReactTable({
@@ -285,6 +272,13 @@ export default function OnboardingListPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             Onboarding List
           </h2>
+          <DebouncedSearchInput
+            placeholder="Search by job title"
+            value={search}
+            onChange={(val) => {
+              setSearch("" + val);
+            }}
+          />
         </div>
         {/* -- Body --- */}
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
@@ -681,7 +675,7 @@ export function UpdateStatusModal({
               containerClassName="mb-4"
               register={followUpForm.register}
               name="followUpOn"
-              label="Followup On"
+              label="Follow up On"
               type="datetime-local"
             />
           ) : (
@@ -693,7 +687,7 @@ export function UpdateStatusModal({
                 fieldState: { error },
               }) => (
                 <DateTimeInput
-                  label="Followup On"
+                  label="Follow up On"
                   onChange={onChange}
                   error={error?.message}
                   containerClassName="mb-4 w-full"
@@ -707,7 +701,7 @@ export function UpdateStatusModal({
             containerClassName="mb-4"
             register={followUpForm.register}
             name="followUpReason"
-            label="Followup Reason"
+            label="Follow up Reason"
             className="h-24"
           />
         </>

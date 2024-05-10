@@ -1,9 +1,9 @@
 import { axiosApi } from "@/api/api";
 import { BlockButton } from "@/components/common/BlockButton";
+import { DebouncedSearchInput } from "@/components/common/Input";
 import { cn, replaceWith } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
-  ColumnFilter,
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
@@ -16,8 +16,7 @@ import { TableLoader } from "./common/TableLoader";
 const columnHelper = createColumnHelper<EmployerListItem>();
 
 export default function EmployerListPage() {
-  const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
-
+  const [search, setSearch] = useState("");
   const blockEmployerMutation = useMutation({
     mutationKey: ["blockEmployerMutation"],
     mutationFn: async ({ blocked, id }: { id: number; blocked: boolean }) => {
@@ -41,18 +40,15 @@ export default function EmployerListPage() {
   });
 
   const employerListingQuery = useInfiniteQuery({
-    queryKey: ["employerListingQuery", columnFilters],
+    queryKey: ["employerListingQuery", search],
     queryFn: async ({ pageParam }) => {
-      const name =
-        (columnFilters.find((e) => e.id === "employer_label")
-          ?.value as string) || "";
       return axiosApi({
         url: (pageParam ||
           "data-sourcing/employer/") as "data-sourcing/employer/",
         method: "GET",
         params: {
           per_page: 12,
-          name,
+          name: search,
         },
       }).then((e) => e.data);
     },
@@ -94,7 +90,7 @@ export default function EmployerListPage() {
           </div>
         ),
         footer: (info) => info.column.id,
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       }),
       columnHelper.accessor("email", {
         header: "Email",
@@ -154,8 +150,6 @@ export default function EmployerListPage() {
   const table = useReactTable({
     columns: columns,
     data: employerList,
-    state: { columnFilters },
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
   });
   return (
@@ -165,6 +159,14 @@ export default function EmployerListPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             Employer List
           </h2>
+
+          <DebouncedSearchInput
+            placeholder="Search by Employer Name"
+            value={search}
+            onChange={(val) => {
+              setSearch("" + val);
+            }}
+          />
         </div>
         {/* -- Body --- */}
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">

@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FieldPath, FieldValues, UseFormRegister } from "react-hook-form";
 
+import { SearchIcon } from "lucide-react";
 import { cn } from "../../utils";
 
 export function Input<
@@ -162,3 +163,28 @@ export function DebouncedInput({
     />
   );
 }
+
+export const DebouncedSearchInput = ({
+  placeholder,
+  value,
+  onChange,
+}: {
+  placeholder: string;
+  value: string;
+  onChange: (val: string) => void;
+}) => {
+  return (
+    <div className="flex items-center justify-center gap-2 rounded-md border border-slate-200 px-2 py-1 shadow-sm">
+      <SearchIcon size={20} />
+      <DebouncedInput
+        className=" field-sizing w-52 text-base outline-none "
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={(val) => {
+          onChange("" + val);
+        }}
+      />
+    </div>
+  );
+};
