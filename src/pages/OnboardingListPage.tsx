@@ -185,7 +185,7 @@ export default function OnboardingListPage() {
               className={cn(
                 "rounded-md bg-primary p-2 text-white hover:bg-opacity-70",
               )}
-              title="Candidate Register History"
+              title="Candidate Register"
               onClick={() => {
                 setSelectedHistoryItem({
                   onboardingId: info.row.original.id,
@@ -363,7 +363,7 @@ export default function OnboardingListPage() {
         <PopupDialog
           isOpen={selectedHistoryItem != null}
           setIsOpen={() => setSelectedHistoryItem(null)}
-          title="Candidate Register History"
+          title="Candidate Register"
           showXMarkIcon
         >
           {selectedHistoryItem && (
