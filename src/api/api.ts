@@ -256,6 +256,22 @@ interface AllApiEndpoints {
     };
     response: CandidateListResponse;
   };
+  "onboarding/history/:candidateId/:onboardingId/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: OnboardingHistoryResponse;
+  };
+  "onboarding/comments/:onboardingId/": {
+    request: {
+      method: "POST";
+      params?: undefined;
+      data?: FormData;
+    };
+    response: OnboardingHistoryResponse;
+  };
   "onboarding/scoring/": {
     request: {
       method: "GET";
@@ -1195,6 +1211,21 @@ interface ListEmployerResponseData {
   phone2?: string;
   is_interested: boolean;
   is_blocked: boolean;
+}
+export type OnboardingHistoryResponseType =
+  OnboardingHistoryResponse["data"][0]["type"];
+interface OnboardingHistoryResponse {
+  data: {
+    type: "comment" | "notification" | "status_change";
+    datetime: string;
+    title: string;
+    related_message?: null | string;
+    related_date?: null | string;
+    id?: number;
+  }[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
 }
 
 export enum OnboardingStatus {

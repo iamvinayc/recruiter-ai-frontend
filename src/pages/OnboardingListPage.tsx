@@ -32,7 +32,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { Check, ChevronsUpDown, Edit2Icon, InfoIcon } from "lucide-react";
+import { Check, ChevronsUpDown, InfoIcon, NotebookTabs } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from "react-hook-form";
@@ -40,6 +40,7 @@ import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { P, match } from "ts-pattern";
 import { z } from "zod";
+import { OnboardingHistoryModal } from "./OnboardingListPage.dialog";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
@@ -55,7 +56,11 @@ interface OnboardingList {
   followup_on?: string;
   followup_reason?: string;
 }
-const columnHelper = createColumnHelper<OnboardingList>();
+const columnHelper = createColumnHelper<
+  OnboardingList & {
+    candidate_id: number;
+  }
+>();
 
 const STATUS_NOT_EDITABLE = [
   OnboardingStatus.PLACED,
@@ -97,6 +102,10 @@ export default function OnboardingListPage() {
   const [selectedOnboardingId, setSelectedOnboardingId] = useState<
     number | null
   >(null);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<{
+    onboardingId: number;
+    candidateId: number;
+  } | null>(null);
   const { isRecruiter } = useLogin();
   const [{ id: onboardingId }] = useTypedSearchParams(
     isRecruiter ? ROUTES.RECRUITER.ONBOARDING : ROUTES.ADMIN.ONBOARDING,
@@ -124,7 +133,7 @@ export default function OnboardingListPage() {
       onboardingListingQuery?.data?.pages
         ?.map((e) => e?.data)
         ?.flat()
-        ?.map<OnboardingList>((e) => ({
+        ?.map<OnboardingList & { candidate_id: number }>((e) => ({
           id: e.id,
           job_name: e.job.title,
           employer_name: e.employer.employer_label,
@@ -135,6 +144,7 @@ export default function OnboardingListPage() {
           followup: e.followup ?? false,
           followup_on: e.followup_on,
           followup_reason: e.followup_reason,
+          candidate_id: e.candidate.id,
         })) || [],
     [onboardingListingQuery.data],
   );
@@ -166,8 +176,25 @@ export default function OnboardingListPage() {
       columnHelper.accessor("candidate_name", {
         header: () => <div>Candidate Name</div>,
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
-            {info.getValue()}
+          <div
+            className="flex max-w-[200px] justify-between "
+            title={info.getValue()}
+          >
+            <div className="flex-1 truncate">{info.getValue()}</div>
+            <button
+              className={cn(
+                "rounded-md bg-primary p-2 text-white hover:bg-opacity-70",
+              )}
+              title="Candidate Register History"
+              onClick={() => {
+                setSelectedHistoryItem({
+                  onboardingId: info.row.original.id,
+                  candidateId: info.row.original.candidate_id,
+                });
+              }}
+            >
+              <NotebookTabs size={16} strokeWidth={3} />
+            </button>
           </div>
         ),
       }),
@@ -233,14 +260,15 @@ export default function OnboardingListPage() {
               .otherwise(() =>
                 isRecruiter ? info.row.original.is_editable : true,
               ) ? (
-              <button
-                className={cn(
-                  "rounded-md bg-primary p-2 text-white hover:bg-opacity-70",
-                )}
-                onClick={() => setSelectedOnboardingId(info.row.original.id)}
-              >
-                <Edit2Icon size={16} strokeWidth={3} />
-              </button>
+              // <button
+              //   className={cn(
+              //     "rounded-md bg-primary p-2 text-white hover:bg-opacity-70",
+              //   )}
+              //   onClick={() => setSelectedOnboardingId(info.row.original.id)}
+              // >
+              //   <Edit2Icon size={16} strokeWidth={3} />
+              // </button>
+              <></>
             ) : null}
           </div>
         ),
@@ -331,6 +359,22 @@ export default function OnboardingListPage() {
               }
             />
           </div>
+        </PopupDialog>
+        <PopupDialog
+          isOpen={selectedHistoryItem != null}
+          setIsOpen={() => setSelectedHistoryItem(null)}
+          title="Candidate Register History"
+          showXMarkIcon
+        >
+          {selectedHistoryItem && (
+            <OnboardingHistoryModal
+              selected={selectedHistoryItem}
+              onFollowUpClick={() => {
+                setSelectedHistoryItem(null);
+                setSelectedOnboardingId(selectedHistoryItem.onboardingId);
+              }}
+            />
+          )}
         </PopupDialog>
       </div>
     </main>
