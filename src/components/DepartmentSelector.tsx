@@ -72,7 +72,7 @@ export function DepartmentSelector({
             )}
             <div className="relative flex items-center">
               <Combobox.Input
-                placeholder="Search a skills"
+                placeholder="Search a Skill"
                 displayValue={(item: Item) => item.name}
                 onChange={(event) => setQuery(event.target.value)}
                 className={cn(

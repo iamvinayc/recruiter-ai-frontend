@@ -273,7 +273,7 @@ export default function OnboardingListPage() {
             Onboarding List
           </h2>
           <DebouncedSearchInput
-            placeholder="Search by job title"
+            placeholder="Search by Candidate Name"
             value={search}
             onChange={(val) => {
               setSearch("" + val);

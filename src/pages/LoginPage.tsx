@@ -57,7 +57,7 @@ export function LoginPage() {
           id: data.user.id,
           change_password: data.user.change_password,
         });
-        toast.success("Logged in succesfully");
+        toast.success("Logged in Succesfully");
       })
       .catch((e) => {
         const msg = e?.message?.toLowerCase().includes("login failed")
