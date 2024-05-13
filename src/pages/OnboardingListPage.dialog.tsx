@@ -46,7 +46,7 @@ export function OnboardingHistoryModal({
   const [addingCommentId, setAddingCommentId] = useState("");
   return (
     <div>
-      <div className="mt-3 h-[70vh] overflow-y-auto">
+      <div className="mt-3 max-h-[70vh] overflow-y-auto">
         <FlatList
           data={onboardingHistory.data || []}
           isLoading={onboardingHistory.isFetching}
@@ -62,7 +62,7 @@ export function OnboardingHistoryModal({
             </div>
           }
         >
-          <div className=" space-y-3">
+          <div className=" mb-4 space-y-3">
             {onboardingHistory.data?.map((e, i) => (
               <div
                 key={i}
@@ -139,7 +139,7 @@ export function OnboardingHistoryModal({
         </Button>
         <Button className="space-x-2 py-2" onClick={onFollowUpClick}>
           <PenIcon className="h-4 w-4" />
-          <span>Follow Up</span>
+          <span>Edit Status</span>
         </Button>
       </div>
       <OnboardingCommentModal

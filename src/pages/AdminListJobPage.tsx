@@ -604,16 +604,16 @@ const AddJobPopup = ({
             </div>
             <div className="flex flex-1 flex-col gap-2">
               <Input
-                label="Phone 1"
-                placeholder="Phone 1"
+                label="Contact Number"
+                placeholder="Contact Number"
                 className="px-3 py-3"
                 register={register}
                 name="phone1"
                 error={errors.phone1?.message}
               />
               <Input
-                label="Phone 2"
-                placeholder="Phone 2"
+                label="Alternate Number"
+                placeholder="Alternate Number"
                 className="px-3 py-3"
                 register={register}
                 name="phone2"
@@ -697,20 +697,25 @@ const AddJobPopup = ({
 
 //#endregion Add Job Popup
 
-const formSchema = z.object({
-  title: z.string().min(1, "Please enter job title"),
-  description: z.string().min(1, "Please enter description"),
-  employer_name: z.string().min(1, "Please enter employer name"),
-  email: z.string().email(),
-  phone1: z.string().min(1, "Please enter phone1"),
-  phone2: z.string(),
-  department: z
-    .array(
-      z.object({
-        id: z.number().optional(),
-        name: z.string().min(1),
-      }),
-    )
-    .min(1, "Please Select at-least one skill"),
-  city: z.string().min(1, "Please enter a city"),
-});
+const formSchema = z
+  .object({
+    title: z.string().min(1, "Please enter job title"),
+    description: z.string().min(1, "Please enter description"),
+    employer_name: z.string().min(1, "Please enter employer name"),
+    email: z.string().email(),
+    phone1: z.string().min(1, "Please enter phone1"),
+    phone2: z.string(),
+    department: z
+      .array(
+        z.object({
+          id: z.number().optional(),
+          name: z.string().min(1),
+        }),
+      )
+      .min(1, "Please Select at-least one skill"),
+    city: z.string().min(1, "Please enter a city"),
+  })
+  .refine((data) => data.phone1 !== data.phone2, {
+    path: ["phone2"],
+    message: "Alternate number should be different from contact number",
+  });

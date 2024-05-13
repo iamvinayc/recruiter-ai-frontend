@@ -103,7 +103,7 @@ export default function EmployerListPage() {
         enableColumnFilter: false,
       }),
       columnHelper.accessor("phone1", {
-        header: "Phone No. 1",
+        header: "Contact Number",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -112,7 +112,7 @@ export default function EmployerListPage() {
         enableColumnFilter: false,
       }),
       columnHelper.accessor("phone2", {
-        header: "Phone No. 2",
+        header: "Alternate Number",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
