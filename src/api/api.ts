@@ -613,6 +613,16 @@ interface AllApiEndpoints {
     };
     response: NotificationListResponse;
   };
+  "notification/{{notificationId}}/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: {
+      data: NotificationListData;
+    };
+  };
   "dashboard/calender_events/": {
     request: {
       method: "GET";
@@ -1221,7 +1231,22 @@ interface OnboardingHistoryResponse {
     title: string;
     related_message?: null | string;
     related_date?: null | string;
-    id?: number;
+    status?:
+      | "CANCELLED"
+      | "REJECTED"
+      | "PLACED"
+      | "EMPLOYER_SELECTED"
+      | "EMPLOYER_INTERVIEWED_F2F"
+      | "EMPLOYER_INTERVIEW_RESCHEDULED_F2F"
+      | "EMPLOYER_INTERVIEW_SCHEDULED_F2F"
+      | "EMPLOYER_INTERVIEWED_VIDEO"
+      | "EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO"
+      | "EMPLOYER_INTERVIEW_SCHEDULED_VIDEO"
+      | "RECRUITER_INTERVIEWED"
+      | "Recruiter Followup"
+      | "FEEDBACK_SUBMITTED_BY_CANDIDATE"
+      | "FEEDBACK_SUBMITTED_BY_EMPLOYER";
+    notification_id?: number;
   }[];
   message: string;
   isSuccess: boolean;

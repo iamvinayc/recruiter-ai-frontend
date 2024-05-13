@@ -4,8 +4,8 @@ import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { useLogin } from "@/hooks/useLogin";
 import { queryClient } from "@/routes";
 import { ROUTES } from "@/routes/routes";
-import { cn } from "@/utils";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { cn, makeUrlWithParams } from "@/utils";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { EyeIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
@@ -22,25 +22,16 @@ import { TableLoader } from "./common/TableLoader";
 const columnHelper = createColumnHelper<ReportListItem>();
 
 export function NotificationListPage() {
-  const [{ from_date, status, to_date, employer }] = useTypedSearchParams(
-    ROUTES.ADMIN.LIST_REPORT,
-  );
   const { isRecruiter } = useLogin();
-  const [showDetailsId, setShowDetailsId] = useState("");
+  // const [showDetailsId, setShowDetailsId] = useState("");
+  const [{ notification_id: showDetailsId }, setTypeParams] =
+    useTypedSearchParams(ROUTES.ADMIN.LIST_NOTIFICATION);
+  const setShowDetailsId = (id: string) =>
+    setTypeParams({ notification_id: id });
 
   const reportListingQuery = useInfiniteQuery({
-    queryKey: ["notificationListPage", from_date, status, to_date, employer],
+    queryKey: ["notificationListPage"],
     queryFn: async ({ pageParam }) =>
-      // axiosApi({
-      //   url: (pageParam || "report/onboarding/") as "report/onboarding/",
-      //   method: "GET",
-      //   params: {
-      //     from_date,
-      //     status,
-      //     to_date,
-      //     employer,
-      //   },
-      // }).then((e) => e.data),
       axiosApi({
         url: (pageParam || "notification/") as "notification/",
         method: "GET",
@@ -52,6 +43,17 @@ export function NotificationListPage() {
       return lastPage?.next;
     },
     initialPageParam: "",
+  });
+  const notificationDetailsQuery = useQuery({
+    queryKey: ["notificationDetails", showDetailsId],
+    queryFn: async () =>
+      axiosApi({
+        url: makeUrlWithParams("notification/{{notificationId}}/", {
+          notificationId: showDetailsId,
+        }),
+        method: "GET",
+      }).then((e) => e.data),
+    enabled: !!showDetailsId,
   });
 
   const readNotificationsMutation = useMutation({
@@ -181,11 +183,7 @@ export function NotificationListPage() {
     enableFilters: false,
   });
 
-  const content =
-    reportListingQuery.data?.pages
-      .map((e) => e.data)
-      .flat()
-      .find((e) => e.id === +showDetailsId)?.content || "";
+  const content = notificationDetailsQuery?.data?.data?.content || "";
   return (
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -234,12 +232,14 @@ export function NotificationListPage() {
           containerClassName="relative h-[70vh]"
           showXMarkIcon
         >
-          <iframe
-            src={`data:text/html;base64,${btoa(
-              unescape(encodeURIComponent(content)),
-            )}`}
-            className="h-full w-full py-4"
-          />
+          {content ? (
+            <iframe
+              src={`data:text/html;base64,${btoa(
+                unescape(encodeURIComponent(content)),
+              )}`}
+              className="h-full w-full py-4"
+            />
+          ) : null}
         </PopupDialog>
       </div>
     </main>

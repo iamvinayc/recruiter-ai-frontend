@@ -233,20 +233,21 @@ export default function OnboardingListPage() {
 
                 <PopoverContent>
                   <div className="space-y-2 text-sm">
-                    {[
-                      [
-                        "Follow up On:",
-                        dayjs(info.row.original.followup_on).format(
+                    <div className="flex space-x-2">
+                      <span className="font-bold">Follow up On:</span>
+                      <span className="flex-wrap break-all">
+                        {dayjs(info.row.original.followup_on).format(
                           "DD/MM/YYYY HH:mm:ss",
-                        ),
-                      ],
-                      ["Follow up Reason:", info.row.original.followup_reason],
-                    ].map((e) => (
-                      <div key={e[0]} className="flex space-x-2">
-                        <span className="font-bold">{e[0]}</span>
-                        <span className="flex-wrap break-all">{e[1]}</span>
+                        )}
+                      </span>
+                    </div>
+
+                    <div className="">
+                      <div className="font-bold">Follow up Reason:</div>
+                      <div className="max-h-[200px] flex-wrap overflow-y-auto whitespace-pre-wrap break-all">
+                        {info.row.original.followup_reason}
                       </div>
-                    ))}
+                    </div>
                   </div>
                 </PopoverContent>
               </Popover>

@@ -178,7 +178,7 @@ export const Header = ({
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items className="divide-gray-100 absolute right-0 mt-2 w-56 origin-top-right divide-y rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+              <Menu.Items className="divide-gray-100 absolute right-0 mt-2 max-h-[70vh] w-56 origin-top-right divide-y overflow-y-scroll rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                 <div className="divide-y px-1 py-1">
                   {notificationList.map((e) => (
                     <Menu.Item key={e.id} as="div">

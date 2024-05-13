@@ -54,7 +54,11 @@ export const ROUTES = {
           employer_name: string().default(""),
         },
       }),
-      LIST_NOTIFICATION: route("list-notification"),
+      LIST_NOTIFICATION: route("list-notification", {
+        searchParams: {
+          notification_id: string().default(""),
+        },
+      }),
     },
   ),
   //

@@ -2,13 +2,16 @@ import {
   OnboardingHistoryResponseType,
   OnboardingStatusMap,
   axiosApi,
+  formatOnboardingStatus,
 } from "@/api/api";
 import { FlatList } from "@/components/FlatList";
 import { PopupDialog } from "@/components/PopupDialog";
 import { Button } from "@/components/common/Button";
 import { TextArea } from "@/components/common/Input";
+import { ReadMore } from "@/components/common/ReadMore";
 import { SpinnerIcon } from "@/components/common/SvgIcons";
-import { replaceWith } from "@/utils";
+import { ROUTES } from "@/routes/routes";
+import { cn, replaceWith } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -16,6 +19,7 @@ import { BellIcon, Check, MessageSquareMoreIcon, PenIcon } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import { match } from "ts-pattern";
 import { z } from "zod";
 
@@ -30,6 +34,7 @@ export function OnboardingHistoryModal({
   };
   onFollowUpClick: () => void;
 }) {
+  const navigate = useNavigate();
   const onboardingHistory = useQuery({
     queryKey: ["onboardingHistory", selected.onboardingId],
     queryFn: () =>
@@ -66,7 +71,9 @@ export function OnboardingHistoryModal({
             {onboardingHistory.data?.map((e, i) => (
               <div
                 key={i}
-                className="rounded-md rounded-bl-none border border-slate-200 p-2 shadow-sm"
+                className={cn(
+                  "rounded-md rounded-bl-none border border-slate-200 p-2 shadow-sm",
+                )}
               >
                 <div className="flex items-center justify-between">
                   {match(e.type as OnboardingHistoryResponseType)
@@ -102,27 +109,97 @@ export function OnboardingHistoryModal({
                   </div>
                 </div>
                 <div className="mt-2">
-                  {e.type === "status_change"
-                    ? convertStatusTitle(e.title)
-                    : e.title}
+                  {match(e.type)
+                    .with("status_change", () => convertStatusTitle(e.title))
+                    .with("comment", () => <ReadMore text={e.title} />)
+                    .otherwise(() => e.title)}
                 </div>
-
-                {e.related_message && (
-                  <div className="mt-2">
-                    <div className="flex flex-wrap items-center gap-x-2">
-                      <div className="font-semibold">Message</div>
-                      <div>
-                        {e.related_date
-                          ? " - " +
-                            dayjs(e.related_date).format("DD MMM YYYY hh:mm A")
-                          : ""}
+                {match(e.status)
+                  .with("Recruiter Followup", () => (
+                    <div className="mt-2">
+                      <div className="flex flex-wrap items-center gap-x-2">
+                        <div className="font-semibold">Follow Up On:</div>
+                        <div>
+                          {e.related_date
+                            ? dayjs(e.related_date).format(
+                                "DD MMM YYYY hh:mm A",
+                              )
+                            : ""}
+                        </div>
                       </div>
+                      <div className="font-semibold">Follow up Reason:</div>
+
+                      <ReadMore text={e.related_message} />
                     </div>
-                    <div>{e.related_message}</div>
-                  </div>
-                )}
+                  ))
+                  .with(
+                    "EMPLOYER_INTERVIEWED_F2F",
+                    "EMPLOYER_INTERVIEW_RESCHEDULED_F2F",
+                    "EMPLOYER_INTERVIEW_SCHEDULED_F2F",
+                    "EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO",
+                    "EMPLOYER_INTERVIEW_SCHEDULED_VIDEO",
+                    "EMPLOYER_INTERVIEWED_VIDEO",
+
+                    (status) => (
+                      <div className="mt-2 flex flex-wrap items-center gap-x-2">
+                        <div className="font-semibold">
+                          {formatOnboardingStatus(status)} on:
+                        </div>
+                        <div>
+                          {e.related_date
+                            ? dayjs(e.related_date).format(
+                                "DD MMM YYYY hh:mm A",
+                              )
+                            : ""}
+                        </div>
+                      </div>
+                    ),
+                  )
+                  .with(
+                    "FEEDBACK_SUBMITTED_BY_CANDIDATE",
+                    "FEEDBACK_SUBMITTED_BY_EMPLOYER",
+                    () => (
+                      <div className="mt-2">
+                        <div className="font-semibold">Feedback Message:</div>
+
+                        <ReadMore text={e.related_message} />
+                      </div>
+                    ),
+                  )
+                  .otherwise(() =>
+                    e.related_message ? (
+                      <div className="mt-2">
+                        <div className="font-semibold">Message:</div>
+
+                        <ReadMore text={e.related_message} />
+                      </div>
+                    ) : null,
+                  )}
+                <div className="flex justify-end">
+                  {e.type === "notification" ? (
+                    <button
+                      onClick={() => {
+                        const notification_id = e.notification_id;
+                        if (notification_id) {
+                          navigate(
+                            ROUTES.ADMIN.LIST_NOTIFICATION.buildPath(
+                              {},
+                              {
+                                notification_id: "" + notification_id,
+                              },
+                            ),
+                          );
+                        }
+                      }}
+                      className="mt-2 text-sm text-blue-700"
+                    >
+                      View details
+                    </button>
+                  ) : null}
+                </div>
               </div>
             ))}
+            {}
           </div>
         </FlatList>
       </div>
