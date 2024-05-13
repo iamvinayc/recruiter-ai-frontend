@@ -310,7 +310,7 @@ export function ListScoringPage() {
         </h2>
         {selectedJobId ? null : (
           <DebouncedSearchInput
-            placeholder="Search by job title"
+            placeholder="Search by Job Title"
             value={search}
             onChange={(val) => {
               setSearch("" + val);

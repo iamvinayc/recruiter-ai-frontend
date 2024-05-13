@@ -43,7 +43,7 @@ export const SkillSelector = ({
         <div className="relative  ">
           <div className="relative flex items-center overflow-hidden rounded-md border border-slate-300">
             <Combobox.Input
-              placeholder="Search a skills"
+              placeholder="Search a Skill"
               displayValue={() => selectedItem}
               onChange={(event) => setQuery(event.target.value)}
               className={cn(
