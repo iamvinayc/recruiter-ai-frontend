@@ -43,6 +43,8 @@ export const ROUTES = {
       ONBOARDING: route("onboarding", {
         searchParams: {
           id: string().default(""),
+          notification_id: string().default(""),
+          onboarding_id: string().default(""),
         },
       }),
       LIST_REPORT: route("list-report", {
@@ -81,6 +83,8 @@ export const ROUTES = {
       ONBOARDING: route("onboarding", {
         searchParams: {
           id: string().default(""),
+          notification_id: string().default(""),
+          onboarding_id: string().default(""),
         },
       }),
       LIST_REPORT: route("list-report", {

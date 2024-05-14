@@ -11,7 +11,7 @@ import { TextArea } from "@/components/common/Input";
 import { ReadMore } from "@/components/common/ReadMore";
 import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { ROUTES } from "@/routes/routes";
-import { cn, replaceWith } from "@/utils";
+import { cn, makeUrlWithParams, replaceWith } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -19,7 +19,7 @@ import { BellIcon, Check, MessageSquareMoreIcon, PenIcon } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { match } from "ts-pattern";
 import { z } from "zod";
 
@@ -34,7 +34,11 @@ export function OnboardingHistoryModal({
   };
   onFollowUpClick: () => void;
 }) {
-  const navigate = useNavigate();
+  const [addingCommentId, setAddingCommentId] = useState("");
+  const [{ notification_id: showDetailsId }, setTypeParams] =
+    useTypedSearchParams(ROUTES.ADMIN.ONBOARDING);
+  const setShowDetailsId = (id: string) =>
+    setTypeParams({ notification_id: id });
   const onboardingHistory = useQuery({
     queryKey: ["onboardingHistory", selected.onboardingId],
     queryFn: () =>
@@ -48,7 +52,19 @@ export function OnboardingHistoryModal({
         ),
       }).then((e) => e.data.data),
   });
-  const [addingCommentId, setAddingCommentId] = useState("");
+  const notificationDetailsQuery = useQuery({
+    queryKey: ["notificationDetails", showDetailsId],
+    queryFn: async () =>
+      axiosApi({
+        url: makeUrlWithParams("notification/{{notificationId}}/", {
+          notificationId: showDetailsId,
+        }),
+        method: "GET",
+      }).then((e) => e.data),
+    enabled: !!showDetailsId,
+  });
+  const content = notificationDetailsQuery?.data?.data?.content || "";
+
   return (
     <div>
       <div className="mt-3 max-h-[70vh] overflow-y-auto">
@@ -127,9 +143,8 @@ export function OnboardingHistoryModal({
                             : ""}
                         </div>
                       </div>
-                      <div className="font-semibold">Follow up Reason:</div>
-
-                      <ReadMore text={e.related_message} />
+                      <span className="font-semibold">Follow up Reason: </span>
+                      <span>{e.related_message}</span>
                     </div>
                   ))
                   .with(
@@ -181,19 +196,12 @@ export function OnboardingHistoryModal({
                       onClick={() => {
                         const notification_id = e.notification_id;
                         if (notification_id) {
-                          navigate(
-                            ROUTES.ADMIN.LIST_NOTIFICATION.buildPath(
-                              {},
-                              {
-                                notification_id: "" + notification_id,
-                              },
-                            ),
-                          );
+                          setShowDetailsId(notification_id.toString());
                         }
                       }}
                       className="mt-2 text-sm text-blue-700"
                     >
-                      View details
+                      View Details
                     </button>
                   ) : null}
                 </div>
@@ -228,6 +236,26 @@ export function OnboardingHistoryModal({
           }
         }}
       />
+      <PopupDialog
+        isOpen={!!showDetailsId}
+        setIsOpen={() => setShowDetailsId("")}
+        title="Notification Details"
+        containerClassName="relative h-[70vh]"
+        showXMarkIcon
+      >
+        {content ? (
+          <iframe
+            src={`data:text/html;base64,${btoa(
+              unescape(encodeURIComponent(content)),
+            )}`}
+            className="h-full w-full py-4"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center gap-4">
+            <SpinnerIcon className="h-6 w-6 text-slate-400" />
+          </div>
+        )}
+      </PopupDialog>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { TrashIcon } from "lucide-react";
+import { NotebookTabs, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -26,6 +26,7 @@ import { ChipGroup } from "../components/common/ChipGroup";
 import { Input, TextArea } from "../components/common/Input";
 import { ROUTES, SortBy } from "../routes/routes";
 import { cn, emptyArray } from "../utils";
+import { JobRegisterDialog } from "./AdminListJobPage.dialog";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
@@ -38,6 +39,7 @@ const columnHelper = createColumnHelper<Person>();
 
 export function AdminListJobPage() {
   const [showAddJobPopup, _setShowAddJobPopup] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState("");
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
@@ -194,6 +196,17 @@ export function AdminListJobPage() {
         cell: (info) => {
           return (
             <div className="flex items-center space-x-2">
+              <button
+                className={cn(
+                  "rounded-md bg-primary p-3 text-white hover:bg-opacity-70 ",
+                )}
+                title="Job Register"
+                onClick={() => {
+                  setSelectedJobId(info.row.original.id.toString());
+                }}
+              >
+                <NotebookTabs className="h-5 w-5 " strokeWidth={3} />
+              </button>
               <button
                 onClick={() => setShowUserDetailsId(info.row.original.id)}
                 className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
@@ -444,6 +457,10 @@ export function AdminListJobPage() {
           </div>
         </div>
       </PopupDialog>
+      <JobRegisterDialog
+        selectedJobId={selectedJobId}
+        closeDialog={() => setSelectedJobId("")}
+      />
     </main>
   );
 }

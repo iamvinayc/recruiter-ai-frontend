@@ -283,6 +283,14 @@ interface AllApiEndpoints {
     };
     response: ScoringListResponse;
   };
+  "onboarding/job/history/{{jobId}}/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: OnboardingJobHistory;
+  };
   "onboarding/candidates_score/": {
     request: {
       method: "GET";
@@ -1253,6 +1261,20 @@ interface OnboardingHistoryResponse {
   status: number;
 }
 
+interface OnboardingJobHistory {
+  data: {
+    candidates: {
+      onboarding_id: number;
+      candidate_name: string;
+      datetime: string;
+      current_status: string;
+    }[];
+  };
+  message: string;
+  isSuccess: boolean;
+  status: number;
+}
+
 export enum OnboardingStatus {
   SHORTLISTED = "SHORTLISTED",
   RECRUITER_INTERVIEWED = "RECRUITER_INTERVIEWED",
@@ -1292,5 +1314,5 @@ export const OnboardingStatusMap = {
   CANCELLED: "Cancelled",
 };
 export const formatOnboardingStatus = (status: string) =>
-  OnboardingStatusMap[status as OnboardingStatus];
+  OnboardingStatusMap[status as OnboardingStatus] || status;
 //#endregion
