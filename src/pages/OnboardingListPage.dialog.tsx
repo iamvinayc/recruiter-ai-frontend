@@ -143,8 +143,14 @@ export function OnboardingHistoryModal({
                             : ""}
                         </div>
                       </div>
-                      <span className="font-semibold">Follow up Reason: </span>
-                      <span>{e.related_message}</span>
+                      <ReadMore
+                        prefix={
+                          <span className="font-semibold">
+                            Follow up Reason:{" "}
+                          </span>
+                        }
+                        text={e.related_message}
+                      />
                     </div>
                   ))
                   .with(

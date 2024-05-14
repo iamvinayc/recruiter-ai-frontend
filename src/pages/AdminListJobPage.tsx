@@ -17,6 +17,7 @@ import { z } from "zod";
 import { Combobox } from "@/components/Combobox";
 import { LocationSelector } from "@/components/LocationSelector";
 import { useLogin } from "@/hooks/useLogin";
+import { useNavigate } from "react-router-dom";
 import { axiosApi } from "../api/api";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { LineClamp } from "../components/LineClamp";
@@ -25,7 +26,7 @@ import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { Input, TextArea } from "../components/common/Input";
 import { ROUTES, SortBy } from "../routes/routes";
-import { cn, emptyArray } from "../utils";
+import { cn, emptyArray, removeEmptyKeys } from "../utils";
 import { JobRegisterDialog } from "./AdminListJobPage.dialog";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
@@ -39,7 +40,6 @@ const columnHelper = createColumnHelper<Person>();
 
 export function AdminListJobPage() {
   const [showAddJobPopup, _setShowAddJobPopup] = useState(false);
-  const [selectedJobId, setSelectedJobId] = useState("");
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
@@ -52,10 +52,13 @@ export function AdminListJobPage() {
       sort_by,
       common,
       search,
+      job_id: selectedJobId,
     },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
-
+  // const [selectedJobId, setSelectedJobId] = useState("");
+  const setSelectedJobId = (id: string) =>
+    setTypeSearch((prev) => removeEmptyKeys({ ...prev, job_id: id }));
   const handleFilterCommonJobs = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -64,6 +67,7 @@ export function AdminListJobPage() {
       common: event.target.checked ? "True" : "",
     }));
   };
+  const navigate = useNavigate();
 
   //#region query/mutation
 
@@ -459,7 +463,7 @@ export function AdminListJobPage() {
       </PopupDialog>
       <JobRegisterDialog
         selectedJobId={selectedJobId}
-        closeDialog={() => setSelectedJobId("")}
+        closeDialog={() => navigate(-1)}
       />
     </main>
   );

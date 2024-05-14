@@ -42,3 +42,7 @@ type ExtractUrlParams<T extends string> =
     ? { [K in Param | keyof ExtractUrlParams<Rest>]: string }
     : // eslint-disable-next-line @typescript-eslint/ban-types
       {};
+export const removeEmptyKeys = (obj: Record<string, unknown>) => {
+  Object.keys(obj).forEach((key) => !obj[key] && delete obj[key]);
+  return obj;
+};

@@ -244,7 +244,7 @@ export default function OnboardingListPage() {
 
                     <div className="">
                       <div className="font-bold">Follow up Reason:</div>
-                      <div className="max-h-[200px] flex-wrap overflow-y-auto whitespace-pre-wrap break-all">
+                      <div className="max-h-[200px] flex-wrap overflow-y-auto whitespace-pre-wrap ">
                         {info.row.original.followup_reason}
                       </div>
                     </div>

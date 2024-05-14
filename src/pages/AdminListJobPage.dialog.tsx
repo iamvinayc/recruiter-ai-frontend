@@ -12,6 +12,7 @@ import { ROUTES } from "@/routes/routes";
 import { convertEnumToStr, emptyArray, makeUrlWithParams } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRightIcon, User2Icon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export const JobRegisterDialog = ({
@@ -21,6 +22,7 @@ export const JobRegisterDialog = ({
   selectedJobId: string;
   closeDialog: () => void;
 }) => {
+  const [hash, setHash] = useLocationHash();
   const { isRecruiter } = useLogin();
   const jobRegisterQuery = useQuery({
     queryKey: ["jobRegister", selectedJobId],
@@ -57,7 +59,13 @@ export const JobRegisterDialog = ({
           </div>
         ) : null}
 
-        <Accordion type="single" collapsible className="space-y-3 divide-y-0">
+        <Accordion
+          type="single"
+          collapsible
+          className="space-y-3 divide-y-0"
+          value={hash.replace("#", "")}
+          onValueChange={(e) => setHash(`#${e}`)}
+        >
           {results.map((result) => (
             <AccordionItem
               key={result.status}
@@ -148,3 +156,32 @@ interface Struct {
     current_status: string;
   }[];
 }
+
+const useLocationHash = () => {
+  const [hash, _setHash] = useState(window.location.hash);
+  useEffect(() => {
+    const handler = () => {
+      _setHash(window.location.hash);
+    };
+    _setHash(window.location.hash);
+    window.addEventListener("hashchange", handler);
+    return () => {
+      window.removeEventListener("hashchange", handler);
+    };
+  }, []);
+  const setHash = (hash: string) => {
+    if (history.replaceState) {
+      history.replaceState(
+        null,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        null,
+        hash,
+      );
+    } else {
+      location.hash = hash;
+    }
+    _setHash(hash);
+  };
+  return [hash, setHash] as const;
+};

@@ -31,6 +31,7 @@ export const ROUTES = {
           sort_by: string().default(SortBy.Latest),
           common: string().default(""),
           search: string().default(""),
+          job_id: string().default(""),
         },
       }),
       LIST_CANDIDATE: route("list-candidate"),

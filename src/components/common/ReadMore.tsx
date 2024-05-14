@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-export const ReadMore = ({ text: _text = "" }: { text?: string | null }) => {
+export const ReadMore = ({
+  prefix,
+  text: _text = "",
+}: {
+  text?: string | null;
+  prefix?: JSX.Element;
+}) => {
   const text = _text || "";
   const [showAll, setShowAll] = useState(false);
   const textSm = text
@@ -13,6 +19,7 @@ export const ReadMore = ({ text: _text = "" }: { text?: string | null }) => {
   return (
     <div>
       <div className="whitespace-pre-wrap text-base font-normal ">
+        {prefix}
         {content}
       </div>
       {hasMore ? (
