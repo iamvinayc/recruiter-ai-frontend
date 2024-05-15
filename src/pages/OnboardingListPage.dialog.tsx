@@ -349,7 +349,7 @@ const commentFormSchema = z.object({
   comment: z.string().min(1),
 });
 const convertStatusTitle = (text: string) => {
-  let finalString = text;
+  let finalString = text.replace("None - ", "");
   Object.entries(OnboardingStatusMap).forEach(([key, value]) => {
     finalString = finalString.replace(key, value);
   });
