@@ -1,13 +1,13 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
-import { useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
+import { ReasonRenderer } from "@/components/ReasonRenderer";
+import { Button } from "@/components/common/Button";
+import { ROUTES } from "@/routes/routes";
 import toast from "react-hot-toast";
 import { axiosApi } from "../api/api";
-import { ROUTES } from "@/routes/routes";
-import { Button } from "@/components/common/Button";
-import { ReasonRenderer } from "@/components/ReasonRenderer";
 
 interface MoreOptionsProps {
   prefer_contract: boolean;
@@ -26,7 +26,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
       // return [
       //   {
       //     job_id: "string",
-      //     job_title: "string",
+      //     job_title: "Front end developer doing stuff",
       //     candidates: [
       //       {
       //         candidate_id: "string",
@@ -132,7 +132,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
               <div>
                 {data?.map((job, index) => (
                   <div key={job.job_id} className="mb-4">
-                    <div className="flex items-center  justify-between border-b-2 border-b-[#ddd] bg-slate-200 p-4">
+                    <div className="flex flex-col items-center justify-between  gap-4 border-b-2 border-b-[#ddd] bg-slate-200 p-4 md:flex-row">
                       <p className="font-bold">{job.job_title}</p>
                       <MoreOptionsComponent
                         setState={(newState) => {
@@ -246,9 +246,9 @@ const MoreOptionsComponent = ({
             />
           </label>
         </div>
-        <div className="space-2 flex">
-          <label className="mb-2 font-bold">Job/Project:</label>
-          <div>
+        <div className="space-2 flex  flex-wrap">
+          <div className="mb-2 font-bold">Job/Project:</div>
+          <div className="flex flex-row flex-wrap">
             <label htmlFor={`Job-${job_id}`}>
               <input
                 name={`job_or_project-${job_id}`}
