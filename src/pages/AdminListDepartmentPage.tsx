@@ -55,7 +55,7 @@ export function AdminListDepartmentPage() {
       .mutateAsync({ name: data.department })
       .then((data) => {
         if (data.isSuccess) {
-          toast.success("New skill added successfully");
+          toast.success("New Work Area added successfully");
           setShowAddDepartmentPopup(false);
           reset({ department: "" });
           departmentListQuery.refetch();
@@ -85,7 +85,7 @@ export function AdminListDepartmentPage() {
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            List Skill
+            List Work Area
           </h2>
           <button
             type="button"
@@ -95,7 +95,7 @@ export function AdminListDepartmentPage() {
             className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
           >
             <PlusIcon className="h-6 w-6 stroke-2" />
-            Add Skill
+            Add Work Area
           </button>
         </div>
         {departmentListQuery.isLoading ? (
@@ -126,7 +126,7 @@ export function AdminListDepartmentPage() {
       <PopupDialog
         isOpen={showAddDepartmentPopup}
         setIsOpen={setShowAddDepartmentPopup}
-        title="Add new skill"
+        title="Add new Work Area"
         containerClassName="relative"
       >
         <button
@@ -138,8 +138,8 @@ export function AdminListDepartmentPage() {
         <form onSubmit={handleSubmit(onNewDepartmentAdd)}>
           <div className="mb-4 py-4">
             <Input
-              label="Skill"
-              placeholder="Skill"
+              label="Work Area"
+              placeholder="Work Area"
               containerClassName=""
               className="px-3 py-3"
               disabled={addDepartmentMutation.isPending}
@@ -154,7 +154,7 @@ export function AdminListDepartmentPage() {
               isLoading={addDepartmentMutation.isPending}
               className="py-2"
             >
-              Add Skill
+              Add Work Area
             </Button>
           </div>
         </form>
@@ -179,5 +179,5 @@ export function AdminListDepartmentPage() {
 // ];
 // const emptyArr: [] = [];
 const formState = z.object({
-  department: z.string().min(1, "Please enter a skill"),
+  department: z.string().min(1, "Please enter a work area"),
 });

@@ -27,7 +27,7 @@ import { PopupDialog } from "../components/PopupDialog";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { Input, TextArea } from "../components/common/Input";
-import { cn, emptyArray, replaceWith } from "../utils";
+import { cn, emptyArray, makeUrlWithParams, replaceWith } from "../utils";
 import { EditCandidateDialog } from "./AdminListCandidatePage.dialogs";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
@@ -52,6 +52,9 @@ export function AdminListCandidatePage() {
     },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
+  const [{ id: candidateId }] = useTypedSearchParams(
+    ROUTES.ADMIN.LIST_CANDIDATE,
+  );
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
@@ -77,12 +80,18 @@ export function AdminListCandidatePage() {
       sort_by,
       common,
       search,
+      candidateId,
     ],
     queryFn: async ({ pageParam }) =>
       axiosApi({
-        url: (pageParam ||
-          "data-sourcing/candidate/") as "data-sourcing/candidate/",
-
+        url: replaceWith(
+          candidateId
+            ? makeUrlWithParams("data-sourcing/candidate/{{candidateId}}/", {
+                candidateId: candidateId,
+              })
+            : "data-sourcing/candidate/",
+          pageParam,
+        ),
         method: "GET",
         params: {
           department: department || undefined,
@@ -178,7 +187,7 @@ export function AdminListCandidatePage() {
       }),
 
       columnHelper.accessor("departments", {
-        header: "Skills",
+        header: "Work Area",
         cell: (info) => {
           return <ChipGroup items={info.getValue()} />;
         },
@@ -488,7 +497,7 @@ export function AdminListCandidatePage() {
                 ),
               )}
               <div className="space-y-1">
-                <div className="font-medium">Skills</div>
+                <div className="font-medium">Work Area</div>
                 <div className="text-sm ">
                   <ChipGroup
                     items={selectedUser?.departments || emptyArray}
@@ -883,6 +892,6 @@ const formSchema = z.object({
         name: z.string().min(1),
       }),
     )
-    .min(1, "Please Select at-least one skills"),
+    .min(1, "Please Select at-least one work area"),
   city: z.string().min(1, "Please enter a city"),
 });

@@ -35,7 +35,7 @@ const nameMap = {
   last_name: "Last Name",
   email: "Email",
   is_active: "Is Active",
-  departments: "Skills",
+  departments: "Work Area",
   location: "Location",
 };
 export function AdminListRecruiterPage() {
@@ -167,7 +167,7 @@ export function AdminListRecruiterPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("departments", {
-        header: "Departments",
+        header: "Work Area",
         cell: (info) => {
           return (
             <ChipGroup
@@ -552,8 +552,8 @@ const AddDepartmentDialog = ({
           setSelectedDepartments([]);
           toast.success(
             isUpdate
-              ? "Updated skill successfully"
-              : "Added new skill successfully",
+              ? "Updated work area successfully"
+              : "Added new work area successfully",
           );
           onSuccess();
           return;
@@ -575,7 +575,7 @@ const AddDepartmentDialog = ({
     <PopupDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      title={isUpdate ? "Update skill" : "Add new skill"}
+      title={isUpdate ? "Update work area" : "Add new work area"}
       containerClassName="relative"
     >
       <button
@@ -591,33 +591,6 @@ const AddDepartmentDialog = ({
               selectedItems={selectedDepartments}
               setSelectedItems={setSelectedDepartments}
             />
-            {/* {departments.map(({ id, description, name }, i) => (
-              <label key={`department-${i}`}>
-                <div className="flex w-full items-start space-x-2">
-                  <input
-                    type="checkbox"
-                    className="m-2"
-                    checked={selectedDepartmentIds.includes(id)}
-                    onChange={() => {
-                      setSelectedDepartmentIds((prevIds) =>
-                        prevIds.includes(id)
-                          ? prevIds.filter((e) => e !== id)
-                          : prevIds.concat(id),
-                      );
-                    }}
-                  />
-                  <div>
-                    <div className="text-lg text-black">{name}</div>
-                    <div className="text-xs">{description}</div>
-                  </div>
-                </div>
-              </label>
-            ))}
-            {departments.length == 0 ? (
-              <div className="flex min-h-[8rem] items-center justify-center">
-                No Skills
-              </div>
-            ) : null} */}
           </div>
         </div>
         <div className="flex justify-end">
@@ -629,7 +602,7 @@ const AddDepartmentDialog = ({
             onClick={onNewRecruiterAdd}
             className="py-2 disabled:border-slate-600 disabled:bg-slate-500"
           >
-            {isUpdate ? "Update skill" : "Add skill"}
+            {isUpdate ? "Update Work Area" : "Add Work Area"}
           </Button>
         </div>
       </div>

@@ -14,7 +14,7 @@ export const ROUTES = {
     {
       LOGIN: route("login"),
       DASHBOARD: route("dashboard"),
-      LIST_SKILL: route("list-skill"),
+      LIST_SKILL: route("list-workspace-area"),
       LIST_RECRUITER: route("list-recruiter"),
       LIST_LOCATION: route("list-location"),
       LIST_EMPLOYER: route("list-employer", {
@@ -32,9 +32,12 @@ export const ROUTES = {
           common: string().default(""),
           search: string().default(""),
           job_id: string().default(""),
+          id: string().default(""),
         },
       }),
-      LIST_CANDIDATE: route("list-candidate"),
+      LIST_CANDIDATE: route("list-candidate", {
+        searchParams: { id: string().default("") },
+      }),
       LIST_SCORING: route("list-scoring", {
         searchParams: {
           skill: string().default(""),
@@ -74,7 +77,9 @@ export const ROUTES = {
       CHANGE_PASSWORD: route("change-password"),
       LIST_EMPLOYER: route("list-employer"),
       LIST_JOBS: route("list-jobs"),
-      LIST_CANDIDATE: route("list-candidate"),
+      LIST_CANDIDATE: route("list-candidate", {
+        searchParams: { id: string().default("") },
+      }),
       LIST_SCORING: route("list-scoring", {
         searchParams: {
           skill: string().default(""),

@@ -113,7 +113,7 @@ export function ListScoringPage() {
         footer: (info) => info.column.id,
       }),
       jobColumnHelper.accessor("department", {
-        header: "Department",
+        header: "Work Area",
         cell: (info) => (
           <div>
             <ChipGroup items={info.getValue() || []} />
@@ -333,7 +333,7 @@ export function ListScoringPage() {
                 </div>
               ))}
               <div>
-                <div className="font-medium">Departments:</div>
+                <div className="font-medium">Work Area:</div>
                 <div className="text-sm">
                   <ChipGroup items={selectedJob.departments} />
                 </div>
@@ -495,7 +495,7 @@ export function ListScoringPage() {
                     </div>
                   ))}
                   <div className="space-y-1 px-4 py-2">
-                    <div className="font-medium">Skills</div>
+                    <div className="font-medium">Work Area</div>
                     <div className="text-sm ">
                       <ChipGroup
                         items={

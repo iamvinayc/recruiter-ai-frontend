@@ -192,6 +192,24 @@ interface AllApiEndpoints {
         sort?: string;
         common?: string;
         search?: string;
+        id?: string;
+      };
+      data?: undefined;
+    };
+    response: JobListingResponse;
+  };
+  "data-sourcing/job/{{jobId}}/": {
+    request: {
+      method: "GET";
+      params: {
+        department?: string;
+        location?: string;
+        from_date?: string;
+        to_date?: string;
+        sort?: string;
+        common?: string;
+        search?: string;
+        id?: string;
       };
       data?: undefined;
     };
@@ -241,6 +259,22 @@ interface AllApiEndpoints {
     };
   };
   "data-sourcing/candidate/": {
+    request: {
+      method: "GET";
+      params: {
+        department?: string;
+        location?: string;
+        from_date?: string;
+        to_date?: string;
+        sort?: string;
+        common?: string;
+        search?: string;
+      };
+      data?: undefined;
+    };
+    response: CandidateListResponse;
+  };
+  "data-sourcing/candidate/{{candidateId}}/": {
     request: {
       method: "GET";
       params: {

@@ -42,6 +42,7 @@ import { useEffect, useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { P, match } from "ts-pattern";
 import { z } from "zod";
@@ -49,60 +50,7 @@ import { OnboardingHistoryModal } from "./OnboardingListPage.dialog";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
-interface OnboardingList {
-  id: number;
-  job_name: string;
-  employer_name: string;
-  candidate_name: string;
-  status: string;
-  updated_at: string;
-  is_editable: boolean;
-  followup: boolean;
-  followup_on?: string;
-  followup_reason?: string;
-}
-const columnHelper = createColumnHelper<
-  OnboardingList & {
-    candidate_id: number;
-  }
->();
 
-const STATUS_NOT_EDITABLE = [
-  OnboardingStatus.PLACED,
-  OnboardingStatus.REJECTED,
-  OnboardingStatus.CANCELLED,
-  OnboardingStatus.EMPLOYER_FEEDBACK_SUBMITTED,
-  OnboardingStatus.CANDIDATE_FEEDBACK_SUBMITTED,
-] as string[];
-
-const STATUS_ORDER = [
-  OnboardingStatus.SHORTLISTED,
-  OnboardingStatus.RECRUITER_INTERVIEWED,
-  OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO,
-  OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
-  OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
-  OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F,
-  OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
-  OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
-  OnboardingStatus.EMPLOYER_SELECTED,
-  OnboardingStatus.PLACED,
-] as string[];
-const ALWAYS_SHOW_STATUS = [
-  OnboardingStatus.REJECTED,
-  OnboardingStatus.CANCELLED,
-] as string[];
-const EXTRA_MAPPINGS_OPTIONS = {
-  [OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO]: [
-    OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
-    OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
-  ],
-  [OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F]: [
-    OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
-    OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
-  ],
-} as {
-  [key: string]: string[];
-};
 export default function OnboardingListPage() {
   const [selectedOnboardingId, setSelectedOnboardingId] = useState<
     number | null
@@ -138,7 +86,7 @@ export default function OnboardingListPage() {
       onboardingListingQuery?.data?.pages
         ?.map((e) => e?.data)
         ?.flat()
-        ?.map<OnboardingList & { candidate_id: number }>((e) => ({
+        ?.map<OnboardingList>((e) => ({
           id: e.id,
           job_name: e.job.title,
           employer_name: e.employer.employer_label,
@@ -150,6 +98,7 @@ export default function OnboardingListPage() {
           followup_on: e.followup_on,
           followup_reason: e.followup_reason,
           candidate_id: e.candidate.id,
+          job_id: e.job.id,
         })) || [],
     [onboardingListingQuery.data],
   );
@@ -163,16 +112,25 @@ export default function OnboardingListPage() {
       columnHelper.accessor("job_name", {
         header: "Job Title",
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
+          <Link
+            to={ROUTES.ADMIN.LIST_JOBS.buildPath(
+              {},
+              {
+                id: info.row.original.job_id.toString(),
+              },
+            )}
+          >
+            <div className="max-w-[200px] truncate" title={info.getValue()}>
+              {info.getValue()}
+            </div>
+          </Link>
         ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("employer_name", {
         header: "Employer Name",
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
+          <div className="max-w-[200px] truncate  " title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -185,7 +143,16 @@ export default function OnboardingListPage() {
             className="flex max-w-[200px] justify-between "
             title={info.getValue()}
           >
-            <div className="flex-1 truncate">{info.getValue()}</div>
+            <Link
+              to={ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
+                {},
+                {
+                  id: info.row.original.candidate_id.toString(),
+                },
+              )}
+            >
+              <div className="flex-1 truncate">{info.getValue()}</div>
+            </Link>
             <button
               className={cn(
                 "rounded-md bg-primary p-2 text-white hover:bg-opacity-70",
@@ -834,3 +801,55 @@ const followUpState = z.object({
   followUpOn: z.coerce.string().min(1, "Required"),
   followUpReason: z.string().min(1, "Required"),
 });
+interface OnboardingList {
+  id: number;
+  job_name: string;
+  employer_name: string;
+  candidate_name: string;
+  status: string;
+  updated_at: string;
+  is_editable: boolean;
+  followup: boolean;
+  followup_on?: string;
+  followup_reason?: string;
+  candidate_id: number;
+  job_id: number;
+}
+const columnHelper = createColumnHelper<OnboardingList>();
+
+const STATUS_NOT_EDITABLE = [
+  OnboardingStatus.PLACED,
+  OnboardingStatus.REJECTED,
+  OnboardingStatus.CANCELLED,
+  OnboardingStatus.EMPLOYER_FEEDBACK_SUBMITTED,
+  OnboardingStatus.CANDIDATE_FEEDBACK_SUBMITTED,
+] as string[];
+
+const STATUS_ORDER = [
+  OnboardingStatus.SHORTLISTED,
+  OnboardingStatus.RECRUITER_INTERVIEWED,
+  OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO,
+  OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
+  OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
+  OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F,
+  OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
+  OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
+  OnboardingStatus.EMPLOYER_SELECTED,
+  OnboardingStatus.PLACED,
+] as string[];
+const ALWAYS_SHOW_STATUS = [
+  OnboardingStatus.REJECTED,
+  OnboardingStatus.CANCELLED,
+] as string[];
+const EXTRA_MAPPINGS_OPTIONS = {
+  [OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_VIDEO]: [
+    OnboardingStatus.EMPLOYER_INTERVIEWED_VIDEO,
+    OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO,
+  ],
+  [OnboardingStatus.EMPLOYER_INTERVIEW_SCHEDULED_F2F]: [
+    OnboardingStatus.EMPLOYER_INTERVIEWED_F2F,
+    OnboardingStatus.EMPLOYER_INTERVIEW_RESCHEDULED_F2F,
+  ],
+} as {
+  [key: string]: string[];
+};

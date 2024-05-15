@@ -30,7 +30,7 @@ export const SkillSelector = ({
   return (
     <div className=" ">
       <label className="mb-2.5 block font-medium text-black dark:text-white">
-        Skills
+        Work Area
       </label>
 
       <Combobox
@@ -43,7 +43,7 @@ export const SkillSelector = ({
         <div className="relative  ">
           <div className="relative flex items-center overflow-hidden rounded-md border border-slate-300">
             <Combobox.Input
-              placeholder="Search a Skill"
+              placeholder="Search a Work Area"
               displayValue={() => selectedItem}
               onChange={(event) => setQuery(event.target.value)}
               className={cn(

@@ -15,7 +15,7 @@ import { cn, makeUrlWithParams, replaceWith } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { BellIcon, Check, MessageSquareMoreIcon, PenIcon } from "lucide-react";
+import { BellIcon, Check, MessageSquareMoreIcon } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -229,8 +229,7 @@ export function OnboardingHistoryModal({
           <span>Add Comment</span>
         </Button>
         <Button className="space-x-2 py-2" onClick={onFollowUpClick}>
-          <PenIcon className="h-4 w-4" />
-          <span>Edit Status</span>
+          <span>Candidate Follow Up</span>
         </Button>
       </div>
       <OnboardingCommentModal

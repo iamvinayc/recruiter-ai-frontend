@@ -53,7 +53,7 @@ const SideBarLinks = {
       icon: <UserIcon className="h-5 w-5" />,
     },
     {
-      title: "Skill",
+      title: "Work Area",
       link: ROUTES.ADMIN.LIST_SKILL.path,
       icon: <BuildingOfficeIcon className="h-5 w-5" />,
     },

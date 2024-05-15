@@ -26,7 +26,13 @@ import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { Input, TextArea } from "../components/common/Input";
 import { ROUTES, SortBy } from "../routes/routes";
-import { cn, emptyArray, removeEmptyKeys } from "../utils";
+import {
+  cn,
+  emptyArray,
+  makeUrlWithParams,
+  removeEmptyKeys,
+  replaceWith,
+} from "../utils";
 import { JobRegisterDialog } from "./AdminListJobPage.dialog";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
@@ -53,6 +59,7 @@ export function AdminListJobPage() {
       common,
       search,
       job_id: selectedJobId,
+      id: jobId,
     },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
@@ -81,10 +88,18 @@ export function AdminListJobPage() {
       sort_by,
       common,
       search,
+      jobId,
     ],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
-        url: (pageParam || "data-sourcing/job/") as "data-sourcing/job/",
+        url: replaceWith(
+          jobId
+            ? makeUrlWithParams("data-sourcing/job/{{jobId}}/", {
+                jobId: jobId,
+              })
+            : "data-sourcing/job/",
+          pageParam,
+        ),
         method: "GET",
         params: {
           department: department || undefined,
@@ -171,7 +186,7 @@ export function AdminListJobPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("departments", {
-        header: "Skills",
+        header: "Work Area",
         cell: (info) => {
           return <ChipGroup items={info.getValue()} />;
         },
@@ -403,7 +418,7 @@ export function AdminListJobPage() {
                 </div>
               ))}
               <div className="space-y-1">
-                <div className="font-medium">Skills</div>
+                <div className="font-medium">Work Area</div>
                 <div className="text-sm ">
                   <ChipGroup
                     items={selectedUser?.departments || emptyArray}
@@ -733,7 +748,7 @@ const formSchema = z
           name: z.string().min(1),
         }),
       )
-      .min(1, "Please Select at-least one skill"),
+      .min(1, "Please Select at-least one work area"),
     city: z.string().min(1, "Please enter a city"),
   })
   .refine((data) => data.phone1 !== data.phone2, {
