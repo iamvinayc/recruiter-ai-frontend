@@ -1,4 +1,9 @@
-import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
+import {
+  OnboardingStatus,
+  OnboardingStatusColorMap,
+  axiosApi,
+  formatOnboardingStatus,
+} from "@/api/api";
 import { PopupDialog } from "@/components/PopupDialog";
 import { Button as Btn } from "@/components/common/Button";
 import {
@@ -207,14 +212,24 @@ export default function OnboardingListPage() {
           >
             <span
               className={cn(
-                "relative grid select-none items-center whitespace-nowrap rounded-lg  px-3 py-1.5 font-sans text-xs font-bold text-white",
-                info.getValue() === OnboardingStatus.CANCELLED ||
-                  info.getValue() === OnboardingStatus.REJECTED
-                  ? "bg-red-500"
-                  : info.getValue() === OnboardingStatus.EMPLOYER_SELECTED
-                  ? "bg-green-500"
-                  : "bg-blue-500",
+                "relative grid select-none   items-center whitespace-nowrap rounded-lg  px-3 py-1.5 font-sans text-xs font-bold text-white",
+                // info.getValue() === OnboardingStatus.CANCELLED ||
+                //   info.getValue() === OnboardingStatus.REJECTED
+                //   ? "bg-red-500"
+                //   : info.getValue() === OnboardingStatus.EMPLOYER_SELECTED
+                //   ? "bg-green-500"
+                //   : `bg-[${
+                //       StatusColorMap[
+                //         info.getValue() as unknown as keyof StatusColorMap
+                //       ] ?? "blue-500"
+                //     }]`,
               )}
+              style={{
+                background:
+                  OnboardingStatusColorMap[
+                    info.getValue() as keyof typeof OnboardingStatusColorMap
+                  ] ?? "rgb(59 130 246);",
+              }}
             >
               {formatOnboardingStatus(info.getValue())}
             </span>
