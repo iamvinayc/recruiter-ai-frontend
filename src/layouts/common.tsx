@@ -95,7 +95,7 @@ export const Header = ({
           </button>
           <div className="block flex-shrink-0">
             {/* <div className="text-3xl text-black">AI-RECRUIT</div> */}
-            <img src="/logo.svg" />
+            <img className="w-[70%]" src="/logo.svg" />
           </div>
         </div>
         <div className="hidden sm:block"></div>
