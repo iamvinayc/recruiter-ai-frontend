@@ -113,12 +113,21 @@ export default function OnboardingListPage() {
         header: "Job Title",
         cell: (info) => (
           <Link
-            to={ROUTES.ADMIN.LIST_JOBS.buildPath(
-              {},
-              {
-                id: info.row.original.job_id.toString(),
-              },
-            )}
+            to={
+              isRecruiter
+                ? ROUTES.RECRUITER.LIST_JOBS.buildPath(
+                    {},
+                    {
+                      id: info.row.original.job_id.toString(),
+                    },
+                  )
+                : ROUTES.ADMIN.LIST_JOBS.buildPath(
+                    {},
+                    {
+                      id: info.row.original.job_id.toString(),
+                    },
+                  )
+            }
           >
             <div className="max-w-[200px] truncate" title={info.getValue()}>
               {info.getValue()}
@@ -144,12 +153,21 @@ export default function OnboardingListPage() {
             title={info.getValue()}
           >
             <Link
-              to={ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
-                {},
-                {
-                  id: info.row.original.candidate_id.toString(),
-                },
-              )}
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        id: info.row.original.candidate_id.toString(),
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        id: info.row.original.candidate_id.toString(),
+                      },
+                    )
+              }
             >
               <div className="flex-1 truncate">{info.getValue()}</div>
             </Link>

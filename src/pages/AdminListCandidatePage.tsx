@@ -49,9 +49,13 @@ export function AdminListCandidatePage() {
       scrape_to,
       common,
       search,
+      open_candidates,
+      non_responsive_candidates,
+      interview_scheduled_candidates,
+      today_scrapped_candidates,
     },
     setTypeSearch,
-  ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
+  ] = useTypedSearchParams(ROUTES.ADMIN.LIST_CANDIDATE);
   const [{ id: candidateId }] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_CANDIDATE,
   );
@@ -81,6 +85,10 @@ export function AdminListCandidatePage() {
       common,
       search,
       candidateId,
+      open_candidates,
+      non_responsive_candidates,
+      interview_scheduled_candidates,
+      today_scrapped_candidates,
     ],
     queryFn: async ({ pageParam }) =>
       axiosApi({
@@ -101,6 +109,10 @@ export function AdminListCandidatePage() {
           sort: sort_by || undefined,
           common: common || undefined,
           search: search || undefined,
+          open_candidates: open_candidates || undefined,
+          non_responsive_candidates: non_responsive_candidates || undefined,
+          interview_scheduled_candidates: interview_scheduled_candidates || undefined,
+          today_scrapped_candidates: today_scrapped_candidates || undefined,
         },
       }).then((e) => e.data),
     getNextPageParam(e) {

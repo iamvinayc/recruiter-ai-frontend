@@ -60,6 +60,10 @@ export function AdminListJobPage() {
       search,
       job_id: selectedJobId,
       id: jobId,
+      open_jobs,
+      non_responsive_jobs,
+      interview_scheduled_jobs,
+      today_scrapped_jobs,
     },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
@@ -89,6 +93,10 @@ export function AdminListJobPage() {
       common,
       search,
       jobId,
+      open_jobs,
+      non_responsive_jobs,
+      interview_scheduled_jobs,
+      today_scrapped_jobs,
     ],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
@@ -109,6 +117,10 @@ export function AdminListJobPage() {
           sort: sort_by || undefined,
           common: common || undefined,
           search: search || undefined,
+          open_jobs: open_jobs || undefined,
+          non_responsive_jobs: non_responsive_jobs || undefined,
+          interview_scheduled_jobs: interview_scheduled_jobs || undefined,
+          today_scrapped_jobs: today_scrapped_jobs || undefined,
         },
       }).then((e) => e.data);
     },
