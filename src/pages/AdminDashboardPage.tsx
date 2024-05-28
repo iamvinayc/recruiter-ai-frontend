@@ -84,7 +84,7 @@ export function AdminDashboardPage() {
                 : "col-span-4 md:grid-cols-4",
             )}
           >
-            <Link
+            {/* <Link
               to={
                 isRecruiter
                   ? ROUTES.RECRUITER.LIST_CANDIDATE.path
@@ -113,63 +113,229 @@ export function AdminDashboardPage() {
                 value={String(dashboardOverviewQuery.data?.total_jobs) || ""}
                 isLoading={dashboardOverviewQuery.isLoading}
               />
+            </Link> */}
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        open_candidates: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        open_candidates: "True",
+                      },
+                    )
+              }
+            >
+              <Card
+                icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+                title="Total Open Candidates"
+                value={
+                  String(dashboardOverviewQuery.data?.total_open_candt) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
             </Link>
-            <Card
-              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-              title="Total Candidate Responded"
-              value={
-                String(dashboardOverviewQuery.data?.total_candt_responded) || ""
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        open_jobs: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        open_jobs: "True",
+                      },
+                    )
               }
-              isLoading={dashboardOverviewQuery.isLoading}
-            />
-            <Card
-              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-              title="Total Candidate Placed"
-              value={
-                String(dashboardOverviewQuery.data?.total_candt_placed) || ""
+            >
+              <Card
+                icon={<BriefcaseIcon className="h-8 w-8 text-[#3C50E0]" />}
+                title="Total Open Jobs"
+                value={
+                  String(dashboardOverviewQuery.data?.total_open_jobs) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        non_responsive_candidates: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        non_responsive_candidates: "True",
+                      },
+                    )
               }
-              isLoading={dashboardOverviewQuery.isLoading}
-            />
-            <Card
-              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-              title="Total Open Candidate"
-              value={
-                String(dashboardOverviewQuery.data?.total_open_candt) || ""
+            >
+              <Card
+                icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+                title="Total Non-Responsive Candidates"
+                value={
+                  String(
+                    dashboardOverviewQuery.data
+                      ?.total_non_responsive_candidates,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        non_responsive_jobs: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        non_responsive_jobs: "True",
+                      },
+                    )
               }
-              isLoading={dashboardOverviewQuery.isLoading}
-            />
-            <Card
-              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-              title="Total Candidate Scraped Today"
-              value={
-                String(dashboardOverviewQuery.data?.total_candt_scrapped_tdy) ||
-                ""
+            >
+              <Card
+                icon={<BriefcaseIcon className="h-8 w-8 text-[#3C50E0]" />}
+                title="Total Non-Responsive Jobs"
+                value={
+                  String(
+                    dashboardOverviewQuery.data?.total_non_responsive_jobs,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        interview_scheduled_candidates: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        interview_scheduled_candidates: "True",
+                      },
+                    )
               }
-              isLoading={dashboardOverviewQuery.isLoading}
-            />
-            <Card
-              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-              title="Total Interviews"
-              value={
-                String(dashboardOverviewQuery.data?.total_interviews) || ""
+            >
+              <Card
+                icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+                title="Total Interview Scheduled Candidates"
+                value={
+                  String(
+                    dashboardOverviewQuery.data
+                      ?.total_interview_scheduled_candidates,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        interview_scheduled_jobs: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        interview_scheduled_jobs: "True",
+                      },
+                    )
               }
-              isLoading={dashboardOverviewQuery.isLoading}
-            />
-            <Card
-              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-              title="Total Open Jobs"
-              value={String(dashboardOverviewQuery.data?.total_open_jobs) || ""}
-              isLoading={dashboardOverviewQuery.isLoading}
-            />
-            <Card
-              icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
-              title="Total Jobs Scraped Today"
-              value={
-                String(dashboardOverviewQuery.data?.total_jobs_scrapped_tdy) ||
-                ""
+            >
+              <Card
+                icon={<BriefcaseIcon className="h-8 w-8 text-[#3C50E0]" />}
+                title="Total Interview Scheduled Jobs"
+                value={
+                  String(
+                    dashboardOverviewQuery.data?.total_interview_scheduled_jobs,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        today_scrapped_candidates: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        today_scrapped_candidates: "True",
+                      },
+                    )
               }
-              isLoading={dashboardOverviewQuery.isLoading}
-            />
+            >
+              <Card
+                icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+                title="Total Candidates Scraped Today"
+                value={
+                  String(
+                    dashboardOverviewQuery.data?.total_candt_scrapped_tdy,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        today_scrapped_jobs: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        today_scrapped_jobs: "True",
+                      },
+                    )
+              }
+            >
+              <Card
+                icon={<BriefcaseIcon className="h-8 w-8 text-[#3C50E0]" />}
+                title="Total Jobs Scraped Today"
+                value={
+                  String(
+                    dashboardOverviewQuery.data?.total_jobs_scrapped_tdy,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
           </div>
         </div>
       </div>

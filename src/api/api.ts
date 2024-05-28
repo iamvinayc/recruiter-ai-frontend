@@ -193,6 +193,10 @@ interface AllApiEndpoints {
         common?: string;
         search?: string;
         id?: string;
+        open_jobs?: string;
+        non_responsive_jobs?: string;
+        interview_scheduled_jobs?: string;
+        today_scrapped_jobs?: string;
       };
       data?: undefined;
     };
@@ -269,6 +273,10 @@ interface AllApiEndpoints {
         sort?: string;
         common?: string;
         search?: string;
+        open_candidates?: string;
+        non_responsive_candidates?: string;
+        interview_scheduled_candidates?: string;
+        today_scrapped_candidates?: string;
       };
       data?: undefined;
     };
@@ -782,12 +790,13 @@ interface DashboardOverviewResponse {
   data: {
     total_candidates: number;
     total_jobs: number;
-    total_candt_responded: number;
-    total_candt_placed: number;
+    total_non_responsive_candidates: number;
+    total_non_responsive_jobs: number;
     total_open_candt: number;
-    total_candt_scrapped_tdy: number;
-    total_interviews: number;
     total_open_jobs: number;
+    total_interview_scheduled_candidates: number;
+    total_interview_scheduled_jobs: number;
+    total_candt_scrapped_tdy: number;
     total_jobs_scrapped_tdy: number;
   };
   message: string;
