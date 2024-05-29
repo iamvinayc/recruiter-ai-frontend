@@ -7,17 +7,20 @@ export function InfinityLoaderComponent({
   dataLength,
   next,
   hasMore,
+  height,
 }: {
   dataLength: number;
   children: JSX.Element;
   next: () => void;
   hasMore: boolean;
+  height?: number;
 }) {
   return (
     <InfiniteScroll
       dataLength={dataLength}
       next={next}
       hasMore={hasMore}
+      height={height}
       loader={
         <div className="flex items-center justify-center p-4 py-6">
           <div className="flex items-center space-x-2">

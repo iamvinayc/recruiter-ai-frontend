@@ -8,14 +8,16 @@ export function Table<T>({
   table,
   loader,
   flat,
+  theadClassName,
 }: {
   table: ITable<T>;
   loader: JSX.Element;
   flat?: boolean;
+  theadClassName?: string;
 }) {
   return (
     <table className={cn("min-w-full   table-fixed overflow-scroll")}>
-      <thead>
+      <thead className={theadClassName}>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
