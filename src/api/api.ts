@@ -697,6 +697,14 @@ interface AllApiEndpoints {
       status: number;
     };
   };
+  "dashboard/candidate_summary/": {
+    request: {
+      method: "GET";
+      params?: undefined; 
+      data?: undefined;
+    };
+    response: CandidateSummaryResponse;
+  };
 }
 //#endregion
 
@@ -784,6 +792,27 @@ interface DepartmentListingResponseParams {
   type: number;
   page_size: number;
   name?: string;
+}
+
+interface CandidateSummaryResponse {
+  data: CandidateSummaryResponseData[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+  next: string | null;
+  previous?: string | null;
+}
+
+interface CandidateSummaryResponseData {
+  id: number;
+  name: string;
+  jobs: {
+    job_id: number;
+    job_name: string;
+    onboarding_id?: number;
+    scoring_id: number;
+    status: string;
+  }[];
 }
 
 interface DashboardOverviewResponse {
