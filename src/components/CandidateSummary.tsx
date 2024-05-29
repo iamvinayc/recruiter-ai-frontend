@@ -1,4 +1,9 @@
-import { CheckCircleIcon, EyeIcon, XMarkIcon, XCircleIcon } from "@heroicons/react/20/solid";
+import {
+  CheckCircleIcon,
+  EyeIcon,
+  XMarkIcon,
+  XCircleIcon,
+} from "@heroicons/react/20/solid";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { useMemo, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -15,7 +20,7 @@ import { TableLoader } from "@/pages/common/TableLoader";
 import { PopupDialog } from "@/components/PopupDialog";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
-
+import { replaceWith } from "@/utils";
 
 const columnHelper = createColumnHelper<CandidateSummaryResponseData>();
 
@@ -30,8 +35,10 @@ export function CandidateSummary() {
     queryKey: ["candidateSummaryQuery"],
     queryFn: async ({ pageParam }) =>
       axiosApi({
-        url: (pageParam ||
-          "dashboard/candidate_summary/") as "dashboard/candidate_summary/",
+        url: replaceWith(
+          "dashboard/candidate_summary/",
+          pageParam || "dashboard/candidate_summary/?page_size=16",
+        ),
         method: "GET",
       }).then((e) => e.data),
     getNextPageParam: (lastPage) => lastPage.next,
@@ -121,6 +128,7 @@ export function CandidateSummary() {
             }`}
           >
             <InfinityLoaderComponent
+              height={828}
               dataLength={candidateList.length}
               hasMore={candidateSummaryQuery.hasNextPage}
               next={() => {
@@ -128,6 +136,7 @@ export function CandidateSummary() {
               }}
             >
               <Table
+                theadClassName="sticky w-full z-10 border-b-[solid] left-0 top-0 bg-white shadow-sm"
                 table={table}
                 loader={
                   <TableLoader
@@ -137,7 +146,7 @@ export function CandidateSummary() {
                     isUpdateLoading={
                       candidateSummaryQuery.isLoading ||
                       candidateSummaryQuery.isRefetching
-                    } 
+                    }
                   />
                 }
               />
@@ -226,7 +235,10 @@ export function CandidateSummary() {
                                       )
                                 }
                               >
-                                <td className="whitespace-nowrap px-7 py-4" title={job.status}>
+                                <td
+                                  className="whitespace-nowrap px-7 py-4"
+                                  title={job.status}
+                                >
                                   <ArrowTopRightOnSquareIcon className="h-5 w-5 text-blue-500" />
                                 </td>
                               </Link>

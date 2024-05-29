@@ -77,7 +77,7 @@ export function AdminDashboardPage() {
         <div className="grid h-[850px] grid-cols-5 gap-10">
           {/* {isRecruiter ? <ListRecruiterActions /> : null} */}
           <div className="col-span-2 py-8">
-            <h2 className="text-title-md2 font-bold text-black dark:text-white mb-6">
+            <h2 className="mb-6 text-title-md2 font-bold text-black dark:text-white">
               Quick Links
             </h2>
             <div
@@ -364,7 +364,7 @@ const Card = ({
   isLoading: boolean;
 }) => {
   return (
-    <div className="dark:bg-boxdark dark:border-strokedark rounded-sm border border-stroke bg-white p-4 shadow-default md:p-6 xl:p-7.5">
+    <div className="dark:bg-boxdark dark:border-strokedark h-full rounded-sm border border-stroke bg-white p-4 shadow-default md:p-6 xl:p-7.5">
       {icon}
       <h4 className="mb-2 mt-5 font-medium">{title}</h4>
       <h3
