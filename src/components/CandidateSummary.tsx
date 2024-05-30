@@ -17,6 +17,9 @@ import {
 import { InfinityLoaderComponent } from "@/pages/common/InfinityLoaderComponent";
 import { Table } from "@/pages/common/Table";
 import { TableLoader } from "@/pages/common/TableLoader";
+import {
+  DebouncedInput,
+} from "@/components/common/Input";
 import { PopupDialog } from "@/components/PopupDialog";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
@@ -27,12 +30,14 @@ const columnHelper = createColumnHelper<CandidateSummaryResponseData>();
 export function CandidateSummary() {
   const { isRecruiter } = useLogin();
 
+  const [searchCandidateName, setSearchCandidateName] = useState("");
+
   const [showCandidateSummary, setShowCandidateSummary] = useState<
     number | null
   >(null);
 
   const candidateSummaryQuery = useInfiniteQuery({
-    queryKey: ["candidateSummaryQuery"],
+    queryKey: ["candidateSummaryQuery", searchCandidateName],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: replaceWith(
@@ -40,6 +45,9 @@ export function CandidateSummary() {
           pageParam || "dashboard/candidate_summary/?page_size=16",
         ),
         method: "GET",
+        params: {
+          candidate_name: searchCandidateName,
+        }
       }).then((e) => e.data),
     getNextPageParam: (lastPage) => lastPage.next,
     initialPageParam: "",
@@ -53,7 +61,20 @@ export function CandidateSummary() {
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("name", {
-        header: () => <div className="flex justify-start">Candidate Name</div>,
+        header: () => (
+          <div>
+            <div>Candidate Name</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Search"
+              value={searchCandidateName}
+              onChange={(val) => {
+                setSearchCandidateName("" + val);
+              }}
+            />
+          </div>
+        ),
         cell: (info) => (
           <Link
             to={
@@ -72,10 +93,18 @@ export function CandidateSummary() {
                   )
             }
           >
-            <div className="flex justify-start" title={info.getValue()}>
+            <div  title={info.getValue()}>
               {info.getValue()}
             </div>
           </Link>
+        ),
+      }),
+      columnHelper.accessor("email", {
+        header: () => <div>Candidate Email</div>,
+        cell: (info) => (
+          <div  title={info.getValue()}>
+            {info.getValue()}
+          </div>
         ),
       }),
       columnHelper.display({
@@ -273,6 +302,7 @@ export function CandidateSummary() {
 interface CandidateSummaryResponseData {
   id: number;
   name: string;
+  email: string;
   jobs: {
     job_id: number;
     job_name: string;

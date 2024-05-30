@@ -700,7 +700,9 @@ interface AllApiEndpoints {
   "dashboard/candidate_summary/": {
     request: {
       method: "GET";
-      params?: undefined; 
+      params?: {
+        candidate_name?: string;
+      } 
       data?: undefined;
     };
     response: CandidateSummaryResponse;
@@ -806,6 +808,7 @@ interface CandidateSummaryResponse {
 interface CandidateSummaryResponseData {
   id: number;
   name: string;
+  email: string;
   jobs: {
     job_id: number;
     job_name: string;
