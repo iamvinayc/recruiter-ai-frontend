@@ -8,15 +8,24 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { useMemo, useState } from "react";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
+import { useLogin } from "@/hooks/useLogin";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
+import { ROUTES } from "../routes/routes";
 
 const columnHelper = createColumnHelper<EmployerListItem>();
 
 export default function EmployerListPage() {
   const [search, setSearch] = useState("");
+  
+  const { isRecruiter } = useLogin();
+  const [{ id: employerId }] = useTypedSearchParams(
+    isRecruiter ? ROUTES.RECRUITER.LIST_EMPLOYER : ROUTES.ADMIN.LIST_EMPLOYER
+  );
+  
   const blockEmployerMutation = useMutation({
     mutationKey: ["blockEmployerMutation"],
     mutationFn: async ({ blocked, id }: { id: number; blocked: boolean }) => {
@@ -40,7 +49,7 @@ export default function EmployerListPage() {
   });
 
   const employerListingQuery = useInfiniteQuery({
-    queryKey: ["employerListingQuery", search],
+    queryKey: ["employerListingQuery", search, employerId],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
         url: (pageParam ||
@@ -49,6 +58,7 @@ export default function EmployerListPage() {
         params: {
           per_page: 12,
           name: search,
+          id: employerId,
         },
       }).then((e) => e.data);
     },

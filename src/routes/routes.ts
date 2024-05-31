@@ -20,6 +20,7 @@ export const ROUTES = {
       LIST_EMPLOYER: route("list-employer", {
         searchParams: {
           name: string().default(""),
+          id: string().default(""),
         },
       }),
       LIST_JOBS: route("list-jobs", {
@@ -93,7 +94,12 @@ export const ROUTES = {
       LOGIN: route("login"),
       DASHBOARD: route("dashboard"),
       CHANGE_PASSWORD: route("change-password"),
-      LIST_EMPLOYER: route("list-employer"),
+      LIST_EMPLOYER: route("list-employer" , {
+        searchParams: {
+          name: string().default(""),
+          id: string().default(""),
+        }
+      }),
       LIST_JOBS: route("list-jobs", {
         searchParams: {
           skill: string().default(""),
