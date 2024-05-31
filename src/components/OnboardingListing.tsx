@@ -6,7 +6,12 @@ import {
 } from "@/api/api";
 import { PopupDialog } from "@/components/PopupDialog";
 import { Button as Btn } from "@/components/common/Button";
-import { DateTimeInput, Input, TextArea } from "@/components/common/Input";
+import {
+  DateTimeInput,
+  DebouncedInput,
+  Input,
+  TextArea,
+} from "@/components/common/Input";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -21,6 +26,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useLogin } from "@/hooks/useLogin";
+import { OnboardingHistoryModal } from "@/pages/OnboardingListPage.dialog";
+import { InfinityLoaderComponent } from "@/pages/common/InfinityLoaderComponent";
+import { Table } from "@/pages/common/Table";
+import { TableLoader } from "@/pages/common/TableLoader";
 import { ROUTES } from "@/routes/routes";
 import { cn, replaceWith } from "@/utils";
 import { isChrome } from "@/utils/constants";
@@ -41,13 +50,6 @@ import { Link } from "react-router-dom";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { P, match } from "ts-pattern";
 import { z } from "zod";
-import {
-    DebouncedInput,
-} from "@/components/common/Input";
-import { OnboardingHistoryModal } from "@/pages/OnboardingListPage.dialog";
-import { InfinityLoaderComponent } from "@/pages/common/InfinityLoaderComponent";
-import { Table } from "@/pages/common/Table";
-import { TableLoader } from "@/pages/common/TableLoader";
 
 export default function OnboardingListing() {
   const [selectedOnboardingId, setSelectedOnboardingId] = useState<
@@ -66,7 +68,13 @@ export default function OnboardingListing() {
   const [searchEmployerName, setSearchEmployerName] = useState("");
 
   const onboardingListingQuery = useInfiniteQuery({
-    queryKey: ["onboardingListingQuery", searchCandidateName, searchJobName, searchEmployerName, onboardingId],
+    queryKey: [
+      "onboardingListingQuery",
+      searchCandidateName,
+      searchJobName,
+      searchEmployerName,
+      onboardingId,
+    ],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: replaceWith("onboarding/employee_onboarding/", pageParam),
@@ -75,7 +83,7 @@ export default function OnboardingListing() {
           id: onboardingId,
           candidate_search: searchCandidateName,
           job_search: searchJobName,
-          employer_search: searchEmployerName
+          employer_search: searchEmployerName,
         },
       }).then((e) => e.data),
     getNextPageParam(e) {
@@ -115,18 +123,18 @@ export default function OnboardingListing() {
       }),
       columnHelper.accessor("job_name", {
         header: () => (
-            <div>
-                <div> Job Name </div>
-                <DebouncedInput
-                    className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
-                    type="text"
-                    placeholder="Job Name"
-                    value={searchJobName}
-                    onChange={(val) => {
-                        setSearchJobName("" + val);
-                    }}
-                />
-            </div>
+          <div>
+            <div> Job Name </div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Job Name"
+              value={searchJobName}
+              onChange={(val) => {
+                setSearchJobName("" + val);
+              }}
+            />
+          </div>
         ),
         cell: (info) => (
           <Link
@@ -155,18 +163,18 @@ export default function OnboardingListing() {
       }),
       columnHelper.accessor("employer_name", {
         header: () => (
-            <div>
-                <div> Employer Name </div>
-                <DebouncedInput
-                    className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
-                    type="text"
-                    placeholder="Employer Name"
-                    value={searchEmployerName}
-                    onChange={(val) => {
-                        setSearchEmployerName("" + val);
-                    }}
-                />
-            </div>
+          <div>
+            <div> Employer Name </div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Employer Name"
+              value={searchEmployerName}
+              onChange={(val) => {
+                setSearchEmployerName("" + val);
+              }}
+            />
+          </div>
         ),
         cell: (info) => (
           <Link
@@ -195,18 +203,18 @@ export default function OnboardingListing() {
       }),
       columnHelper.accessor("candidate_name", {
         header: () => (
-            <div>
-                <div> Candidate Name </div>
-                <DebouncedInput
-                    className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
-                    type="text"
-                    placeholder="Candidate Name"
-                    value={searchCandidateName}
-                    onChange={(val) => {
-                        setSearchCandidateName("" + val);
-                    }}
-                />
-            </div>
+          <div>
+            <div> Candidate Name </div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Candidate Name"
+              value={searchCandidateName}
+              onChange={(val) => {
+                setSearchCandidateName("" + val);
+              }}
+            />
+          </div>
         ),
         cell: (info) => (
           <div
@@ -372,7 +380,7 @@ export default function OnboardingListing() {
             )}
           >
             <InfinityLoaderComponent
-              height={828}
+              height={700}
               dataLength={onboardingList.length}
               hasMore={onboardingListingQuery.hasNextPage}
               next={() => {
