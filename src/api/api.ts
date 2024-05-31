@@ -1155,7 +1155,11 @@ interface EmployerMatchingCandidatesData {
   candidates: {
     candidate_id: string;
     candidate_name: string;
+    skills: {
+      name: string
+    }[];
     reasons: string | string[];
+    details: string;
   }[];
 }
 

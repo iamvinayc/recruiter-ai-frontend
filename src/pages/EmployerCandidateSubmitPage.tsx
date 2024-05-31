@@ -131,7 +131,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
             ) : (
               <div>
                 {data?.map((job, index) => (
-                  <div key={job.job_id} className="mb-4">
+                  <div key={job.job_id} className="mb-8">
                     <div className="flex flex-col items-center justify-between  gap-4 border-b-2 border-b-[#ddd] bg-slate-200 p-4 md:flex-row">
                       <p className="font-bold">{job.job_title}</p>
                       <MoreOptionsComponent
@@ -152,11 +152,13 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                       />
                     </div>
                     <div className="overflow-x-auto">
-                      <table className="w-full whitespace-nowrap">
+                      <table className="w-full table-auto">
                         <thead>
                           <tr className="text-gray-500 border-b bg-slate-200 text-left text-xs font-semibold uppercase tracking-wide">
                             <th className="w-1/4 px-4 py-3">Candidate Name</th>
-                            <th className="w-3/4 px-4 py-3">Reasons</th>
+                            <th className="w-1/4 px-4 py-3">Skills</th>
+                            <th className="w-1/4 px-4 py-3">Details</th>
+                            <th className="w-1/4 px-4 py-3">Reasons</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y bg-white">
@@ -186,7 +188,22 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                                   </label>
                                 </div>
                               </td>
-                              <td className="text-gray-500 whitespace-normal px-4 py-3 text-sm">
+                              <td className="px-4 py-3">
+                                <div className="flex flex-wrap gap-2">
+                                  {candidate.skills.map((skill, index) => (
+                                    <span
+                                      key={index}
+                                      className="inline-flex text-ellipsis rounded bg-[#3BA2B8] px-2 py-1 text-xs font-normal text-white hover:bg-opacity-90"
+                                    >
+                                      {skill.name}
+                                    </span>
+                                  ))}
+                                </div>
+                              </td>
+                              <td className="text-gray-500 px-4 py-3 text-sm">
+                                {candidate.details}
+                              </td>
+                              <td className="text-gray-500 px-4 py-3 text-sm">
                                 <ReasonRenderer reason={candidate.reasons} />
                               </td>
                             </tr>
@@ -208,7 +225,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                     }
                   }}
                   isLoading={submitCandidateMutation.isPending}
-                  className="py-2"
+                  className="mt-4 py-2"
                 >
                   Submit
                 </Button>
