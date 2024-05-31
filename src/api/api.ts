@@ -508,7 +508,9 @@ interface AllApiEndpoints {
       method: "GET";
       params?: {
         id?: string;
-        search: string;
+        candidate_search?: string;
+        job_search?: string;
+        employer_search?: string;
       };
       data?: undefined;
     };
@@ -546,6 +548,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params?: {
+        id?: string;
         per_page?: number;
         page?: number;
         name?: string;

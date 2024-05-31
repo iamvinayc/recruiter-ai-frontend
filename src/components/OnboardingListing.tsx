@@ -6,12 +6,7 @@ import {
 } from "@/api/api";
 import { PopupDialog } from "@/components/PopupDialog";
 import { Button as Btn } from "@/components/common/Button";
-import {
-  DateTimeInput,
-  DebouncedSearchInput,
-  Input,
-  TextArea,
-} from "@/components/common/Input";
+import { DateTimeInput, Input, TextArea } from "@/components/common/Input";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -46,12 +41,15 @@ import { Link } from "react-router-dom";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { P, match } from "ts-pattern";
 import { z } from "zod";
-import { OnboardingHistoryModal } from "./OnboardingListPage.dialog";
-import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
-import { Table } from "./common/Table";
-import { TableLoader } from "./common/TableLoader";
+import {
+    DebouncedInput,
+} from "@/components/common/Input";
+import { OnboardingHistoryModal } from "@/pages/OnboardingListPage.dialog";
+import { InfinityLoaderComponent } from "@/pages/common/InfinityLoaderComponent";
+import { Table } from "@/pages/common/Table";
+import { TableLoader } from "@/pages/common/TableLoader";
 
-export default function OnboardingListPage() {
+export default function OnboardingListing() {
   const [selectedOnboardingId, setSelectedOnboardingId] = useState<
     number | null
   >(null);
@@ -63,16 +61,21 @@ export default function OnboardingListPage() {
   const [{ id: onboardingId }] = useTypedSearchParams(
     isRecruiter ? ROUTES.RECRUITER.ONBOARDING : ROUTES.ADMIN.ONBOARDING,
   );
-  const [search, setSearch] = useState("");
+  const [searchCandidateName, setSearchCandidateName] = useState("");
+  const [searchJobName, setSearchJobName] = useState("");
+  const [searchEmployerName, setSearchEmployerName] = useState("");
+
   const onboardingListingQuery = useInfiniteQuery({
-    queryKey: ["onboardingListingQuery", search, onboardingId],
+    queryKey: ["onboardingListingQuery", searchCandidateName, searchJobName, searchEmployerName, onboardingId],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: replaceWith("onboarding/employee_onboarding/", pageParam),
         method: "GET",
         params: {
           id: onboardingId,
-          candidate_search: search,
+          candidate_search: searchCandidateName,
+          job_search: searchJobName,
+          employer_search: searchEmployerName
         },
       }).then((e) => e.data),
     getNextPageParam(e) {
@@ -99,6 +102,7 @@ export default function OnboardingListPage() {
           followup_reason: e.followup_reason,
           candidate_id: e.candidate.id,
           job_id: e.job.id,
+          employer_id: e.employer.id,
         })) || [],
     [onboardingListingQuery.data],
   );
@@ -110,7 +114,20 @@ export default function OnboardingListPage() {
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("job_name", {
-        header: "Job Title",
+        header: () => (
+            <div>
+                <div> Job Name </div>
+                <DebouncedInput
+                    className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+                    type="text"
+                    placeholder="Job Name"
+                    value={searchJobName}
+                    onChange={(val) => {
+                        setSearchJobName("" + val);
+                    }}
+                />
+            </div>
+        ),
         cell: (info) => (
           <Link
             to={
@@ -137,16 +154,60 @@ export default function OnboardingListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("employer_name", {
-        header: "Employer Name",
+        header: () => (
+            <div>
+                <div> Employer Name </div>
+                <DebouncedInput
+                    className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+                    type="text"
+                    placeholder="Employer Name"
+                    value={searchEmployerName}
+                    onChange={(val) => {
+                        setSearchEmployerName("" + val);
+                    }}
+                />
+            </div>
+        ),
         cell: (info) => (
-          <div className="max-w-[200px] truncate  " title={info.getValue()}>
-            {info.getValue()}
-          </div>
+          <Link
+            to={
+              isRecruiter
+                ? ROUTES.RECRUITER.LIST_EMPLOYER.buildPath(
+                    {},
+                    {
+                      id: info.row.original.employer_id.toString(),
+                    },
+                  )
+                : ROUTES.ADMIN.LIST_EMPLOYER.buildPath(
+                    {},
+                    {
+                      id: info.row.original.employer_id.toString(),
+                    },
+                  )
+            }
+          >
+            <div className="max-w-[200px] truncate  " title={info.getValue()}>
+              {info.getValue()}
+            </div>
+          </Link>
         ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("candidate_name", {
-        header: () => <div>Candidate Name</div>,
+        header: () => (
+            <div>
+                <div> Candidate Name </div>
+                <DebouncedInput
+                    className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+                    type="text"
+                    placeholder="Candidate Name"
+                    value={searchCandidateName}
+                    onChange={(val) => {
+                        setSearchCandidateName("" + val);
+                    }}
+                />
+            </div>
+        ),
         cell: (info) => (
           <div
             className="flex max-w-[200px] justify-between "
@@ -296,18 +357,11 @@ export default function OnboardingListPage() {
     ?.status;
   return (
     <main>
-      <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mx-auto max-w-screen-2xl py-8">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            Onboarding List
+          <h2 className="text-title-md2 font-bold text-black dark:text-white">
+            Candidate Summary
           </h2>
-          <DebouncedSearchInput
-            placeholder="Search by Candidate Name"
-            value={search}
-            onChange={(val) => {
-              setSearch("" + val);
-            }}
-          />
         </div>
         {/* -- Body --- */}
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
@@ -318,6 +372,7 @@ export default function OnboardingListPage() {
             )}
           >
             <InfinityLoaderComponent
+              height={828}
               dataLength={onboardingList.length}
               hasMore={onboardingListingQuery.hasNextPage}
               next={() => {
@@ -326,6 +381,7 @@ export default function OnboardingListPage() {
             >
               <Table
                 table={table}
+                theadClassName="sticky w-full z-10 border-b-[solid] left-0 top-0 bg-white shadow-sm"
                 loader={
                   <TableLoader
                     colSpan={columns.length}
@@ -832,6 +888,7 @@ interface OnboardingList {
   followup_reason?: string;
   candidate_id: number;
   job_id: number;
+  employer_id: number;
 }
 const columnHelper = createColumnHelper<OnboardingList>();
 
