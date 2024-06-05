@@ -10,16 +10,28 @@ import {
 } from "@tanstack/react-table";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { useMemo, useState } from "react";
+import { NotebookTabs } from "lucide-react";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { useLogin } from "@/hooks/useLogin";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
 import { ROUTES } from "../routes/routes";
+import EmployerListDialog from "./EmployerListPage.dialog";
 
 const columnHelper = createColumnHelper<EmployerListItem>();
 
 export default function EmployerListPage() {
   const [search, setSearch] = useState("");
+
+  const [selectedEmployerId, setSelectedEmployerId] = useState<string | null>(null);
+
+  const openDialog = (employerId: string) => {
+    setSelectedEmployerId(employerId);
+  };
+
+  const closeDialog = () => {
+    setSelectedEmployerId(null);
+  };
   
   const { isRecruiter } = useLogin();
   const [{ id: employerId }] = useTypedSearchParams(
@@ -89,11 +101,11 @@ export default function EmployerListPage() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "Sr. No",
+        header: "No",
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("employer_label", {
-        header: "Employer Name",
+        header: "Company",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -134,7 +146,14 @@ export default function EmployerListPage() {
         id: "action",
         header: "Action",
         cell: (info) => (
-          <div className="max-w-[150px] truncate">
+          <div className="flex items-center space-x-2">
+            <button
+              className={cn("rounded-md bg-primary p-3 text-white hover:bg-opacity-70")}
+              title="Job Register"
+              onClick={() => openDialog(info.row.original.id.toString())}
+            >
+              <NotebookTabs className="h-5 w-5" strokeWidth={3} />
+            </button>
             <BlockButton
               isLoading={
                 blockEmployerMutation.variables?.id === info.row.original.id &&
@@ -167,11 +186,11 @@ export default function EmployerListPage() {
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            Employer List
+            Company List
           </h2>
 
           <DebouncedSearchInput
-            placeholder="Search by Employer Name"
+            placeholder="Search by Company Name"
             value={search}
             onChange={(val) => {
               setSearch("" + val);
@@ -211,6 +230,12 @@ export default function EmployerListPage() {
           </div>
         </div>
       </div>
+      {selectedEmployerId && (
+        <EmployerListDialog
+          selectedEmployerId={selectedEmployerId}
+          closeDialog={closeDialog}
+        />
+      )}
     </main>
   );
 }

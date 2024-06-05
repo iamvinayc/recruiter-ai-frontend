@@ -102,7 +102,7 @@ export default function EmployerAgreementPage() {
               onChange={() => setIsChecked(!isChecked)}
               className="form-checkbox h-5 w-5 text-blue-600"
             />
-            <span className="ml-2 text-gray-700">I agree to the terms and conditions</span>
+            <span className="ml-2 text-gray-700">I agree with terms and conditions and privacy statement</span>
           </label>
         </div>
         {message && (
@@ -112,7 +112,7 @@ export default function EmployerAgreementPage() {
         )}
         <div>
           <Button onClick={onSubmit} isLoading={fileUploadMutation.isPending} className="py-2">
-                Accept Terms and Conditions
+            Accept conditions of cooperation 
           </Button>
         </div>
       </div>

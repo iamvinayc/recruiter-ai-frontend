@@ -1,4 +1,6 @@
 import BriefcaseIcon from "@heroicons/react/24/outline/BriefcaseIcon";
+import { NoSymbolIcon, ExclamationTriangleIcon, PhoneIcon, BuildingOfficeIcon, AdjustmentsHorizontalIcon, AdjustmentsVerticalIcon } from "@heroicons/react/24/outline";
+
 import UserCircleIcon from "@heroicons/react/24/outline/UserCircleIcon";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -161,7 +163,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<BriefcaseIcon className="h-8 w-8 text-[#3C50E0]" />}
+                icon={<BriefcaseIcon className="h-8 w-8 text-blue-500" />}
                 title="Total Open Jobs"
                 value={
                   String(dashboardOverviewQuery.data?.total_open_jobs) || ""
@@ -187,7 +189,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+                icon={<NoSymbolIcon className="h-8 w-8 text-red-600" />}
                 title="Total Non-Responsive Candidates"
                 value={
                   String(
@@ -216,7 +218,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<BriefcaseIcon className="h-8 w-8 text-[#3C50E0]" />}
+                icon={<ExclamationTriangleIcon className="h-8 w-8 text-yellow-600" />}
                 title="Total Non-Responsive Jobs"
                 value={
                   String(
@@ -244,7 +246,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+                icon={<PhoneIcon className="h-8 w-8 text-green-500" />}
                 title="Total Interview Scheduled Candidates"
                 value={
                   String(
@@ -273,7 +275,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<BriefcaseIcon className="h-8 w-8 text-[#3C50E0]" />}
+                icon={<BuildingOfficeIcon className="h-8 w-8 text-teal-400" />}
                 title="Total Interview Scheduled Jobs"
                 value={
                   String(
@@ -301,7 +303,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<UserCircleIcon className="h-8 w-8 text-[#3C50E0]" />}
+                icon={<AdjustmentsVerticalIcon className="h-8 w-8 text-fuchsia-600" />}
                 title="Total Candidates Scraped Today"
                 value={
                   String(
@@ -329,7 +331,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<BriefcaseIcon className="h-8 w-8 text-[#3C50E0]" />}
+                icon={<AdjustmentsHorizontalIcon className="h-8 w-8 text-purple-600" />}
                 title="Total Jobs Scraped Today"
                 value={
                   String(

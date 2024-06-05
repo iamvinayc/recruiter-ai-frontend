@@ -367,7 +367,7 @@ const FileUpload = ({
   };
   return (
     <>
-      <p className="mb-2 font-bold">Resume</p>
+      <p className="mb-2 font-bold">Please upload your latest resume</p>
 
       {file ? (
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">

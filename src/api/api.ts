@@ -710,6 +710,14 @@ interface AllApiEndpoints {
     };
     response: CandidateSummaryResponse;
   };
+  "data-sourcing/employer/history/{{employerId}}/": {
+    request: {
+      method: "GET";
+      params?: undefined,
+      data?: undefined;
+    };
+    response: EmployerHistoryResponse;
+  };
 }
 //#endregion
 
@@ -1312,6 +1320,44 @@ interface ListEmployerResponseData {
   is_interested: boolean;
   is_blocked: boolean;
 }
+
+interface EmployerHistoryResponse {
+  data: {
+    job_id: number;
+    job_title: string;
+    candidates: {
+      candidate_id: number;
+      candidate_name: string;
+      data: {
+        type: "comment" | "notification" | "status_change";
+        datetime: string;
+        title: string;
+        related_message?: null | string;
+        related_date?: null | string;
+        status?:
+          | "CANCELLED"
+          | "REJECTED"
+          | "PLACED"
+          | "EMPLOYER_SELECTED"
+          | "EMPLOYER_INTERVIEWED_F2F"
+          | "EMPLOYER_INTERVIEW_RESCHEDULED_F2F"
+          | "EMPLOYER_INTERVIEW_SCHEDULED_F2F"
+          | "EMPLOYER_INTERVIEWED_VIDEO"
+          | "EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO"
+          | "EMPLOYER_INTERVIEW_SCHEDULED_VIDEO"
+          | "RECRUITER_INTERVIEWED"
+          | "Recruiter Followup"
+          | "FEEDBACK_SUBMITTED_BY_CANDIDATE"
+          | "FEEDBACK_SUBMITTED_BY_EMPLOYER";
+        notification_id?: number;
+      }[] | [];
+    }[];
+  }[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+}
+
 export type OnboardingHistoryResponseType =
   OnboardingHistoryResponse["data"][0]["type"];
 interface OnboardingHistoryResponse {

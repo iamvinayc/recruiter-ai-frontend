@@ -106,11 +106,11 @@ export default function OnboardingListPage() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "Sr. No",
+        header: "No",
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("job_name", {
-        header: "Job Title",
+        header: "Position",
         cell: (info) => (
           <Link
             to={
@@ -137,7 +137,7 @@ export default function OnboardingListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("employer_name", {
-        header: "Employer Name",
+        header: "Company",
         cell: (info) => (
           <div className="max-w-[200px] truncate  " title={info.getValue()}>
             {info.getValue()}
@@ -146,7 +146,7 @@ export default function OnboardingListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("candidate_name", {
-        header: () => <div>Candidate Name</div>,
+        header: () => <div>Candidate</div>,
         cell: (info) => (
           <div
             className="flex max-w-[200px] justify-between "

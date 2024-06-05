@@ -118,17 +118,17 @@ export default function OnboardingListing() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "Sr. No",
+        header: "No",
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("job_name", {
         header: () => (
           <div>
-            <div> Job Name </div>
+            <div> Position </div>
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
-              placeholder="Job Name"
+              placeholder="Position"
               value={searchJobName}
               onChange={(val) => {
                 setSearchJobName("" + val);
@@ -164,11 +164,11 @@ export default function OnboardingListing() {
       columnHelper.accessor("employer_name", {
         header: () => (
           <div>
-            <div> Employer Name </div>
+            <div> Company </div>
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
-              placeholder="Employer Name"
+              placeholder="Company"
               value={searchEmployerName}
               onChange={(val) => {
                 setSearchEmployerName("" + val);
@@ -204,11 +204,11 @@ export default function OnboardingListing() {
       columnHelper.accessor("candidate_name", {
         header: () => (
           <div>
-            <div> Candidate Name </div>
+            <div> Candidate </div>
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
-              placeholder="Candidate Name"
+              placeholder="Candidate"
               value={searchCandidateName}
               onChange={(val) => {
                 setSearchCandidateName("" + val);
@@ -389,7 +389,7 @@ export default function OnboardingListing() {
             >
               <Table
                 table={table}
-                theadClassName="sticky w-full z-10 border-b-[solid] left-0 top-0 bg-white shadow-sm"
+                theadClassName="sticky w-full z-10 border-b-[solid] left-0 top-0 shadow-sm"
                 loader={
                   <TableLoader
                     colSpan={columns.length}

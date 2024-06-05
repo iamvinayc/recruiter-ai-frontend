@@ -57,13 +57,13 @@ export function CandidateSummary() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "Sr. No",
+        header: "No",
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("name", {
         header: () => (
           <div>
-            <div>Candidate Name</div>
+            <div>Candidate</div>
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
@@ -208,10 +208,10 @@ export function CandidateSummary() {
                       <thead className="sticky top-0 z-10 mb-5 h-[40px] bg-slate-100 ">
                         <tr>
                           <th className="text-gray-500 px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                            Sr. No
+                            No
                           </th>
                           <th className="text-gray-500 px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                            Job Title
+                            Position
                           </th>
                           <th className="text-gray-500 px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                             Status

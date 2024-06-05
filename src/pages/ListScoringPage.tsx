@@ -99,11 +99,11 @@ export function ListScoringPage() {
     () => [
       jobColumnHelper.display({
         id: "SLNo",
-        header: "Sr. No",
+        header: "No",
         cell: (info) => info.row.index + 1,
       }),
       jobColumnHelper.accessor("job_title", {
-        header: () => <div>Job Title</div>,
+        header: () => <div>Position</div>,
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
@@ -113,7 +113,7 @@ export function ListScoringPage() {
         footer: (info) => info.column.id,
       }),
       jobColumnHelper.accessor("department", {
-        header: "Work Area",
+        header: "Skills",
         cell: (info) => (
           <div>
             <ChipGroup items={info.getValue() || []} />
@@ -146,13 +146,13 @@ export function ListScoringPage() {
     () => [
       candidateColumnHelper.display({
         id: "SLNo",
-        header: "Sr. No",
+        header: "No",
         cell: (info) => info.row.index + 1,
       }),
       candidateColumnHelper.accessor("candidate_name", {
         header: () => (
           <div>
-            <div>Candidate Name</div>
+            <div>Candidate</div>
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
@@ -310,7 +310,7 @@ export function ListScoringPage() {
         </h2>
         {selectedJobId ? null : (
           <DebouncedSearchInput
-            placeholder="Search by Job Title"
+            placeholder="Search by Position"
             value={search}
             onChange={(val) => {
               setSearch("" + val);
@@ -324,7 +324,7 @@ export function ListScoringPage() {
             {/* <h2 className="text-xl font-bold text-stone-700">Selected Job</h2> */}
             <div className="flex flex-wrap gap-x-12 gap-y-4">
               {[
-                { title: "Job Title", value: selectedJob.title },
+                { title: "Position", value: selectedJob.title },
                 { title: "Job Location", value: selectedJob.location.name },
               ].map(({ title, value }) => (
                 <div key={title}>
@@ -333,7 +333,7 @@ export function ListScoringPage() {
                 </div>
               ))}
               <div>
-                <div className="font-medium">Work Area:</div>
+                <div className="font-medium">Skills:</div>
                 <div className="text-sm">
                   <ChipGroup items={selectedJob.departments} />
                 </div>
@@ -361,7 +361,7 @@ export function ListScoringPage() {
               </div>
               {[
                 {
-                  title: "Employer Name",
+                  title: "Company",
                   value: selectedJob.employer.employer_label,
                 },
                 { title: "Employer Email", value: selectedJob.employer.email },
@@ -495,7 +495,7 @@ export function ListScoringPage() {
                     </div>
                   ))}
                   <div className="space-y-1 px-4 py-2">
-                    <div className="font-medium">Work Area</div>
+                    <div className="font-medium">Skills</div>
                     <div className="text-sm ">
                       <ChipGroup
                         items={

@@ -35,7 +35,7 @@ const nameMap = {
   last_name: "Last Name",
   email: "Email",
   is_active: "Is Active",
-  departments: "Work Area",
+  departments: "Skills",
   location: "Location",
 };
 export function AdminListRecruiterPage() {
@@ -126,7 +126,7 @@ export function AdminListRecruiterPage() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "Sr. No",
+        header: "No",
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("first_name", {
@@ -167,7 +167,7 @@ export function AdminListRecruiterPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("departments", {
-        header: "Work Area",
+        header: "Skills",
         cell: (info) => {
           return (
             <ChipGroup
@@ -552,8 +552,8 @@ const AddDepartmentDialog = ({
           setSelectedDepartments([]);
           toast.success(
             isUpdate
-              ? "Updated work area successfully"
-              : "Added new work area successfully",
+              ? "Updated Skills successfully"
+              : "Added new Skills successfully",
           );
           onSuccess();
           return;
@@ -575,7 +575,7 @@ const AddDepartmentDialog = ({
     <PopupDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      title={isUpdate ? "Update work area" : "Add new work area"}
+      title={isUpdate ? "Update Skills" : "Add new Skills"}
       containerClassName="relative"
     >
       <button
@@ -602,7 +602,7 @@ const AddDepartmentDialog = ({
             onClick={onNewRecruiterAdd}
             className="py-2 disabled:border-slate-600 disabled:bg-slate-500"
           >
-            {isUpdate ? "Update Work Area" : "Add Work Area"}
+            {isUpdate ? "Update Skills" : "Add Skills"}
           </Button>
         </div>
       </div>

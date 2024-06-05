@@ -157,7 +157,7 @@ export const EditCandidateDialog = ({
                 ),
               )}
               <div className="space-y-1">
-                <div className="font-medium">Work Area</div>
+                <div className="font-medium">Skills</div>
                 <div className="text-sm ">
                   <ChipGroup
                     items={selectedUser?.departments || emptyArray}
