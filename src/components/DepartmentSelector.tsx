@@ -36,7 +36,7 @@ export function DepartmentSelector({
   return (
     <div className=" ">
       <label className="mb-2.5 block font-medium text-black dark:text-white">
-        Work Area
+        Skills
       </label>
 
       <Combobox
@@ -72,7 +72,7 @@ export function DepartmentSelector({
             )}
             <div className="relative flex items-center">
               <Combobox.Input
-                placeholder="Search a Work Area"
+                placeholder="Search a Skill"
                 displayValue={(item: Item) => item.name}
                 onChange={(event) => setQuery(event.target.value)}
                 className={cn(

@@ -53,7 +53,7 @@ const SideBarLinks = {
       icon: <UserIcon className="h-5 w-5" />,
     },
     {
-      title: "Work Area",
+      title: "Skills",
       link: ROUTES.ADMIN.LIST_SKILL.path,
       icon: <BuildingOfficeIcon className="h-5 w-5" />,
     },
@@ -63,7 +63,7 @@ const SideBarLinks = {
       icon: <MapPinIcon className="h-5 w-5" />,
     },
     {
-      title: "Employer",
+      title: "Company",
       link: ROUTES.ADMIN.LIST_EMPLOYER.path,
       icon: <BriefcaseIcon className="h-5 w-5" />,
     },

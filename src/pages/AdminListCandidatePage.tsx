@@ -180,11 +180,11 @@ export function AdminListCandidatePage() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "Sr. No",
+        header: "No",
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("title", {
-        header: "Candidate Name",
+        header: "Candidate",
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
       }),
@@ -199,7 +199,7 @@ export function AdminListCandidatePage() {
       }),
 
       columnHelper.accessor("departments", {
-        header: "Work Area",
+        header: "Skills",
         cell: (info) => {
           return <ChipGroup items={info.getValue()} />;
         },
@@ -211,7 +211,7 @@ export function AdminListCandidatePage() {
         },
       }),
       columnHelper.accessor("city", {
-        header: "City",
+        header: "Provincie",
       }),
       // columnHelper.accessor("platform", {
       //   header: "Platform",
@@ -344,7 +344,7 @@ export function AdminListCandidatePage() {
                 id="common-filter"
                 checked={common === "True"}
                 onChange={handleFilterCommonCandidates}
-                className="form-checkbox h-6 w-6 rounded border-primary text-primary focus:ring-primary"
+                className="form-checkbox h-6 w-6 accent-black border-black focus:ring-0"
               />
               <span className="ml-2">Common Candidates</span>
             </label>
@@ -509,7 +509,7 @@ export function AdminListCandidatePage() {
                 ),
               )}
               <div className="space-y-1">
-                <div className="font-medium">Work Area</div>
+                <div className="font-medium">Skills</div>
                 <div className="text-sm ">
                   <ChipGroup
                     items={selectedUser?.departments || emptyArray}
@@ -705,8 +705,8 @@ const AddCandidatePopup = ({
           <div className="flex flex-col gap-6 md:flex-row">
             <div className="flex flex-1 flex-col">
               <Input
-                label="Candidate Name"
-                placeholder="Candidate Name"
+                label="Candidate"
+                placeholder="Candidate"
                 className=" px-3 py-3"
                 register={register}
                 name="name"
@@ -904,6 +904,6 @@ const formSchema = z.object({
         name: z.string().min(1),
       }),
     )
-    .min(1, "Please Select at-least one work area"),
+    .min(1, "Please Select at-least one skill"),
   city: z.string().min(1, "Please enter a city"),
 });

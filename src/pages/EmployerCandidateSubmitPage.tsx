@@ -155,7 +155,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                       <table className="w-full table-auto">
                         <thead>
                           <tr className="text-gray-500 border-b bg-slate-200 text-left text-xs font-semibold uppercase tracking-wide">
-                            <th className="w-1/4 px-4 py-3">Candidate Name</th>
+                            <th className="w-1/4 px-4 py-3">Candidate</th>
                             <th className="w-1/4 px-4 py-3">Skills</th>
                             <th className="w-1/4 px-4 py-3">Details</th>
                             <th className="w-1/4 px-4 py-3">Reasons</th>

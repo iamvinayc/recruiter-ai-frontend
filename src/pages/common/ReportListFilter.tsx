@@ -68,7 +68,7 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
   return (
     <div className="mb-2">
       <div className="border-gray-200 dark:border-strokedark rounded-sm border border-stroke bg-white p-4 shadow-default">
-        <h2 className="text-xl font-bold text-stone-700">Apply filters</h2>
+        <h2 className="text-xl font-bold text-stone-700">Apply Filter</h2>
         <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Example
             selectedEmployer={selectedEmployerName}
@@ -170,7 +170,7 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
                 }}
                 className="rounded-lg bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
               >
-                Apply filter
+                Apply Filter
               </button>
             </>
           ) : null}
@@ -243,12 +243,12 @@ function Example({
           <>
             <div className="relative ">
               <label className="mb-2.5 block font-medium text-black dark:text-white">
-                Employer
+                Company
               </label>
-              <div className="relative w-full cursor-default overflow-hidden rounded-lg border bg-white text-left  sm:text-sm">
+              <div className="relative w-full cursor-default overflow-hidden rounded-none border bg-white text-left  sm:text-sm">
                 <HUICombobox.Input
                   className="text-gray-900 w-full  py-2 pl-3 pr-10 text-sm leading-5 "
-                  placeholder="Search Employer"
+                  placeholder="Search Company"
                   displayValue={(person: { label: string }) => person?.label}
                   onChange={(event) => {
                     setQuery(event.target.value);

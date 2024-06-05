@@ -505,7 +505,7 @@ function CalendarHeader({
           </button>
         </div>
         <div>{selectedDate.format("MMMM YYYY")}</div>
-        <div className="space-x-2 rounded-lg bg-blue-300 px-1  py-1">
+        <div className="space-x-2 rounded-lg bg-yellow-400 px-1  py-1">
           {(["day", "week", "month"] as const).map((e, i) => (
             <button
               key={i}

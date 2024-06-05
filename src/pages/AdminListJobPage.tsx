@@ -167,11 +167,11 @@ export function AdminListJobPage() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "Sr. No",
+        header: "No",
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("title", {
-        header: "Title",
+        header: "Position",
         cell: (info) => (
           <div className="max-w-[150px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -189,7 +189,7 @@ export function AdminListJobPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("employer", {
-        header: "Employer",
+        header: "Company",
         cell: (info) => (
           <div className="max-w-[150px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -198,7 +198,7 @@ export function AdminListJobPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("departments", {
-        header: "Work Area",
+        header: "Skills",
         cell: (info) => {
           return <ChipGroup items={info.getValue()} />;
         },
@@ -210,7 +210,7 @@ export function AdminListJobPage() {
         },
       }),
       columnHelper.accessor("city", {
-        header: "City",
+        header: "Provincie",
         cell: (info) => {
           return <div className="w-auto">{info.getValue()}</div>;
         },
@@ -353,7 +353,7 @@ export function AdminListJobPage() {
           </div>
         </div>
         <DepartmentLocationScrapeFromSearch
-          searchTitle="Job Title"
+          searchTitle="Position"
           onSearch={() => {
             jobListQuery.refetch();
           }}
@@ -430,7 +430,7 @@ export function AdminListJobPage() {
                 </div>
               ))}
               <div className="space-y-1">
-                <div className="font-medium">Work Area</div>
+                <div className="font-medium">Skills</div>
                 <div className="text-sm ">
                   <ChipGroup
                     items={selectedUser?.departments || emptyArray}
@@ -450,7 +450,7 @@ export function AdminListJobPage() {
                 <div className="rounded-md border">
                   <div className="flex items-center space-x-2 border-b p-4 py-3 text-lg font-medium">
                     {/* icon */}
-                    <span>Employer Info</span>
+                    <span>Company Info</span>
                   </div>
                   <div className="divide-y">
                     {[
@@ -611,8 +611,8 @@ const AddJobPopup = ({
           <div className="flex flex-col gap-6 md:flex-row">
             <div className="flex flex-1 flex-col">
               <Input
-                label="Title"
-                placeholder="Title"
+                label="Position"
+                placeholder="Position"
                 className=" px-3 py-3"
                 register={register}
                 name="title"
@@ -633,8 +633,8 @@ const AddJobPopup = ({
           <div className="flex flex-col gap-x-6 md:flex-row">
             <div className="flex flex-1 flex-col gap-2">
               <Input
-                label="Employer Name"
-                placeholder="Employer Name"
+                label="Company"
+                placeholder="Company"
                 className="px-3 py-3"
                 register={register}
                 name="employer_name"
@@ -760,7 +760,7 @@ const formSchema = z
           name: z.string().min(1),
         }),
       )
-      .min(1, "Please Select at-least one work area"),
+      .min(1, "Please Select at-least one skill"),
     city: z.string().min(1, "Please enter a city"),
   })
   .refine((data) => data.phone1 !== data.phone2, {
