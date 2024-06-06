@@ -370,9 +370,9 @@ const FileUpload = ({
       <p className="mb-2 font-bold">
         By completing this questionnaire you agree to our privacy statement,
         which can be found at{" "}
-        <a href="https://www.talentpush.nl" target="_blank" rel="noreferrer">
+        <span className="text-primary"><a href="https://www.talentpush.nl" target="_blank" rel="noreferrer">
           www.talentpush.nl
-        </a>
+        </a></span>
       </p>
 
       {file ? (

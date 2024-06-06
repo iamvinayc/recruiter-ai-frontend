@@ -193,7 +193,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
                                   {candidate.skills.map((skill, index) => (
                                     <span
                                       key={index}
-                                      className="inline-flex text-ellipsis rounded bg-[#3BA2B8] px-2 py-1 text-xs font-normal text-white hover:bg-opacity-90"
+                                      className="inline-flex text-ellipsis rounded bg-purple-600 px-2 py-1 text-xs font-normal text-white hover:bg-opacity-90"
                                     >
                                       {skill.name}
                                     </span>
