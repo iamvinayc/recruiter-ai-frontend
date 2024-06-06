@@ -337,7 +337,7 @@ export function AdminListJobPage() {
                 id="common-filter"
                 checked={common === "True"}
                 onChange={handleFilterCommonJobs}
-                className="form-checkbox h-6 w-6 rounded border-primary text-primary focus:ring-primary"
+                className="form-checkbox h-6 w-6 rounded border-black accent-black focus:ring-0"
               />
               <span className="ml-2">Common Jobs</span>
             </label>

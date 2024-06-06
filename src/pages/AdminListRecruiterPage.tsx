@@ -186,6 +186,7 @@ export function AdminListRecruiterPage() {
               items={info.getValue()}
               onAdd={() => onAddLocation(info.row.original.id)}
               addLabel={info.getValue().length === 0 ? "+ Add" : "Edit"}
+              className="bg-[#55BCE7]"
             />
           );
         },

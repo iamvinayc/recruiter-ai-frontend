@@ -156,12 +156,28 @@ export function DebouncedInput({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
+  const handleClear = () => {
+    setValue('');
+    onChange('');
+  };
+
   return (
-    <input
-      {...props}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-    />
+    <div className="relative inline-block">
+      <input
+        {...props}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      {value && (
+        <button
+          type="button"
+          onClick={handleClear}
+          className="absolute inset-y-5 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
+        >
+          &times;
+        </button>
+      )}
+    </div>
   );
 }
 

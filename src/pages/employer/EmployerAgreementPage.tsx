@@ -60,8 +60,9 @@ export default function EmployerAgreementPage() {
   };
   return (
     <div className="flex min-h-screen items-center justify-center bg-blue-100">
-      <div className="bg-gray-100 w-full max-w-2xl rounded-md bg-gray p-8 shadow-lg">
-        <div className="mb-4">
+      <div className="bg-[url('/watermark.jpg')] bg-contain bg-no-repeat bg-center bg-white w-full max-w-2xl rounded-md p-8 shadow-lg">
+        <div className="mb-3">
+        {/* <img className="h-[50px] mx-auto" src="/logo.svg" /> */}
           <p className="mb-4 text-lg font-bold uppercase">
             VOORWAARDEN SAMENWERWERKING
           </p>
