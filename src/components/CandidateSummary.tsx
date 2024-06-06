@@ -165,7 +165,7 @@ export function CandidateSummary() {
               }}
             >
               <Table
-                theadClassName="sticky w-full z-10 border-b-[solid] left-0 top-0 bg-white shadow-sm"
+                theadClassName="sticky w-full z-10 border-b-[solid] left-0 top-0 shadow-sm"
                 table={table}
                 loader={
                   <TableLoader

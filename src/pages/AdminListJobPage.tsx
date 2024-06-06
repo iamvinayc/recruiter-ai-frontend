@@ -229,7 +229,7 @@ export function AdminListJobPage() {
             <div className="flex items-center space-x-2">
               <button
                 className={cn(
-                  "rounded-md bg-primary p-3 text-white hover:bg-opacity-70 ",
+                  "rounded-none bg-primary p-3 text-white hover:bg-opacity-70 ",
                 )}
                 title="Job Register"
                 onClick={() => {
@@ -240,14 +240,14 @@ export function AdminListJobPage() {
               </button>
               <button
                 onClick={() => setShowUserDetailsId(info.row.original.id)}
-                className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
+                className="rounded-none bg-primary p-3 text-white hover:bg-opacity-70"
               >
                 <EyeIcon className="h-5 w-5 " />
               </button>
               {info.row.original.platform === "SYSTEM" ? (
                 <button
                   onClick={() => setShowJobDeleteId(info.row.original.id)}
-                  className="rounded-md bg-red-500 p-3 text-white hover:bg-opacity-70"
+                  className="rounded-none bg-red-500 p-3 text-white hover:bg-opacity-70"
                 >
                   <TrashIcon className="h-4 w-4 " />
                 </button>
@@ -345,7 +345,7 @@ export function AdminListJobPage() {
             <button
               type="button"
               onClick={() => setShowAddJobPopup(true)}
-              className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
+              className="flex items-center gap-2 rounded-none bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
             >
               <PlusIcon className="h-6 w-6 stroke-2" />
               Add Job

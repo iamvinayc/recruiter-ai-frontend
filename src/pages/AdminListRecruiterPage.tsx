@@ -237,7 +237,7 @@ export function AdminListRecruiterPage() {
             <button
               type="button"
               onClick={() => setShowAddRecruiterDialog(true)}
-              className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
+              className="flex items-center gap-2 rounded-none bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
             >
               <PlusIcon className="h-6 w-6 stroke-2" />
               Add Recruiter
@@ -247,13 +247,13 @@ export function AdminListRecruiterPage() {
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div className="dark:bg-boxdark dark:border-strokedark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default">
             <table className="divide-gray-200 min-w-full divide-y overflow-x-auto">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 bg-[#55BCE7]">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
                         scope="col"
-                        className="text-gray-500 px-6 py-3 text-left text-xs font-medium tracking-wider"
+                        className="text-slate-800 px-6 py-3 text-left text-xs font-medium tracking-wider"
                         key={header.column.id}
                       >
                         {header.isPlaceholder

@@ -130,7 +130,7 @@ export function ListScoringPage() {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setSelectedJobId(info.row.original.job_id)}
-                className="flex items-center rounded-md bg-primary p-3 text-sm text-white hover:bg-opacity-80"
+                className="flex items-center rounded-none bg-primary p-3 text-sm text-white hover:bg-opacity-80"
               >
                 {/* <span>View matching candidates</span> */}
                 <ChevronRight className="h-5 w-5 " />
@@ -215,7 +215,7 @@ export function ListScoringPage() {
           <div className="flex">
             <span
               className={cn(
-                "relative grid select-none items-center whitespace-nowrap rounded-lg  px-3 py-1.5 font-sans text-xs font-bold text-white",
+                "relative grid select-none items-center whitespace-nowrap rounded-none  px-3 py-1.5 font-sans text-xs font-bold text-white",
                 info.getValue() ? "bg-green-500" : "bg-yellow-500",
               )}
             >
@@ -234,7 +234,7 @@ export function ListScoringPage() {
                 onClick={() =>
                   setSelectedCandidateId(info.row.original.candidate_id)
                 }
-                className="flex items-center rounded-md bg-primary p-3 text-white hover:bg-opacity-80"
+                className="flex items-center rounded-none bg-primary p-3 text-white hover:bg-opacity-80"
               >
                 <EyeIcon className="h-5 w-5 " />
               </button>
@@ -379,7 +379,7 @@ export function ListScoringPage() {
                 onClick={() => {
                   setSelectedJobId(null);
                 }}
-                className="flex items-center space-x-2 rounded-lg bg-blue-500 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
+                className="flex items-center space-x-2 rounded-none bg-blue-500 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
               >
                 <PencilIcon className="h-4 w-4" />
                 <span>Change Job</span>
@@ -570,7 +570,7 @@ export function ListScoringPage() {
                     <div className="mt-2 flex">
                       <span
                         className={cn(
-                          "whitespace-nowrap  rounded-lg  px-3 py-1.5 font-sans text-xs font-bold text-white",
+                          "whitespace-nowrap  rounded-none  px-3 py-1.5 font-sans text-xs font-bold text-white",
                           selectedUser?.is_employer_notified
                             ? "bg-green-500"
                             : "bg-yellow-500",

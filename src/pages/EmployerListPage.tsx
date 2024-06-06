@@ -148,7 +148,7 @@ export default function EmployerListPage() {
         cell: (info) => (
           <div className="flex items-center space-x-2">
             <button
-              className={cn("rounded-md bg-primary p-3 text-white hover:bg-opacity-70")}
+              className={cn("rounded-none bg-primary p-3 text-white hover:bg-opacity-70")}
               title="Job Register"
               onClick={() => openDialog(info.row.original.id.toString())}
             >

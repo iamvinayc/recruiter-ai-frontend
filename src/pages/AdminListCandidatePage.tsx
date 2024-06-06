@@ -227,20 +227,20 @@ export function AdminListCandidatePage() {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setEditingUserId(info.row.original.id)}
-                className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
+                className="rounded-none bg-primary p-3 text-white hover:bg-opacity-70"
               >
                 <Pencil className="h-4 w-4 " />
               </button>
               <button
                 onClick={() => setShowUserDetailsId(info.row.original.id)}
-                className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
+                className="rounded-none bg-primary p-3 text-white hover:bg-opacity-70"
               >
                 <EyeIcon className="h-4 w-4 " />
               </button>
               {info.row.original.platform === "SYSTEM" ? (
                 <button
                   onClick={() => setShowUserDeleteId(info.row.original.id)}
-                  className="rounded-md bg-red-500 p-3 text-white hover:bg-opacity-70"
+                  className="rounded-none bg-red-500 p-3 text-white hover:bg-opacity-70"
                 >
                   <TrashIcon className="h-4 w-4 " />
                 </button>

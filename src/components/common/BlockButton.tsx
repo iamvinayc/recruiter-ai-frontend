@@ -15,7 +15,7 @@ export function BlockButton({
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center space-x-2 rounded-md  px-3 py-2 text-white hover:bg-opacity-70",
+        "flex items-center space-x-2 rounded-none  px-3 py-2 text-white hover:bg-opacity-70",
         is_blocked ? "bg-primary" : "bg-red-500",
       )}
     >

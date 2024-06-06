@@ -36,7 +36,7 @@ export function EventTodo({
           <button
             key={i}
             className={cn(
-              "space-y-2 rounded-lg border py-2 text-center shadow-md",
+              "space-y-2 rounded-none border py-2 text-center shadow-md",
               selectedDate.isSame(date, "day")
                 ? "bg-black text-white"
                 : "bg-white text-black",

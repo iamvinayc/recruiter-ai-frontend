@@ -242,7 +242,7 @@ export default function OnboardingListing() {
             </Link>
             <button
               className={cn(
-                "rounded-md bg-primary p-2 text-white hover:bg-opacity-70",
+                "rounded-none bg-primary p-2 text-white hover:bg-opacity-70",
               )}
               title="Candidate Register"
               onClick={() => {
@@ -266,7 +266,7 @@ export default function OnboardingListing() {
           >
             <span
               className={cn(
-                "relative grid select-none   items-center whitespace-nowrap rounded-lg  px-3 py-1.5 font-sans text-xs font-bold text-white",
+                "relative grid select-none   items-center whitespace-nowrap rounded-none  px-3 py-1.5 font-sans text-xs font-bold text-white",
                 // info.getValue() === OnboardingStatus.CANCELLED ||
                 //   info.getValue() === OnboardingStatus.REJECTED
                 //   ? "bg-red-500"
