@@ -10,7 +10,7 @@ export function Button(props: ButtonProps) {
       {...rest}
       disabled={props.isLoading || props.disabled}
       className={cn(
-        "flex cursor-pointer items-center rounded-lg border border-primary  bg-primary p-4 text-white transition hover:bg-opacity-90 disabled:bg-opacity-80",
+        "flex cursor-pointer items-center rounded-none border border-primary  bg-primary p-4 text-white transition hover:bg-opacity-90 disabled:bg-opacity-80",
         className,
       )}
     >

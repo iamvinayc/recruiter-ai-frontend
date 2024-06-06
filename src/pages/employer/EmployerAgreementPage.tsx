@@ -62,36 +62,60 @@ export default function EmployerAgreementPage() {
     <div className="flex min-h-screen items-center justify-center bg-blue-100">
       <div className="bg-gray-100 w-full max-w-2xl rounded-md bg-gray p-8 shadow-lg">
         <div className="mb-4">
-          <p className="mb-4 text-lg font-bold">
-            ALGEMNE VOORWAARDEN
+          <p className="mb-4 text-lg font-bold uppercase">
+            VOORWAARDEN SAMENWERWERKING
           </p>
           <p className="mb-4 text-base font-medium">
-            Algemene voorwaarden van Besloten vennootschap met gewone structuur Wilshire 
-            B.V. handelend onder de naam TalentPush workforce solutions, ingeschreven bij de 
-            Kamer van Koophandel onder nummer 32029548 en is gevestigd aan de 
-            Michelangelostraaat 21-2  (1077BP) te Amsterdam
+            Client en Recruitmentbureau erkennen de potentiële voordelen van een 
+            samenwerking op het gebied van recruitment. Beide partijen wensen hun intentie 
+            tot samenwerking  vast te leggen.
           </p>
-          <p className="text-base mb-2 font-semibold">Artikel 1: Definities</p>
-          <p className="mb-2 text-base font-medium">1.1. In deze algemene voorwaarden wordt verstaan onder:</p>
-          <p className="mb-2 text-base">
-            Klant: De natuurlijke persoon of rechtspersoon die aan het wervings- en 
-            selectiebureau opdracht heeft gegeven tot het verrichten van diensten.
+          <p className="text-base mb-2">
+            1. De partijen streven naar een samenwerking waarbij Recruitmentbureau Klant 
+            ondersteunt bij het werven en selecteren van geschikte kandidaten voor 
+            openstaande posities binnen de organisatie van Klant.
           </p>
-          <p className="mb-2 text-base">
-            Kandidaat: Iedere natuurlijke persoon die door het wervings- en selectiebureau 
-            wordt voorgesteld aan de opdrachtgever met het oog op het aangaan van een 
-            arbeidsovereenkomst.
+          <p className="text-base mb-2">
+            2. Recruitmentbureau zal:
           </p>
-          <p className="text-sm mb-2 font-medium">Artikel 2: Toepasselijkheid</p>
-          <p className="mb-2 text-base">
-            2.1. Deze algemene voorwaarden zijn van toepassing op alle aanbiedingen, offertes 
-            en overeenkomsten tussen het wervings- en selectiebureau en de opdrachtgever, 
-            tenzij schriftelijk anders is overeengekomen.
+          <p className="text-base mb-1">
+            A Proactief op zoek gaan naar geschikte kandidaten voor de door Klant 
+            opgegeven functies.
+            B Een grondige screening en voorselectie van kandidaten uitvoeren.
+            C Kandidaten voorstellen aan Klant die mogelijk voldoen aan de gespecificeerde 
+            functie-eisen.
+          </p> 
+          <p className="text-base mb-2">
+            3. Klant zal:
           </p>
-          <p className="mb-2 text-base">
-            Kandidaat: Iedere natuurlijke persoon die door het wervings- en selectiebureau 
-            wordt voorgesteld aan de opdrachtgever met het oog op het aangaan van een 
-            arbeidsovereenkomst.
+          <p className="text-base mb-1">
+            A Recruitmentbureau voorzien van gedetailleerde informatie over de openstaande
+            functies en de vereisten voor kandidaten.
+            B Tijdig feedback geven op de voorgestelde kandidaten.
+            C Recruitmentbureau op de hoogte houden van wijzigingen in de functie-eisen of 
+            andere relevante informatie.
+          </p>
+          <p className="text-base mb-2">
+            4.  Beide partijen zullen alle vertrouwelijke informatie die zij van elkaar 
+            ontvangen strikt vertrouwelijk behandelen en niet aan derden bekendmaken 
+            zonder voorafgaande schriftelijke toestemming van de andere partij.
+          </p>
+          <p className="text-base mb-2">
+            4.1 Klant en/of medewerker(s) of gelieerde onderneming(en) en/of haar 
+            medewerkers zullen geen door Recruitmentbureau voorgestelde kandidaten 
+            benaderen zonder medeweten van Recruitmentbureau voor een periode van 12 
+            maanden na introductie van de kandidaat.
+          </p>
+          <p className="text-base mb-2">
+            5. Deze intentieverklaring is niet bindend en verplicht geen van beide partijen tot 
+            het aangaan van een definitieve samenwerkingsovereenkomst. Deze 
+            intentieverklaring dient slechts als basis voor verdere onderhandelingen.
+          </p>
+          <p className="text-base mb-2">
+            6. Deze intentieverklaring treedt in werking op de datum van aanvaarding door 
+            klant en blijft van kracht totdat deze wordt vervangen door een definitieve 
+            samenwerkingsovereenkomst of totdat een van beide partijen schriftelijk 
+            aangeeft geen verdere stappen te willen ondernemen.
           </p>
         </div>
         <div className="mb-4">

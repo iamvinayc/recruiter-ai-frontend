@@ -67,8 +67,8 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
 
   return (
     <div className="mb-2">
-      <div className="border-gray-200 dark:border-strokedark rounded-sm border border-stroke bg-white p-4 shadow-default">
-        <h2 className="text-xl font-bold text-stone-700">Apply Filter</h2>
+      <div className="border-yellow-300 dark:border-strokedark rounded-sm border bg-white p-4 shadow-default">
+        <h2 className="text-xl font-bold text-stone-700 uppercase">Apply Filter</h2>
         <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Example
             selectedEmployer={selectedEmployerName}
@@ -168,7 +168,7 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
                     employer_name: selectedEmployerName?.label,
                   });
                 }}
-                className="rounded-lg bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
+                className="rounded-lg bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95 uppercase"
               >
                 Apply Filter
               </button>

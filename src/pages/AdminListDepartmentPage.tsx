@@ -92,7 +92,7 @@ export function AdminListDepartmentPage() {
             onClick={() => {
               setShowAddDepartmentPopup(true);
             }}
-            className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
+            className="flex items-center gap-2 rounded-none bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
           >
             <PlusIcon className="h-6 w-6 stroke-2" />
             Add Skills
@@ -115,7 +115,7 @@ export function AdminListDepartmentPage() {
             {skillList?.map(({ id, name }) => (
               <span
                 key={id}
-                className=" inline-flex  text-ellipsis  rounded  bg-[#3BA2B8]  px-2 py-1 text-lg font-medium text-white hover:bg-opacity-90"
+                className=" inline-flex  text-ellipsis  rounded-none  bg-[#3BA2B8]  px-2 py-1 text-lg font-medium text-white hover:bg-opacity-90"
               >
                 {name}
               </span>

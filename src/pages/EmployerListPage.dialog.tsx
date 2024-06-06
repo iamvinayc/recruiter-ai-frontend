@@ -106,10 +106,10 @@ const EmployerListDialog = ({
                                 value={job.job_id.toString()}
                                 className="border-b-0"
                             >
-                                <AccordionTrigger className="rounded-lg border px-4 py-2 hover:no-underline data-[state=open]:rounded-b-none">
+                                <AccordionTrigger className="rounded-none border px-4 py-2 hover:no-underline data-[state=open]:rounded-none">
                                     <div className="space-x-2">
                                         <span>{job.job_title}</span>
-                                        <span className="rounded-lg border border-black px-2 py-1 text-sm">
+                                        <span className="rounded-none border border-black px-2 py-1 text-sm">
                                             {job.candidates.length}
                                         </span>
                                     </div>
@@ -126,7 +126,7 @@ const EmployerListDialog = ({
                                                 value={`${job.job_id}-${candidate.candidate_id}`}
                                                 className="border-b-0"
                                             >
-                                                <AccordionTrigger className="flex items-center justify-between rounded-lg border px-4 py-2 hover:no-underline data-[state=open]:rounded-b-none">
+                                                <AccordionTrigger className="flex items-center justify-between rounded-none border px-4 py-2 hover:no-underline data-[state=open]:rounded-none">
                                                     <div className="flex items-center gap-4">
                                                         <div className="rounded-full border bg-slate-200 p-2">
                                                             <User2Icon className="text-black" />
@@ -137,7 +137,7 @@ const EmployerListDialog = ({
                                                 {candidate.data.length > 0 ? (
                                                     <AccordionContent className="m-0 divide-y border border-t-0 p-0">
                                                         {candidate.data.map((detail, i) => (
-                                                            <div key={i + "candidate"} className="rounded-md border p-2 shadow-sm">
+                                                            <div key={i + "candidate"} className="rounded-none border p-2 shadow-sm">
                                                                 <div className="flex items-center justify-between my-2 mx-1">
                                                                     {match(detail.type)
                                                                         .with("comment", () => (

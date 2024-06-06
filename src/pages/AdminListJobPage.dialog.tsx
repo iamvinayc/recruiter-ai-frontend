@@ -72,10 +72,10 @@ export const JobRegisterDialog = ({
               value={result.status}
               className="border-b-0"
             >
-              <AccordionTrigger className="rounded-lg border px-4 py-2 hover:no-underline data-[state=open]:rounded-b-none">
+              <AccordionTrigger className="rounded-none border px-4 py-2 hover:no-underline data-[state=open]:rounded-none">
                 <div className="space-x-2">
                   <span>{convertEnumToStr(result.status)}</span>
-                  <span className="rounded-lg border border-black px-2 py-1 text-sm">
+                  <span className="rounded-none border border-black px-2 py-1 text-sm">
                     {result.count}
                   </span>
                 </div>

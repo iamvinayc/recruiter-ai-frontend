@@ -19,7 +19,7 @@ export function ChipGroup({
         .map(({ id, name }) => (
           <button
             key={id}
-            className=" inline-flex  text-ellipsis  rounded  bg-[#3BA2B8] px-2 py-1 font-medium text-white hover:bg-opacity-90"
+            className=" inline-flex  text-ellipsis  rounded-none  bg-purple-600 px-2 py-1 font-medium text-white hover:bg-opacity-90"
           >
             {name}
           </button>
@@ -27,7 +27,7 @@ export function ChipGroup({
       {items.length > 2 && !showMore ? (
         <button
           onClick={() => setShowMore(true)}
-          className="inline-flex rounded border border-[#3BA2B8] px-2 py-1  font-medium text-[#3BA2B8] hover:opacity-80"
+          className="inline-flex rounded-none border bg-black px-2 py-1  font-medium text-white hover:opacity-80"
         >
           More...
         </button>
@@ -36,7 +36,7 @@ export function ChipGroup({
         <button
           onClick={() => onAdd()}
           type="button"
-          className="inline-flex rounded border border-primary px-2 py-1  font-medium text-primary hover:opacity-80"
+          className="inline-flex rounded-none border bg-black px-2 py-1  font-medium text-white hover:opacity-80"
         >
           {addLabel}
         </button>

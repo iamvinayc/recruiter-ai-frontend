@@ -59,8 +59,8 @@ export function DepartmentLocationScrapeFromSearch({
 
   return (
     <div className="mb-2">
-      <div className="border-gray-200 dark:border-strokedark rounded-sm border border-stroke bg-white p-4 shadow-default">
-        <h2 className="text-xl font-bold text-stone-700">Apply Filter</h2>
+      <div className=" dark:border-strokedark rounded-sm border border-yellow-300 bg-white p-4 shadow-default">
+        <h2 className="text-xl font-bold text-stone-700 uppercase">Apply Filter</h2>
         <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <SkillSelector
             selectedItem={selectedDepartment}
@@ -128,7 +128,7 @@ export function DepartmentLocationScrapeFromSearch({
                 search: "",
               });
             }}
-            className="bg-gray-200 text-gray-600 rounded-lg px-8 py-2 font-medium outline-none hover:opacity-90 focus:ring active:scale-95"
+            className="bg-gray-200 text-gray-600 rounded-none px-8 py-2 font-medium border border-black hover:opacity-90 focus:ring active:scale-95"
           >
             Reset
           </button>
@@ -148,7 +148,7 @@ export function DepartmentLocationScrapeFromSearch({
                 search: selectedSearch,
               });
             }}
-            className="rounded-lg bg-green-500 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
+            className="rounded-none bg-green-500 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
           >
             Start Scrape
           </button>

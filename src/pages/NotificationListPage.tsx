@@ -143,7 +143,7 @@ export function NotificationListPage() {
                       reportListingQuery.refetch();
                     });
                 }}
-                className="z-10 rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
+                className="z-10 rounded-none bg-primary p-3 text-white hover:bg-opacity-70"
                 disabled={isLoading}
               >
                 {isLoading ? (
