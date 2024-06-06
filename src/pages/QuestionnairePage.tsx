@@ -182,14 +182,16 @@ export const QuestionnairePage: React.FC = () => {
     : "Phone number required";
   return (
     <div className="flex min-h-screen items-center justify-center bg-blue-100">
-      <div className="bg-gray-100 w-full max-w-2xl rounded-md bg-gray p-8 shadow-lg">
+      <div className="bg-gray-100 w-full max-w-2xl rounded-md p-8 shadow-lg bg-[url('/watermark.jpg')] bg-contain bg-no-repeat bg-center bg-white">
         {isLoading ? (
           <div>Loading...</div>
         ) : error ? (
           <div>Error occurred</div>
         ) : (
           <div className="space-y-4">
-            <h1 className="mb-4 text-center text-2xl font-bold">
+            {/* <img className="h-[50px] mx-auto" src="/logo.svg" /> */}
+
+            <h1 className="mb-4 text-center text-2xl font-bold uppercase">
               Candidate Questionnaire
             </h1>
             {/* <Input
@@ -370,7 +372,7 @@ const FileUpload = ({
       <p className="mb-2 font-bold">
         By completing this questionnaire you agree to our privacy statement,
         which can be found at{" "}
-        <span className="text-primary"><a href="https://www.talentpush.nl" target="_blank" rel="noreferrer">
+        <span className="text-primary"><a href="https://www.talentpush.nl/privacy-policy.html" target="_blank" rel="noreferrer">
           www.talentpush.nl
         </a></span>
       </p>
