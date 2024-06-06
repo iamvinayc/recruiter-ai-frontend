@@ -41,7 +41,7 @@ export const SkillSelector = ({
         }}
       >
         <div className="relative  ">
-          <div className="relative flex items-center overflow-hidden rounded-none border border-slate-300">
+          <div className="relative flex h-[43px] items-center overflow-hidden rounded-none border border-slate-300">
             <Combobox.Input
               placeholder="Search a Skill"
               displayValue={() => selectedItem}

@@ -206,7 +206,7 @@ export function AdminListJobPage() {
       columnHelper.accessor("location", {
         header: "Location",
         cell: (info) => {
-          return <ChipGroup items={info.getValue()} />;
+          return <ChipGroup items={info.getValue()} className="bg-[#55BCE7]" />;
         },
       }),
       columnHelper.accessor("city", {

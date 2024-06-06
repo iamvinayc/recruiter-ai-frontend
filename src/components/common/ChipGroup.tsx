@@ -1,3 +1,4 @@
+import { cn } from "@/utils";
 import { useState } from "react";
 
 export function ChipGroup({
@@ -5,11 +6,13 @@ export function ChipGroup({
   onAdd,
   addLabel = "+ Add",
   showAll = false,
+  className,
 }: {
   items: { id: number; name: string }[];
   onAdd?: VoidFunction;
   addLabel?: string;
   showAll?: boolean;
+  className?: string;
 }) {
   const [showMore, setShowMore] = useState(showAll);
   return (
@@ -19,7 +22,10 @@ export function ChipGroup({
         .map(({ id, name }) => (
           <button
             key={id}
-            className=" inline-flex  text-ellipsis  rounded-none  bg-purple-600 px-2 py-1 font-medium text-white hover:bg-opacity-90"
+            className={cn(
+              " inline-flex  text-ellipsis  rounded-none  bg-purple-600 px-2 py-1 font-medium text-white hover:bg-opacity-90",
+              className,
+            )}
           >
             {name}
           </button>
@@ -27,7 +33,9 @@ export function ChipGroup({
       {items.length > 2 && !showMore ? (
         <button
           onClick={() => setShowMore(true)}
-          className="inline-flex rounded-none border bg-black px-2 py-1  font-medium text-white hover:opacity-80"
+          className={
+            "inline-flex rounded-none border bg-black px-2 py-1  font-medium text-white hover:opacity-80"
+          }
         >
           More...
         </button>

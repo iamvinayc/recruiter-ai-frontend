@@ -14,7 +14,7 @@ import React, {
   useState,
 } from "react";
 import toast from "react-hot-toast";
-import { Document, Page, pdfjs } from "react-pdf";
+import { pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import PhoneInput, {
@@ -39,7 +39,7 @@ export const QuestionnairePage: React.FC = () => {
   const [available, setAvailable] = useState(true);
   const [preferContract, setPreferContract] = useState(false);
   const [availableOnDate, setAvailableOnDate] = useState("");
-  const [acceptAgreement, setAcceptAgreement] = useState(false);
+  // const [acceptAgreement, setAcceptAgreement] = useState(false);
   const {
     data: questions = emptyArray,
     isLoading,
@@ -127,10 +127,10 @@ export const QuestionnairePage: React.FC = () => {
       toast.error("Please enter your mobile number.");
       return;
     }
-    if (!acceptAgreement) {
-      toast.error("Please accept the terms & agreement");
-      return;
-    }
+    // if (!acceptAgreement) {
+    //   toast.error("Please accept the terms & agreement");
+    //   return;
+    // }
     if (Object.keys(selectedOptions).length !== questions?.length) {
       toast.error("Please answer all the questions.");
       return;
@@ -310,7 +310,7 @@ export const QuestionnairePage: React.FC = () => {
               setFile={setFile}
               isLoading={fileUploadMutation.isPending}
             />
-            <div className=" text-lg font-bold">Terms and conditions</div>
+            {/* <div className=" text-lg font-bold">Terms and conditions</div>
             <Document
               className="h-[400px] overflow-x-auto bg-slate-200"
               file="/Privacy Policy Example Document.pdf"
@@ -318,8 +318,8 @@ export const QuestionnairePage: React.FC = () => {
               // file="https://img1.digitallocker.gov.in/nad/assets/user_manual/dl_fetch_document.pdf"
             >
               <Page pageNumber={1} />
-            </Document>
-            <div className="pt-2">
+            </Document> */}
+            {/* <div className="pt-2">
               <label className="text-lg font-bold">
                 <input
                   type="checkbox"
@@ -329,7 +329,7 @@ export const QuestionnairePage: React.FC = () => {
                 />
                 I accept the terms and conditions mentioned above
               </label>
-            </div>
+            </div> */}
             <Button
               type="submit"
               onClick={handleSubmit}
@@ -367,7 +367,13 @@ const FileUpload = ({
   };
   return (
     <>
-      <p className="mb-2 font-bold">Please upload your latest resume</p>
+      <p className="mb-2 font-bold">
+        By completing this questionnaire you agree to our privacy statement,
+        which can be found at{" "}
+        <a href="https://www.talentpush.nl" target="_blank" rel="noreferrer">
+          www.talentpush.nl
+        </a>
+      </p>
 
       {file ? (
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">

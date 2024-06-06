@@ -347,7 +347,7 @@ export default function OnboardingListing() {
         header: "Updated at",
         cell: (info) => (
           <div className="  truncate" title={info.getValue()}>
-            {dayjs(info.getValue()).format("DD/MM/YYYY HH:mm:ss")}
+            {dayjs(info.getValue()).format("DD-MM-YYYY")}
           </div>
         ),
       }),

@@ -111,7 +111,8 @@ export function AdminListCandidatePage() {
           search: search || undefined,
           open_candidates: open_candidates || undefined,
           non_responsive_candidates: non_responsive_candidates || undefined,
-          interview_scheduled_candidates: interview_scheduled_candidates || undefined,
+          interview_scheduled_candidates:
+            interview_scheduled_candidates || undefined,
           today_scrapped_candidates: today_scrapped_candidates || undefined,
         },
       }).then((e) => e.data),
@@ -207,7 +208,7 @@ export function AdminListCandidatePage() {
       columnHelper.accessor("location", {
         header: "Location",
         cell: (info) => {
-          return <ChipGroup items={info.getValue()} />;
+          return <ChipGroup items={info.getValue()} className="bg-[#55BCE7]" />;
         },
       }),
       columnHelper.accessor("city", {
@@ -344,7 +345,7 @@ export function AdminListCandidatePage() {
                 id="common-filter"
                 checked={common === "True"}
                 onChange={handleFilterCommonCandidates}
-                className="form-checkbox h-6 w-6 accent-black border-black focus:ring-0"
+                className="form-checkbox h-6 w-6 border-black accent-black focus:ring-0"
               />
               <span className="ml-2">Common Candidates</span>
             </label>
@@ -352,7 +353,7 @@ export function AdminListCandidatePage() {
             <button
               type="button"
               onClick={() => setShowAddCandidatePopup(true)}
-              className="flex items-center gap-2 rounded bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
+              className="flex items-center gap-2 bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
             >
               <PlusIcon className="h-6 w-6 stroke-2" />
               Add Candidate

@@ -60,13 +60,16 @@ export function DepartmentLocationScrapeFromSearch({
   return (
     <div className="mb-2">
       <div className=" dark:border-strokedark rounded-sm border border-yellow-300 bg-white p-4 shadow-default">
-        <h2 className="text-xl font-bold text-stone-700 uppercase">Apply Filter</h2>
+        <h2 className="text-xl font-bold uppercase text-stone-700">
+          Apply Filter
+        </h2>
         <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <SkillSelector
             selectedItem={selectedDepartment}
             setSelectedItem={setSelectedDepartment}
           />
           <Combobox
+            className="h-[43px]"
             label="Location"
             items={locationListQuery.data || []}
             selectedValue={selectedLocation}
@@ -128,7 +131,7 @@ export function DepartmentLocationScrapeFromSearch({
                 search: "",
               });
             }}
-            className="bg-gray-200 text-gray-600 rounded-none px-8 py-2 font-medium border border-black hover:opacity-90 focus:ring active:scale-95"
+            className="bg-gray-200 text-gray-600 rounded-none border border-black px-8 py-2 font-medium hover:opacity-90 focus:ring active:scale-95"
           >
             Reset
           </button>
