@@ -92,7 +92,7 @@ export const QuestionnairePage: React.FC = () => {
       }).then((response) => {
         if (response.data.isSuccess) {
           toast.success("Questionnaire Submitted Successfully!");
-          navigate("/");
+          navigate('/success');
         } else {
           toast.error(response.data.message);
         }

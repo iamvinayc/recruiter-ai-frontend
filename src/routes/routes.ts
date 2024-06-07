@@ -7,6 +7,13 @@ export enum SortBy {
 export const ROUTES = {
   LOGIN: route(""),
   FORGOT_PASSWORD: route("forgot-password"),
+  SUCCESS: route("success"),
+  UNSUBSCRIBE: route("unsubscribe", {
+    searchParams: {
+      candidate: string().default(""),
+      employer: string().default(""),
+    },
+  }),
   //
   ADMIN: route(
     "admin",

@@ -38,7 +38,7 @@ export default function EmployerAgreementPage() {
         .then((e) => {
           if (e.isSuccess) {
             toast.success("Terms and Conditions Accepted");
-            navigate("/");
+            navigate('/success');
             return true;
           } else {
             toast.error(e.message || "Some error ocurred");

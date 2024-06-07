@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { SuccessPage } from "@/pages/SuccessPage";
 import { EmployerCandidateSubmitPage } from "@/pages/EmployerCandidateSubmitPage";
 import EmployerListPage from "@/pages/EmployerListPage";
 import { FeedbackPage } from "@/pages/FeedbackPage";
@@ -155,6 +156,7 @@ export function AppRouter() {
             element={<EmployerAgreementPage />}
           />
           <Route path={ROUTES.FEEDBACKSUBMIT.path} element={<FeedbackPage />} />
+          <Route path={ROUTES.SUCCESS.path} element={<SuccessPage />} />
         </Routes>
       </BrowserRouter>
     </WithProvider>
