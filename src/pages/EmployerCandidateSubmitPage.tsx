@@ -95,7 +95,7 @@ export const EmployerCandidateSubmitPage: React.FC = () => {
       });
       if (response.data.isSuccess) {
         toast.success("Candidates Onboarded Successfully!");
-        navigate("/");
+        navigate('/success');
       } else {
         toast.error(response.data.message);
       }

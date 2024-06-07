@@ -15,7 +15,7 @@ export const FeedbackPage: React.FC = () => {
 
   useEffect(() => {
     if (employer && candidate) {
-      navigate("/");
+      navigate('/success');
     }
   }, [employer, candidate, navigate]);
 
@@ -36,7 +36,7 @@ export const FeedbackPage: React.FC = () => {
       }).then((response) => {
         if (response.data.isSuccess) {
           toast.success(response.data.message);
-          navigate("/");
+          navigate('/success');
         } else {
           toast.error(response.data.message);
           navigate("/");

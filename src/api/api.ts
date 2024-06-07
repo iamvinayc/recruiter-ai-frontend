@@ -718,6 +718,26 @@ interface AllApiEndpoints {
     };
     response: EmployerHistoryResponse;
   };
+  "candidate/unsubscribe/": {
+    request: {
+      method: "GET";
+      params: {
+        candidate: string;
+      };
+      data?: undefined;
+    };
+    response: SuccessResponse;
+  };
+  "employer/unsubscribe/": {
+    request: {
+      method: "GET";
+      params: {
+        employer: string;
+      };
+      data?: undefined;
+    };
+    response: SuccessResponse;
+  };
 }
 //#endregion
 
