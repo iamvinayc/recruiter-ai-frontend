@@ -197,6 +197,8 @@ interface AllApiEndpoints {
         non_responsive_jobs?: string;
         interview_scheduled_jobs?: string;
         today_scrapped_jobs?: string;
+        responded_jobs?: string;
+        non_matched_jobs?: string;
       };
       data?: undefined;
     };
@@ -277,6 +279,9 @@ interface AllApiEndpoints {
         non_responsive_candidates?: string;
         interview_scheduled_candidates?: string;
         today_scrapped_candidates?: string;
+        responded_candidates?: string;
+        non_matched_candidates?: string;
+        final_followedup_candidates?: string;
       };
       data?: undefined;
     };
@@ -552,6 +557,7 @@ interface AllApiEndpoints {
         per_page?: number;
         page?: number;
         name?: string;
+        final_followedup_employers?: string;
       };
       data?: undefined;
     };
@@ -861,6 +867,12 @@ interface DashboardOverviewResponse {
     total_interview_scheduled_jobs: number;
     total_candt_scrapped_tdy: number;
     total_jobs_scrapped_tdy: number;
+    total_responded_candidates: number,
+    total_responded_jobs: number,
+    total_non_matched_candidates: number,
+    total_non_matched_jobs: number,
+    total_final_followedup_candidates: number,
+    total_final_followedup_employers: number,
   };
   message: string;
   isSuccess: boolean;
