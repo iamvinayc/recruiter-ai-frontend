@@ -1,5 +1,6 @@
 import BriefcaseIcon from "@heroicons/react/24/outline/BriefcaseIcon";
 import { NoSymbolIcon, ExclamationTriangleIcon, PhoneIcon, BuildingOfficeIcon, AdjustmentsHorizontalIcon, AdjustmentsVerticalIcon } from "@heroicons/react/24/outline";
+import { UserRoundCheck, BadgeCheck, UserRoundX, BadgeX, MailCheck, MailPlus } from 'lucide-react';
 
 import UserCircleIcon from "@heroicons/react/24/outline/UserCircleIcon";
 import { useQuery } from "@tanstack/react-query";
@@ -228,6 +229,180 @@ export function AdminDashboardPage() {
                 isLoading={dashboardOverviewQuery.isLoading}
               />
             </Link>
+
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        responded_candidates: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        responded_candidates: "True",
+                      },
+                    )
+              }
+            >
+              <Card
+                icon={<UserRoundCheck className="h-8 w-8 text-lime-600" />}
+                title="Total Responded Candidates"
+                value={
+                  String(
+                    dashboardOverviewQuery.data
+                      ?.total_responded_candidates,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        responded_jobs: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        responded_jobs: "True",
+                      },
+                    )
+              }
+            >
+              <Card
+                icon={<BadgeCheck className="h-8 w-8 text-sky-500" />}
+                title="Total Responded Jobs"
+                value={
+                  String(
+                    dashboardOverviewQuery.data?.total_responded_jobs,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        non_matched_candidates: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        non_matched_candidates: "True",
+                      },
+                    )
+              }
+            >
+              <Card
+                icon={<UserRoundX className="h-8 w-8 text-pink-600" />}
+                title="Total Non Matched Candidates"
+                value={
+                  String(
+                    dashboardOverviewQuery.data
+                      ?.total_non_matched_candidates,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        non_matched_jobs: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_JOBS.buildPath(
+                      {},
+                      {
+                        non_matched_jobs: "True",
+                      },
+                    )
+              }
+            >
+              <Card
+                icon={<BadgeX className="h-8 w-8 text-amber-500" />}
+                title="Total Non Matched Jobs"
+                value={
+                  String(
+                    dashboardOverviewQuery.data?.total_non_matched_jobs,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        final_followedup_candidates: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_CANDIDATE.buildPath(
+                      {},
+                      {
+                        final_followedup_candidates: "True",
+                      },
+                    )
+              }
+            >
+              <Card
+                icon={<MailCheck className="h-8 w-8 text-cyan-600" />}
+                title="Total Final Followed up Candidates"
+                value={
+                  String(
+                    dashboardOverviewQuery.data
+                      ?.total_final_followedup_candidates,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_EMPLOYER.buildPath(
+                      {},
+                      {
+                        final_followedup_employers: "True",
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_EMPLOYER.buildPath(
+                      {},
+                      {
+                        final_followedup_employers: "True",
+                      },
+                    )
+              }
+            >
+              <Card
+                icon={<MailPlus className="h-8 w-8 text-teal-600" />}
+                title="Total Final Followed up Employers"
+                value={
+                  String(
+                    dashboardOverviewQuery.data
+                      ?.total_final_followedup_employers,
+                  ) || ""
+                }
+                isLoading={dashboardOverviewQuery.isLoading}
+              />
+            </Link>
+
             <Link
               to={
                 isRecruiter
@@ -246,7 +421,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<PhoneIcon className="h-8 w-8 text-green-500" />}
+                icon={<PhoneIcon className="h-8 w-8 text-green-400" />}
                 title="Total Interview Scheduled Candidates"
                 value={
                   String(
@@ -303,7 +478,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<AdjustmentsVerticalIcon className="h-8 w-8 text-fuchsia-600" />}
+                icon={<AdjustmentsVerticalIcon className="h-8 w-8 text-fuchsia-700" />}
                 title="Total Candidates Scraped Today"
                 value={
                   String(
@@ -331,7 +506,7 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<AdjustmentsHorizontalIcon className="h-8 w-8 text-purple-600" />}
+                icon={<AdjustmentsHorizontalIcon className="h-8 w-8 text-purple-700" />}
                 title="Total Jobs Scraped Today"
                 value={
                   String(

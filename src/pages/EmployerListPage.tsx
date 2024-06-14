@@ -34,7 +34,7 @@ export default function EmployerListPage() {
   };
   
   const { isRecruiter } = useLogin();
-  const [{ id: employerId }] = useTypedSearchParams(
+  const [{ id: employerId, final_followedup_employers }] = useTypedSearchParams(
     isRecruiter ? ROUTES.RECRUITER.LIST_EMPLOYER : ROUTES.ADMIN.LIST_EMPLOYER
   );
   
@@ -61,7 +61,7 @@ export default function EmployerListPage() {
   });
 
   const employerListingQuery = useInfiniteQuery({
-    queryKey: ["employerListingQuery", search, employerId],
+    queryKey: ["employerListingQuery", search, employerId, final_followedup_employers],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
         url: (pageParam ||
@@ -71,6 +71,7 @@ export default function EmployerListPage() {
           per_page: 12,
           name: search,
           id: employerId,
+          final_followedup_employers: final_followedup_employers || undefined,
         },
       }).then((e) => e.data);
     },

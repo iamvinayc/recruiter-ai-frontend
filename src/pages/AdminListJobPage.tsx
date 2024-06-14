@@ -64,6 +64,8 @@ export function AdminListJobPage() {
       non_responsive_jobs,
       interview_scheduled_jobs,
       today_scrapped_jobs,
+      responded_jobs,
+      non_matched_jobs,
     },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
@@ -97,6 +99,8 @@ export function AdminListJobPage() {
       non_responsive_jobs,
       interview_scheduled_jobs,
       today_scrapped_jobs,
+      responded_jobs,
+      non_matched_jobs,
     ],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
@@ -121,6 +125,8 @@ export function AdminListJobPage() {
           non_responsive_jobs: non_responsive_jobs || undefined,
           interview_scheduled_jobs: interview_scheduled_jobs || undefined,
           today_scrapped_jobs: today_scrapped_jobs || undefined,
+          responded_jobs: responded_jobs || undefined,
+          non_matched_jobs: non_matched_jobs || undefined,
         },
       }).then((e) => e.data);
     },

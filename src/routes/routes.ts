@@ -28,6 +28,7 @@ export const ROUTES = {
         searchParams: {
           name: string().default(""),
           id: string().default(""),
+          final_followedup_employers: string().default(""),
         },
       }),
       LIST_JOBS: route("list-jobs", {
@@ -45,6 +46,8 @@ export const ROUTES = {
           non_responsive_jobs: string().default(""),
           interview_scheduled_jobs: string().default(""),
           today_scrapped_jobs: string().default(""),
+          responded_jobs: string().default(""),
+          non_matched_jobs: string().default(""),
         },
       }),
       LIST_CANDIDATE: route("list-candidate", {
@@ -62,6 +65,9 @@ export const ROUTES = {
           non_responsive_candidates: string().default(""),
           interview_scheduled_candidates: string().default(""),
           today_scrapped_candidates: string().default(""),
+          responded_candidates: string().default(""),
+          non_matched_candidates: string().default(""),
+          final_followedup_candidates: string().default(""),
         },
       }),
       LIST_SCORING: route("list-scoring", {
@@ -105,6 +111,7 @@ export const ROUTES = {
         searchParams: {
           name: string().default(""),
           id: string().default(""),
+          final_followedup_employers: string().default(""),
         }
       }),
       LIST_JOBS: route("list-jobs", {
@@ -122,6 +129,8 @@ export const ROUTES = {
           non_responsive_jobs: string().default(""),
           interview_scheduled_jobs: string().default(""),
           today_scrapped_jobs: string().default(""),
+          responded_jobs: string().default(""),
+          non_matched_jobs: string().default(""),
         }
       }),
       LIST_CANDIDATE: route("list-candidate", {
@@ -139,6 +148,9 @@ export const ROUTES = {
           non_responsive_candidates: string().default(""),
           interview_scheduled_candidates: string().default(""),
           today_scrapped_candidates: string().default(""),
+          responded_candidates: string().default(""),
+          non_matched_candidates: string().default(""),
+          final_followedup_candidates: string().default(""),
         },
       }),
       LIST_SCORING: route("list-scoring", {
