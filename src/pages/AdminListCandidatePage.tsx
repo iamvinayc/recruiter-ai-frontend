@@ -194,12 +194,12 @@ export function AdminListCandidatePage() {
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("title", {
-        header: "Candidate",
+        header: "CANDIDATE",
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("description", {
-        header: "Description",
+        header: "DESCRIPTION",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -209,19 +209,19 @@ export function AdminListCandidatePage() {
       }),
 
       columnHelper.accessor("departments", {
-        header: "Skills",
+        header: "SKILLS",
         cell: (info) => {
           return <ChipGroup items={info.getValue()} />;
         },
       }),
       columnHelper.accessor("location", {
-        header: "Location",
+        header: "PROVINCIE",
         cell: (info) => {
-          return <ChipGroup items={info.getValue()} className="bg-[#55BCE7]" />;
+          return <ChipGroup items={info.getValue()} className="bg-[#55BCE7] text-nowrap" />;
         },
       }),
       columnHelper.accessor("city", {
-        header: "Provincie",
+        header: "LOCATION",
       }),
       // columnHelper.accessor("platform", {
       //   header: "Platform",
@@ -230,20 +230,20 @@ export function AdminListCandidatePage() {
       //   },
       // }),
       columnHelper.display({
-        header: "Action",
+        header: "ACTION",
         id: "action",
         cell: (info) => {
           return (
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setEditingUserId(info.row.original.id)}
-                className="rounded-none bg-primary p-3 text-white hover:bg-opacity-70"
+                className="rounded-none bg-[#F6ea00] p-3 text-white hover:bg-opacity-70"
               >
                 <Pencil className="h-4 w-4 " />
               </button>
               <button
                 onClick={() => setShowUserDetailsId(info.row.original.id)}
-                className="rounded-none bg-primary p-3 text-white hover:bg-opacity-70"
+                className="rounded-none bg-[#55BCE7] p-3 text-white hover:bg-opacity-70"
               >
                 <EyeIcon className="h-4 w-4 " />
               </button>
@@ -320,8 +320,8 @@ export function AdminListCandidatePage() {
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            List Candidate
+          <h2 className="text-title-md2 font-semibold text-black dark:text-white uppercase">
+            Candidates
           </h2>
           <div className="flex items-center space-x-2">
             <Combobox

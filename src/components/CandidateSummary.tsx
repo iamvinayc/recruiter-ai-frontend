@@ -114,7 +114,7 @@ export function CandidateSummary() {
           <div className="flex justify-end px-5">
             <button
               onClick={() => setShowCandidateSummary(info.row.original.id)}
-              className="rounded-md bg-primary p-3 text-white hover:bg-opacity-70"
+              className="rounded-md bg-[#55BCE7] p-3 text-white hover:bg-opacity-70"
             >
               <EyeIcon className="h-4 w-4" />
             </button>

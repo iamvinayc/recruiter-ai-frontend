@@ -106,7 +106,7 @@ export default function EmployerListPage() {
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("employer_label", {
-        header: "Company",
+        header: "COMPANY",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -116,7 +116,7 @@ export default function EmployerListPage() {
         enableColumnFilter: false,
       }),
       columnHelper.accessor("email", {
-        header: "Email",
+        header: "EMAIL",
         cell: (info) => (
           <div className="truncate" title={info.getValue()}>
             {info.getValue()}
@@ -126,7 +126,7 @@ export default function EmployerListPage() {
         enableColumnFilter: false,
       }),
       columnHelper.accessor("phone1", {
-        header: "Contact Number",
+        header: "CONTACT NUMBER",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -135,7 +135,7 @@ export default function EmployerListPage() {
         enableColumnFilter: false,
       }),
       columnHelper.accessor("phone2", {
-        header: "Alternate Number",
+        header: "ALTERNATE NUMBER",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -145,7 +145,7 @@ export default function EmployerListPage() {
       }),
       columnHelper.display({
         id: "action",
-        header: "Action",
+        header: "ACTION",
         cell: (info) => (
           <div className="flex items-center space-x-2">
             <button

@@ -59,9 +59,9 @@ export function DepartmentLocationScrapeFromSearch({
 
   return (
     <div className="mb-2">
-      <div className=" dark:border-strokedark rounded-sm border border-yellow-300 bg-white p-4 shadow-default">
+      <div className=" dark:border-strokedark rounded-sm border border-sky-300 bg-white p-4 shadow-default">
         <h2 className="text-xl font-bold uppercase text-stone-700">
-          Apply Filter
+          Filters
         </h2>
         <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <SkillSelector
@@ -77,7 +77,7 @@ export function DepartmentLocationScrapeFromSearch({
           />
 
           <Input
-            label="Scrapped From"
+            label="Scraped From"
             type="date"
             value={
               selectedScrapeForm
@@ -91,7 +91,7 @@ export function DepartmentLocationScrapeFromSearch({
             }}
           />
           <Input
-            label="Scrapped To"
+            label="Scraped To"
             type="date"
             min={
               selectedScrapeForm
@@ -131,7 +131,7 @@ export function DepartmentLocationScrapeFromSearch({
                 search: "",
               });
             }}
-            className="bg-gray-200 text-gray-600 rounded-none border border-black px-8 py-2 font-medium hover:opacity-90 focus:ring active:scale-95"
+            className="bg-red-600 text-white rounded-none px-14 py-2 font-medium hover:opacity-90 focus:ring active:scale-95"
           >
             Reset
           </button>

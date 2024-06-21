@@ -89,9 +89,9 @@ export const Header = ({
           <button
             aria-controls="sidebar"
             onClick={() => setSidebarOpen((b) => !b)}
-            className="dark:bg-boxdark dark:border-strokedark z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm "
+            className="dark:bg-boxdark dark:border-strokedark z-99999 block rounded-none bg-white p-1.5 mt-1.5"
           >
-            <Bars3Icon className="relative block h-5.5 w-5.5 cursor-pointer" />
+            <Bars3Icon className="relative block h-5.5 w-5.5 cursor-pointer scale-y-[3.5] scale-x-[2.5] stroke-1 text-[#55BCE7]" />
           </button>
           <div className="block flex-shrink-0">
             {/* <div className="text-3xl text-black">AI-RECRUIT</div> */}
@@ -129,7 +129,7 @@ export const Header = ({
                 <Menu.Items className="dark:bg-boxdark dark:border-strokedark absolute right-0 mt-4 w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default">
                   <div>
                     <ul className="dark:border-strokedark flex flex-col gap-5 border-b border-stroke px-6 py-7.5">
-                      {MenuItems.map(({ Icon, link, title }) => (
+                      {/* {MenuItems.map(({ Icon, link, title }) => (
                         <Menu.Item key={title}>
                           {({ close }) => (
                             <li>
@@ -145,16 +145,18 @@ export const Header = ({
                             </li>
                           )}
                         </Menu.Item>
-                      ))}
+                      ))} */}
+                      <li>
+                        <button
+                          onClick={logout}
+                          type="button"
+                          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base uppercase"
+                        >
+                          <ArrowLeftOnRectangleIcon className="h-6 w-6" />
+                          Log Out
+                        </button>
+                      </li>
                     </ul>
-                    <button
-                      onClick={logout}
-                      type="button"
-                      className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base uppercase"
-                    >
-                      <ArrowLeftOnRectangleIcon className="h-6 w-6" />
-                      Log Out
-                    </button>
                   </div>
                 </Menu.Items>
               </Transition>

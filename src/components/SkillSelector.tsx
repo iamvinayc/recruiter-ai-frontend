@@ -29,7 +29,7 @@ export const SkillSelector = ({
 
   return (
     <div className=" ">
-      <label className="mb-2.5 block font-medium text-black dark:text-white">
+      <label className="mb-2.5 block font-medium text-black dark:text-white mx-3">
         Skill
       </label>
 
@@ -47,7 +47,7 @@ export const SkillSelector = ({
               displayValue={() => selectedItem}
               onChange={(event) => setQuery(event.target.value)}
               className={cn(
-                "text-gray-900 w-full border-none py-2 pl-3 pr-10 text-sm leading-5  focus:ring-0 ",
+                "text-gray-900 w-full py-2 pl-3 pr-10 text-sm leading-5 focus:ring-0 dark:bg-form-input dark:outline-form-strokedark focus:outline-primary focus-visible:shadow-none disabled:bg-opacity-80 dark:focus:outline-primary",
               )}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -69,7 +69,7 @@ export const SkillSelector = ({
             leaveTo="opacity-0"
             afterLeave={() => setQuery("")}
           >
-            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-none bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {items.length === 0 && query !== "" ? (
                 <Combobox.Option
                   className={({ active }) =>

@@ -177,7 +177,7 @@ export function AdminListJobPage() {
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("title", {
-        header: "Position",
+        header: "POSITION",
         cell: (info) => (
           <div className="max-w-[150px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -186,7 +186,7 @@ export function AdminListJobPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("description", {
-        header: "Description",
+        header: "DESCRIPTION",
         cell: (info) => (
           <div className="max-w-[150px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -195,7 +195,7 @@ export function AdminListJobPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("employer", {
-        header: "Company",
+        header: "COMPANY",
         cell: (info) => (
           <div className="max-w-[150px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -204,19 +204,19 @@ export function AdminListJobPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("departments", {
-        header: "Skills",
+        header: "SKILLS",
         cell: (info) => {
           return <ChipGroup items={info.getValue()} />;
         },
       }),
       columnHelper.accessor("location", {
-        header: "Location",
+        header: "PROVINCIE",
         cell: (info) => {
-          return <ChipGroup items={info.getValue()} className="bg-[#55BCE7]" />;
+          return <ChipGroup items={info.getValue()} className="bg-[#55BCE7] text-nowrap" />;
         },
       }),
       columnHelper.accessor("city", {
-        header: "Provincie",
+        header: "LOCATION",
         cell: (info) => {
           return <div className="w-auto">{info.getValue()}</div>;
         },
@@ -228,14 +228,14 @@ export function AdminListJobPage() {
       //   },
       // }),
       columnHelper.display({
-        header: "Action",
+        header: "ACTION",
         id: "action",
         cell: (info) => {
           return (
             <div className="flex items-center space-x-2">
               <button
                 className={cn(
-                  "rounded-none bg-primary p-3 text-white hover:bg-opacity-70 ",
+                  "rounded-none bg-orange-500 p-3 text-white hover:bg-opacity-70 ",
                 )}
                 title="Job Register"
                 onClick={() => {
@@ -246,7 +246,7 @@ export function AdminListJobPage() {
               </button>
               <button
                 onClick={() => setShowUserDetailsId(info.row.original.id)}
-                className="rounded-none bg-primary p-3 text-white hover:bg-opacity-70"
+                className="rounded-none bg-[#55BCE7] p-3 text-white hover:bg-opacity-70"
               >
                 <EyeIcon className="h-5 w-5 " />
               </button>
@@ -309,8 +309,8 @@ export function AdminListJobPage() {
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            List Jobs
+          <h2 className="text-title-md2 font-semibold text-black dark:text-white uppercase">
+            Jobs
           </h2>
           <div className="flex items-center space-x-4">
             <Combobox
@@ -343,7 +343,7 @@ export function AdminListJobPage() {
                 id="common-filter"
                 checked={common === "True"}
                 onChange={handleFilterCommonJobs}
-                className="form-checkbox h-6 w-6 rounded border-black accent-black focus:ring-0"
+                className="form-checkbox h-6 w-6 border-black accent-black focus:ring-0"
               />
               <span className="ml-2">Common Jobs</span>
             </label>

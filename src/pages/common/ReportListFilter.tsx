@@ -67,8 +67,8 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
 
   return (
     <div className="mb-2">
-      <div className="border-yellow-300 dark:border-strokedark rounded-sm border bg-white p-4 shadow-default">
-        <h2 className="text-xl font-bold text-stone-700 uppercase">Apply Filter</h2>
+      <div className="border-sky-300 dark:border-strokedark rounded-sm border bg-white p-4 shadow-default">
+        <h2 className="text-xl font-bold text-stone-700 uppercase">Filter</h2>
         <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Example
             selectedEmployer={selectedEmployerName}
@@ -148,7 +148,7 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
                   to_date: "",
                 });
               }}
-              className="rounded-lg bg-slate-200 px-8 py-2 font-medium text-slate-600 outline-none hover:opacity-90 focus:ring active:scale-95"
+              className="rounded-none bg-red-600 px-14 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
             >
               Reset
             </button>
@@ -168,7 +168,7 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
                     employer_name: selectedEmployerName?.label,
                   });
                 }}
-                className="rounded-lg bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95 uppercase"
+                className="rounded-none bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
               >
                 Apply Filter
               </button>
@@ -242,7 +242,7 @@ function Example({
         {({ open }) => (
           <>
             <div className="relative ">
-              <label className="mb-2.5 block font-medium text-black dark:text-white">
+              <label className="mb-2.5 block font-medium text-black dark:text-white mx-3">
                 Company
               </label>
               <div className="relative w-full cursor-default overflow-hidden rounded-none border bg-white text-left  sm:text-sm">

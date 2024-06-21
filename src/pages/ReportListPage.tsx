@@ -47,12 +47,12 @@ export function ReportListPage() {
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("candidate_name", {
-        header: "Candidate",
+        header: "CANDIDATE",
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("job_title", {
-        header: "Position",
+        header: "POSITION",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -62,12 +62,12 @@ export function ReportListPage() {
       }),
 
       columnHelper.accessor("employer_name", {
-        header: "Company",
+        header: "COMPANY",
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("status", {
-        header: "Status",
+        header: "STATUS",
         cell: (info) => {
           return (
             <div
