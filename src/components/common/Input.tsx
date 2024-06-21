@@ -13,7 +13,7 @@ export function Input<
   const { icon, label, containerClassName, error, register, ...rest } = props;
   return (
     <div className={containerClassName}>
-      <label className="mb-2.5 block font-medium text-black dark:text-white">
+      <label className="mb-2.5 block font-medium text-black dark:text-white mx-4">
         {label}
       </label>
       <div className="relative">

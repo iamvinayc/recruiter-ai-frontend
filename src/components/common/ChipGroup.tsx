@@ -34,7 +34,7 @@ export function ChipGroup({
         <button
           onClick={() => setShowMore(true)}
           className={
-            "inline-flex rounded-none border bg-black px-2 py-1  font-medium text-white hover:opacity-80"
+            "inline-flex rounded-none border bg-yellow-500 px-2 py-1  font-medium text-white hover:opacity-80"
           }
         >
           More...

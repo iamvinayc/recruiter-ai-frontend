@@ -47,7 +47,7 @@ export function Combobox({
       <PopoverTrigger asChild>
         <div>
           {label ? (
-            <label className="mb-2.5 block font-medium text-black dark:text-white">
+            <label className="mb-2.5 block font-medium text-black dark:text-white mx-4">
               {label}
             </label>
           ) : null}

@@ -118,17 +118,17 @@ export default function OnboardingListing() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "No",
+        header: "NO",
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("job_name", {
         header: () => (
           <div>
-            <div> Position </div>
+            {/* <div className="uppercase"> Position </div> */}
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
-              placeholder="Position"
+              placeholder="POSITION"
               value={searchJobName}
               onChange={(val) => {
                 setSearchJobName("" + val);
@@ -164,11 +164,11 @@ export default function OnboardingListing() {
       columnHelper.accessor("employer_name", {
         header: () => (
           <div>
-            <div> Company </div>
+            {/* <div className="uppercase"> Company </div> */}
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
-              placeholder="Company"
+              placeholder="COMPANY"
               value={searchEmployerName}
               onChange={(val) => {
                 setSearchEmployerName("" + val);
@@ -204,11 +204,11 @@ export default function OnboardingListing() {
       columnHelper.accessor("candidate_name", {
         header: () => (
           <div>
-            <div> Candidate </div>
+            {/* <div className="uppercase"> Candidate </div> */}
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
-              placeholder="Candidate"
+              placeholder="CANDIDATE"
               value={searchCandidateName}
               onChange={(val) => {
                 setSearchCandidateName("" + val);
@@ -258,7 +258,7 @@ export default function OnboardingListing() {
         ),
       }),
       columnHelper.accessor("status", {
-        header: "Status",
+        header: "STATUS",
         cell: (info) => (
           <div
             className="flex items-center gap-3 truncate"
@@ -344,7 +344,7 @@ export default function OnboardingListing() {
         ),
       }),
       columnHelper.accessor("updated_at", {
-        header: "Updated at",
+        header: "UPDATED AT",
         cell: (info) => (
           <div className="  truncate" title={info.getValue()}>
             {dayjs(info.getValue()).format("DD-MM-YYYY")}

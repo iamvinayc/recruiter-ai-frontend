@@ -113,3 +113,30 @@ html {
   outline: none;
   padding: 10px 0;
 }
+
+.form-checkbox[type="checkbox"] {
+  appearance: none;
+  border-radius: 0;
+  border: 2px solid black;
+  width: 24px;
+  height: 24px;
+  background-color: white;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.form-checkbox[type="checkbox"]:checked {
+  background-color: black;
+}
+
+.form-checkbox[type="checkbox"]:checked::before {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 25px;
+  color: white;
+}

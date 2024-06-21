@@ -125,7 +125,7 @@ export default function EmployerAgreementPage() {
               type="checkbox"
               checked={isChecked}
               onChange={() => setIsChecked(!isChecked)}
-              className="form-checkbox h-5 w-5 text-blue-600"
+              className="h-5 w-5 text-blue-600"
             />
             <span className="ml-2 text-gray-700">I agree with terms and conditions and privacy statement</span>
           </label>

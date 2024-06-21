@@ -103,17 +103,17 @@ export function ListScoringPage() {
         cell: (info) => info.row.index + 1,
       }),
       jobColumnHelper.accessor("job_title", {
-        header: () => <div>Position</div>,
+        header: () => <div className="uppercase">Position</div>,
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
       jobColumnHelper.accessor("job_location", {
-        header: "Location",
+        header: "LOCATION",
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
       jobColumnHelper.accessor("department", {
-        header: "Skills",
+        header: "SKILLS",
         cell: (info) => (
           <div>
             <ChipGroup items={info.getValue() || []} />
@@ -123,7 +123,7 @@ export function ListScoringPage() {
       }),
 
       jobColumnHelper.display({
-        header: "Action",
+        header: "ACTION",
         id: "action",
         cell: (info) => {
           return (
@@ -152,7 +152,7 @@ export function ListScoringPage() {
       candidateColumnHelper.accessor("candidate_name", {
         header: () => (
           <div>
-            <div>Candidate</div>
+            <div className="uppercase">Candidate</div>
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
@@ -170,7 +170,7 @@ export function ListScoringPage() {
       candidateColumnHelper.accessor("candidate_email", {
         header: () => (
           <div>
-            <div>Candidate Email</div>
+            <div className="uppercase">Candidate Email</div>
             <DebouncedInput
               className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
               type="text"
@@ -186,12 +186,12 @@ export function ListScoringPage() {
         footer: (info) => info.column.id,
       }),
       candidateColumnHelper.accessor("profile_score", {
-        header: "Profile Score",
+        header: "PROFILE SCORE",
         cell: (info) => <div>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
       candidateColumnHelper.accessor("overall_score", {
-        header: "Overall Score",
+        header: "OVERALL SCORE",
         cell: (info) => <div>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
@@ -210,7 +210,7 @@ export function ListScoringPage() {
       //   footer: (info) => info.column.id,
       // }),
       candidateColumnHelper.accessor("is_employer_notified", {
-        header: "Is Employer Notified",
+        header: "IS EMPLOYER NOTIFIED",
         cell: (info) => (
           <div className="flex">
             <span
@@ -225,7 +225,7 @@ export function ListScoringPage() {
         ),
       }),
       candidateColumnHelper.display({
-        header: "Action",
+        header: "ACTION",
         id: "action",
         cell: (info) => {
           return (
@@ -234,7 +234,7 @@ export function ListScoringPage() {
                 onClick={() =>
                   setSelectedCandidateId(info.row.original.candidate_id)
                 }
-                className="flex items-center rounded-none bg-primary p-3 text-white hover:bg-opacity-80"
+                className="flex items-center rounded-none bg-[#55BCE7] p-3 text-white hover:bg-opacity-80"
               >
                 <EyeIcon className="h-5 w-5 " />
               </button>

@@ -92,7 +92,7 @@ export function NotificationListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("name", {
-        header: "Name",
+        header: "NAME",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -102,7 +102,7 @@ export function NotificationListPage() {
       }),
 
       columnHelper.accessor("title", {
-        header: "Title",
+        header: "TITLE",
         cell: (info) => (
           <div className="relative">
             {info.getValue()}
@@ -114,7 +114,7 @@ export function NotificationListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("date", {
-        header: "Date",
+        header: "DATE",
         cell: (info) => {
           return (
             <div className="flex items-center space-x-3 truncate">
@@ -125,7 +125,7 @@ export function NotificationListPage() {
       }),
       columnHelper.display({
         id: "Action",
-        header: "Action",
+        header: "ACTION",
         cell: (info) => {
           const isLoading =
             readNotificationsMutation.variables?.id === info.row.original.id &&
@@ -143,7 +143,7 @@ export function NotificationListPage() {
                       reportListingQuery.refetch();
                     });
                 }}
-                className="z-10 rounded-none bg-primary p-3 text-white hover:bg-opacity-70"
+                className="z-10 rounded-none bg-[#55BCE7] p-3 text-white hover:bg-opacity-70"
                 disabled={isLoading}
               >
                 {isLoading ? (

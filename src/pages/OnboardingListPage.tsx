@@ -110,7 +110,7 @@ export default function OnboardingListPage() {
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("job_name", {
-        header: "Position",
+        header: "POSITION",
         cell: (info) => (
           <Link
             to={
@@ -137,7 +137,7 @@ export default function OnboardingListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("employer_name", {
-        header: "Company",
+        header: "COMPANY",
         cell: (info) => (
           <div className="max-w-[200px] truncate  " title={info.getValue()}>
             {info.getValue()}
@@ -146,7 +146,7 @@ export default function OnboardingListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("candidate_name", {
-        header: () => <div>Candidate</div>,
+        header: () => <div>CANDIDATE</div>,
         cell: (info) => (
           <div
             className="flex max-w-[200px] justify-between "
@@ -189,7 +189,7 @@ export default function OnboardingListPage() {
         ),
       }),
       columnHelper.accessor("status", {
-        header: "Status",
+        header: "STATUS",
         cell: (info) => (
           <div
             className="flex items-center gap-3 truncate"
@@ -275,7 +275,7 @@ export default function OnboardingListPage() {
         ),
       }),
       columnHelper.accessor("updated_at", {
-        header: "Updated at",
+        header: "UPDATE AT",
         cell: (info) => (
           <div className="  truncate" title={info.getValue()}>
             {dayjs(info.getValue()).format("DD-MM-YYYY")}

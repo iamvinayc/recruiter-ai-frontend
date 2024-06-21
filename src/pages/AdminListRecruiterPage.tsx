@@ -130,17 +130,17 @@ export function AdminListRecruiterPage() {
         cell: (info) => info.row.index + 1,
       }),
       columnHelper.accessor("first_name", {
-        header: "First Name",
+        header: "FIRST NAME",
         cell: (info) => info.getValue(),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("last_name", {
         cell: (info) => info.getValue(),
-        header: () => <span>Last Name</span>,
+        header: () => <span className="uppercase">Last Name</span>,
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("email", {
-        header: "Email",
+        header: "EMAIL",
         cell: (info) => (
           <div className=" max-w-[200px] overflow-hidden truncate ">
             {info.renderValue()}
@@ -149,7 +149,7 @@ export function AdminListRecruiterPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("is_active", {
-        header: "Active",
+        header: "ACTIVE",
         cell: (info) => (
           <div className="w-auto text-center">
             <input
@@ -167,7 +167,7 @@ export function AdminListRecruiterPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("departments", {
-        header: "Skills",
+        header: "SKILLS",
         cell: (info) => {
           return (
             <ChipGroup
@@ -179,7 +179,7 @@ export function AdminListRecruiterPage() {
         },
       }),
       columnHelper.accessor("location", {
-        header: "Location",
+        header: "LOCATION",
         cell: (info) => {
           return (
             <ChipGroup
