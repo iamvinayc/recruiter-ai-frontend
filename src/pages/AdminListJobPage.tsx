@@ -212,7 +212,12 @@ export function AdminListJobPage() {
       columnHelper.accessor("location", {
         header: "PROVINCIE",
         cell: (info) => {
-          return <ChipGroup items={info.getValue()} className="bg-[#55BCE7] text-nowrap" />;
+          return (
+            <ChipGroup
+              items={info.getValue()}
+              className="whitespace-nowrap bg-[#55BCE7] "
+            />
+          );
         },
       }),
       columnHelper.accessor("city", {
@@ -309,7 +314,7 @@ export function AdminListJobPage() {
     <main>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-title-md2 font-semibold text-black dark:text-white uppercase">
+          <h2 className="text-title-md2 font-semibold uppercase text-black dark:text-white">
             Jobs
           </h2>
           <div className="flex items-center space-x-4">
