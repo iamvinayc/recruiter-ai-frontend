@@ -974,6 +974,8 @@ interface JobListingResponseData {
   expires_on: string;
   platform: string;
   city: string;
+  job_link: string | null;
+  job_type: string
 }
 
 interface Department {
@@ -989,6 +991,7 @@ interface Employer {
   email: string;
   phone1: string;
   phone2: string;
+  hr_url: string | null;
 }
 
 interface Location {
@@ -1351,6 +1354,7 @@ interface ListEmployerResponseData {
   phone2?: string;
   is_interested: boolean;
   is_blocked: boolean;
+  hr_url: string | null;
 }
 
 interface EmployerHistoryResponse {
