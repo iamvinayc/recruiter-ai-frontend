@@ -94,6 +94,7 @@ export default function EmployerListPage() {
           phone2: e.phone2,
           is_interested: e.is_interested,
           is_blocked: e.is_blocked,
+          hr_url: e.hr_url,
         })) || [],
     [employerListingQuery.data],
   );
@@ -139,6 +140,15 @@ export default function EmployerListPage() {
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
+          </div>
+        ),
+        enableColumnFilter: false,
+      }),
+      columnHelper.accessor("hr_url", {
+        header: "HR PROFILE",
+        cell: (info) => (
+          <div className="max-w-[200px] truncate" title={info?.getValue() || "Not Found"}>
+            {info.getValue() || "Not Found"}
           </div>
         ),
         enableColumnFilter: false,
@@ -249,4 +259,5 @@ interface EmployerListItem {
   phone2?: string;
   is_interested: boolean;
   is_blocked: boolean;
+  hr_url: string | null;
 }

@@ -432,6 +432,8 @@ export function AdminListJobPage() {
               {(
                 [
                   ["Job Title", selectedUser?.title],
+                  ["Job Link", selectedUser?.job_link || "Not Found"],
+                  ["Job Type", selectedUser?.job_type],
                   ["Location", selectedUser?.location?.name],
                 ] as const
               ).map(([key, value]) => (
@@ -467,6 +469,7 @@ export function AdminListJobPage() {
                     {[
                       ["Employer Name", selectedUser?.employer?.employer_label],
                       ["Email", selectedUser?.employer?.email],
+                      ["HR Profile", selectedUser?.employer?.hr_url || "Not Found"],
                       ["Contact Number", selectedUser?.employer?.phone1],
                       ["Alternate Number", selectedUser?.employer?.phone2],
                       ["Platform", selectedUser?.platform],
