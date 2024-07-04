@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { SuccessPage } from "@/pages/SuccessPage";
+import { PublicCandidateAddPage } from "@/pages/PublicCandidateAddPage";
 import { EmployerCandidateSubmitPage } from "@/pages/EmployerCandidateSubmitPage";
 import EmployerListPage from "@/pages/EmployerListPage";
 import { FeedbackPage } from "@/pages/FeedbackPage";
@@ -155,6 +156,7 @@ export function AppRouter() {
             path={ROUTES.EMPLOYER.AGREEMENT.path}
             element={<EmployerAgreementPage />}
           />
+          <Route path={ROUTES.PUBLICCANDIDATEADD.path} element={<PublicCandidateAddPage />} />
           <Route path={ROUTES.FEEDBACKSUBMIT.path} element={<FeedbackPage />} />
           <Route path={ROUTES.SUCCESS.path} element={<SuccessPage />} />
         </Routes>

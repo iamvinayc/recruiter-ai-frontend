@@ -206,7 +206,7 @@ export const ROUTES = {
       id: string().default(""),
     },
   }),
-
+  PUBLICCANDIDATEADD: route("public/add-candidate"),
   //
   // DASHBOARD: route(
   //   "dashboard",

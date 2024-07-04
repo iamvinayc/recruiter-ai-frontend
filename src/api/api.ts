@@ -54,6 +54,7 @@ export interface ResumeFileUploadResponse {
   resume_email: string;
   resume_phone: string;
   resume_file: string;
+  resume_file_uuid: string;
   resume_text: string;
   resume_skills: {
     name: string;
@@ -472,6 +473,32 @@ interface AllApiEndpoints {
       data: {
         id: number;
       };
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
+  "data-sourcing/public/add_candidate/": {
+    request: {
+      method: "POST";
+      params?: undefined;
+      data?: {
+        name: string;
+        email: string;
+        departments: [];
+        location: {
+          name: string;
+        };
+        description?: string;
+        phone?: string;
+        profile_url?: string | null;
+        handle?: string;
+        platform: string;
+        resume_data?: ResumeFileUploadResponse;
+      };
+    };
+    response: {
+      data: object;
       message: string;
       isSuccess: boolean;
       status: number;
