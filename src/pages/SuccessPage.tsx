@@ -11,7 +11,7 @@ export const SuccessPage: React.FC = () => {
                 <p className="text-gray-600">Your request has been submitted, we will get back to you soon.</p>
                 <button
                     className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-300"
-                    onClick={() => window.location.href = '/'}
+                    onClick={() => window.location.href = 'https://www.talentpush.nl/'}
                 >
                     Go to Home
                 </button>
