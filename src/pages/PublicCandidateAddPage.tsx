@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -6,13 +5,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Document, Page } from "react-pdf";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { ResumeFileUploadResponse, axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
 import { Input } from "../components/common/Input";
-
 
 export const PublicCandidateAddPage = () => {
   const [showPreview, setShowPreview] = useState(false);
@@ -75,13 +74,13 @@ export const PublicCandidateAddPage = () => {
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append("resume", file);
-      
+
       const resumeFileUUID = getValues("resume_file_uuid");
       if (resumeFileUUID) {
         formData.append("resume_file_uuid", resumeFileUUID);
       }
 
-      return axiosApi({
+      return await axiosApi({
         url: "data-sourcing/candidate/resume_upload/",
         method: "POST",
         data: formData,
@@ -118,7 +117,7 @@ export const PublicCandidateAddPage = () => {
         if (data.isSuccess) {
           toast.success("Added candidate successfully");
           resetForm();
-          navigate('/success', { replace: true });
+          navigate("/success", { replace: true });
         } else if (data.message) {
           toast.error(data.message);
           if (data.message.toLowerCase().includes("email")) {
@@ -136,7 +135,7 @@ export const PublicCandidateAddPage = () => {
   const [pdfPreviewURL, setPdfPreviewURL] = useState("");
   return (
     <main>
-      <div className="border-gray-300 lg:mx-auto my-20 mx-10 max-w-screen-2xl border p-5 md:p-6 lg:my-48 2xl:p-10">
+      <div className="border-gray-300 mx-10 my-20 max-w-screen-2xl border p-5 md:p-6 lg:mx-auto lg:my-48 2xl:p-10">
         <h1 className="mb-8 text-center text-4xl font-bold">Candidate Form</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-6 space-y-6">
@@ -249,11 +248,18 @@ export const PublicCandidateAddPage = () => {
             <Button
               type="reset"
               onClick={resetForm}
-              className="border-slate-400 bg-slate-400 p-4 py-2 px-11 outline-slate-500"
+              className="border-slate-400 bg-slate-400 p-4 px-11 py-2 outline-slate-500"
             >
               Reset
             </Button>
-            <Button type="submit" className="py-2">
+            <Button
+              type="submit"
+              className="py-2"
+              disabled={
+                uploadResumeFile.isPending || addCandidateMutation.isPending
+              }
+              isLoading={addCandidateMutation.isPending}
+            >
               Add Candidate
             </Button>
           </div>
@@ -271,6 +277,6 @@ const formSchema = z.object({
   profile_url: z.string(),
   resume_file: z.string().optional(),
   city: z.string().min(1, "Please enter a city"),
-  resume_file_uuid: z.string().optional()
+  resume_file_uuid: z.string().optional(),
 });
 //#endregion form
