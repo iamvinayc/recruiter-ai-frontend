@@ -142,8 +142,8 @@ export const PublicCandidateAddPage = () => {
             <div className="flex flex-col gap-6 md:flex-row">
               <div className="flex flex-1 flex-col">
                 <Input
-                  label="Candidate"
-                  placeholder="Candidate"
+                  label="Name"
+                  placeholder="Name"
                   className="border-gray-300  border px-4 py-2"
                   register={register}
                   name="name"
@@ -260,7 +260,7 @@ export const PublicCandidateAddPage = () => {
               }
               isLoading={addCandidateMutation.isPending}
             >
-              Add Candidate
+              Join
             </Button>
           </div>
         </form>
@@ -271,7 +271,7 @@ export const PublicCandidateAddPage = () => {
 
 //#region form
 const formSchema = z.object({
-  name: z.string().min(1, "Please enter candidate name"),
+  name: z.string().min(1, "Please enter your name"),
   email: z.string().email(),
   phone: z.string().min(1, "Please enter phone"),
   profile_url: z.string(),
