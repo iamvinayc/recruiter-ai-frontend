@@ -135,135 +135,179 @@ export const PublicCandidateAddPage = () => {
   const [pdfPreviewURL, setPdfPreviewURL] = useState("");
   return (
     <main>
-      <div className="border-gray-300 mx-10 my-20 max-w-screen-2xl border p-5 md:p-6 lg:mx-auto lg:my-48 2xl:p-10">
-        <h1 className="mb-8 text-center text-4xl font-bold">Candidate Form</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-6 space-y-6">
-            <div className="flex flex-col gap-6 md:flex-row">
-              <div className="flex flex-1 flex-col">
-                <Input
-                  label="Name"
-                  placeholder="Name"
-                  className="border-gray-300  border px-4 py-2"
-                  register={register}
-                  name="name"
-                  error={errors.name?.message}
-                />
+      <div className="container_wrapper md:my-32 md:p-5 lg:my-11.5 lg:p-0">
+        <div className="content border">
+          <div className="header lg:my-5">
+            <img
+              src="https://app.talentpush.nl/static/email/img/logo.png"
+              alt="logo"
+              className="logo mx-auto"
+            />
+          </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-6 space-y-6 lg:space-y-8">
+              <div className="flex flex-col gap-6 md:flex-row">
+                <div className="flex flex-1 flex-col">
+                  <Input
+                    label=""
+                    placeholder="Name"
+                    className="border-gray-300  border px-4 py-2"
+                    register={register}
+                    name="name"
+                    error={errors.name?.message}
+                  />
+                </div>
+                <div className="flex flex-1 flex-col">
+                  <Input
+                    label=""
+                    placeholder="Email"
+                    type="email"
+                    className="border-gray-300  border px-4 py-2"
+                    register={register}
+                    name="email"
+                    error={errors.email?.message}
+                  />
+                </div>
               </div>
-              <div className="flex flex-1 flex-col">
-                <Input
-                  label="Email"
-                  placeholder="Email"
-                  type="email"
-                  className="border-gray-300  border px-4 py-2"
-                  register={register}
-                  name="email"
-                  error={errors.email?.message}
-                />
+              <div className="flex flex-col gap-6 md:flex-row">
+                <div className="flex flex-1 flex-col gap-4">
+                  <Input
+                    label=""
+                    placeholder="Phone"
+                    className="border-gray-300  border px-4 py-2"
+                    register={register}
+                    name="phone"
+                    error={errors.phone?.message}
+                  />
+                </div>
+                <div className="flex flex-1 flex-col gap-4">
+                  <Input
+                    label=""
+                    placeholder="LinkedIn URL"
+                    className="border-gray-300  border px-4 py-2"
+                    register={register}
+                    name="profile_url"
+                    type="url"
+                    error={errors.profile_url?.message}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-6 md:flex-row">
-              <div className="flex flex-1 flex-col gap-4">
-                <Input
-                  label="Phone"
-                  placeholder="Phone"
-                  className="border-gray-300  border px-4 py-2"
-                  register={register}
-                  name="phone"
-                  error={errors.phone?.message}
-                />
-              </div>
-              <div className="flex flex-1 flex-col gap-4">
-                <Input
-                  label="Profile URL"
-                  placeholder="Profile URL"
-                  className="border-gray-300  border px-4 py-2"
-                  register={register}
-                  name="profile_url"
-                  type="url"
-                  error={errors.profile_url?.message}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-6 md:flex-row">
-              <div className="flex flex-1 flex-col">
-                <Input
-                  type="file"
-                  label="Upload Resume"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      uploadResumeFile.mutateAsync(file);
-                      setPdfPreviewURL(URL.createObjectURL(file));
+              <div className="flex flex-col gap-6 md:flex-row">
+                <div className="flex flex-1 flex-col">
+                  <Input
+                    type="file"
+                    label=""
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        uploadResumeFile.mutateAsync(file);
+                        setPdfPreviewURL(URL.createObjectURL(file));
+                      }
+                    }}
+                    icon={
+                      uploadResumeFile.isPending ? (
+                        <SpinnerIcon className="m-0 mt-1 p-0 text-primary" />
+                      ) : undefined
                     }
-                  }}
-                  icon={
-                    uploadResumeFile.isPending ? (
-                      <SpinnerIcon className="m-0 mt-1 p-0 text-primary" />
-                    ) : undefined
-                  }
-                  error={errors.resume_file?.message}
-                  className="border-gray-300  border px-4 py-[5.5px]"
-                />
-                {uploadResumeFile.data && (
+                    error={errors.resume_file?.message}
+                    className="border-gray-300  border px-4 py-[5.5px]"
+                  />
+                  {uploadResumeFile.data && (
+                    <button
+                      type="button"
+                      className="ml-2 text-primary underline"
+                      onClick={() => setShowPreview(true)}
+                    >
+                      Preview
+                    </button>
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col">
+                  <Input
+                    register={register}
+                    name="city"
+                    label=""
+                    placeholder="Location"
+                    error={errors.city?.message?.replace("city", "location")}
+                    className="border-gray-300  border px-4 py-2"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {showPreview && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-3">
+                <div className="relative max-h-full max-w-full overflow-auto  bg-white p-4">
                   <button
-                    type="button"
-                    className="ml-2 text-primary underline"
-                    onClick={() => setShowPreview(true)}
+                    className="text-gray-500 hover:text-gray-700 fixed right-4 top-4 z-10 rounded-full bg-white p-2"
+                    onClick={() => setShowPreview(false)}
                   >
-                    Preview
+                    <XMarkIcon className="h-6 w-6" />
                   </button>
-                )}
+                  <Document file={pdfPreviewURL}>
+                    <Page pageNumber={1} />
+                  </Document>
+                </div>
               </div>
-              <div className="flex flex-1 flex-col">
-                <Input
-                  register={register}
-                  name="city"
-                  label="Location"
-                  placeholder="Location"
-                  error={errors.city?.message?.replace("city", "location")}
-                  className="border-gray-300  border px-4 py-2"
-                />
-              </div>
+            )}
+
+            <div className="flex justify-end space-x-4 lg:py-4">
+              <Button
+                type="reset"
+                onClick={resetForm}
+                className="border-none bg-red-500 p-4 px-10 py-2"
+              >
+                Reset
+              </Button>
+              <Button
+                type="submit"
+                className="border-none bg-green-500 px-11.5 py-2"
+                disabled={
+                  uploadResumeFile.isPending || addCandidateMutation.isPending
+                }
+                isLoading={addCandidateMutation.isPending}
+              >
+                Join
+              </Button>
             </div>
+          </form>
+        </div>
+        <div className="footer space-y-6 lg:h-[350px] lg:space-y-8 lg:py-15">
+          <div className="socials">
+            <a href="#">
+              <img src="https://app.talentpush.nl/static/email/img/fb.png" />
+            </a>
+            <a href="#">
+              <img src="https://app.talentpush.nl/static/email/img/twitter.png" />
+            </a>
+            <a href="#">
+              <img src="https://app.talentpush.nl/static/email/img/instagram.png" />
+            </a>
+            <a href="#">
+              <img src="https://app.talentpush.nl/static/email/img/linkedin.png" />
+            </a>
           </div>
 
-          {showPreview && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-3">
-              <div className="relative max-h-full max-w-full overflow-auto  bg-white p-4">
-                <button
-                  className="text-gray-500 hover:text-gray-700 fixed right-4 top-4 z-10 rounded-full bg-white p-2"
-                  onClick={() => setShowPreview(false)}
-                >
-                  <XMarkIcon className="h-6 w-6" />
-                </button>
-                <Document file={pdfPreviewURL}>
-                  <Page pageNumber={1} />
-                </Document>
-              </div>
-            </div>
-          )}
+          <p className="address">Michelangelostraat 21-2 1077 BP Amsterdam</p>
 
-          <div className="mt-6 flex justify-end space-x-4">
-            <Button
-              type="reset"
-              onClick={resetForm}
-              className="border-slate-400 bg-slate-400 p-4 px-11 py-2 outline-slate-500"
-            >
-              Reset
-            </Button>
-            <Button
-              type="submit"
-              className="py-2"
-              disabled={
-                uploadResumeFile.isPending || addCandidateMutation.isPending
-              }
-              isLoading={addCandidateMutation.isPending}
-            >
-              Join
-            </Button>
+          <div className="contact">
+            <a href="mailto:info@talentpush.nl">
+              <img src="https://app.talentpush.nl/static/email/img/email.png" />
+              info@talentpush.nl
+            </a>
+            <a href="www.talentpush.nl" target="_blank" rel="noreferrer">
+              <img
+                src="https://static.thenounproject.com/png/365220-200.png"
+                style={{
+                  filter:
+                    "invert(80%) sepia(37%) saturate(3333%) hue-rotate(167deg) brightness(95%) contrast(80%)",
+                }}
+              />
+              &#173;www.talentpush&#173;.nl
+            </a>
           </div>
-        </form>
+          <p className="copyright">Copyright © 2024 | All rights reserved .</p>
+        </div>
       </div>
     </main>
   );
