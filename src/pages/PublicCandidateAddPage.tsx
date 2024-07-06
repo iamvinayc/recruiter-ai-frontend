@@ -216,7 +216,7 @@ export const PublicCandidateAddPage = () => {
                     error={errors.resume_file?.message}
                     className="border-gray-300  border px-4 py-[5.5px]"
                   />
-                  <span className="text-sm text-zinc-600 mt-2 ml-1">Please select your cv in PDF format, maximum file size should be under 5 mb.</span>
+                  <span className="text-sm text-zinc-600 mt-2 ml-1">Please select your Resume or CV in PDF format, maximum file size should be under 5 mb.</span>
                   {uploadResumeFile.data && (
                     <button
                       type="button"
