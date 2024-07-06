@@ -133,6 +133,10 @@ export const PublicCandidateAddPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [pdfPreviewURL, setPdfPreviewURL] = useState("");
+  
+  const website_url = 'https://www.talentpush.nl/';
+  const linkedin_url = 'https://www.linkedin.com/company/talentpush-workforce-solutions';
+
   return (
     <main>
       <div className="container_wrapper md:my-32 md:p-5 lg:my-11.5 lg:p-0">
@@ -212,6 +216,7 @@ export const PublicCandidateAddPage = () => {
                     error={errors.resume_file?.message}
                     className="border-gray-300  border px-4 py-[5.5px]"
                   />
+                  <span className="text-sm text-zinc-600 mt-2 ml-1">Please select your cv in PDF format, maximum file size should be under 5 mb.</span>
                   {uploadResumeFile.data && (
                     <button
                       type="button"
@@ -251,7 +256,7 @@ export const PublicCandidateAddPage = () => {
               </div>
             )}
 
-            <div className="flex justify-end space-x-4 lg:py-4">
+            <div className="flex justify-end space-x-4">
               <Button
                 type="reset"
                 onClick={resetForm}
@@ -274,16 +279,7 @@ export const PublicCandidateAddPage = () => {
         </div>
         <div className="footer space-y-6 lg:h-[350px] lg:space-y-8 lg:py-15">
           <div className="socials">
-            <a href="#">
-              <img src="https://app.talentpush.nl/static/email/img/fb.png" />
-            </a>
-            <a href="#">
-              <img src="https://app.talentpush.nl/static/email/img/twitter.png" />
-            </a>
-            <a href="#">
-              <img src="https://app.talentpush.nl/static/email/img/instagram.png" />
-            </a>
-            <a href="#">
+            <a href={linkedin_url} target="_blank" rel="noreferrer">
               <img src="https://app.talentpush.nl/static/email/img/linkedin.png" />
             </a>
           </div>
@@ -295,7 +291,7 @@ export const PublicCandidateAddPage = () => {
               <img src="https://app.talentpush.nl/static/email/img/email.png" />
               info@talentpush.nl
             </a>
-            <a href="www.talentpush.nl" target="_blank" rel="noreferrer">
+            <a href={website_url} target="_blank" rel="noreferrer">
               <img
                 src="https://static.thenounproject.com/png/365220-200.png"
                 style={{
