@@ -535,6 +535,19 @@ interface AllApiEndpoints {
       data: ResumeFileUploadResponse;
     };
   };
+  "data-sourcing/candidate/resume_download/:id/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: {
+      message?: string;
+      isSuccess?: boolean;
+      status?: number;
+      data?: undefined;
+    } | Blob;
+  };
   "onboarding/employee_onboarding/": {
     request: {
       method: "GET";

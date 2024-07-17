@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Pencil, TrashIcon } from "lucide-react";
+import { Download, Mail, Pencil, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -166,6 +166,47 @@ export function AdminListCandidatePage() {
     },
   });
 
+  const downloadCandidateResumeMutation = useMutation({
+    mutationKey: ["downloadCandidateResumeMutation"],
+    mutationFn: async ({
+      id,
+      candidate_name,
+    }: {
+      id: number;
+      candidate_name: string;
+    }) => {
+      return axiosApi({
+        url: replaceWith(
+          "data-sourcing/candidate/resume_download/:id/",
+          "data-sourcing/candidate/resume_download/:id/".replace(
+            ":id",
+            id.toString(),
+          ),
+        ),
+        method: "GET",
+        params: undefined,
+        data: undefined,
+        responseType: "blob",
+        headers: {
+          "Content-Type": "application/pdf",
+        },
+      })
+        .then((response) => response.data)
+        .then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response as Blob]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", `${candidate_name} Resume.pdf`);
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch((error) => {
+          toast.error("Error downloading file");
+          console.error("File could not be downloaded:", error);
+        });
+    },
+  });
+
   const onUserDelete = () => {
     if (!showUserDeleteId)
       return console.log("No user to delete", showUserDeleteId);
@@ -260,6 +301,27 @@ export function AdminListCandidatePage() {
                   <TrashIcon className="h-4 w-4 " />
                 </button>
               ) : null}
+              <button
+                onClick={() =>
+                  downloadCandidateResumeMutation.mutateAsync({
+                    id: info.row.original.id,
+                    candidate_name: info.row.original.title,
+                  })
+                }
+                className="rounded-none bg-teal-500 p-3 text-white hover:bg-opacity-70"
+              >
+                <Download className="h-4 w-4 " />
+              </button>
+              <button
+                className="rounded-none bg-blue-500 p-3 text-white hover:bg-opacity-70"
+                onClick={() => {
+                  window.open(
+                    `mailto:${info.row.original.email}?subject=Your Subject Here`,
+                  );
+                }}
+              >
+                <Mail className="h-4 w-4 " />
+              </button>
               <BlockButton
                 isLoading={
                   blockCandidateMutation.variables?.id ===
@@ -298,6 +360,7 @@ export function AdminListCandidatePage() {
         platform: e.platform,
         city: e.city,
         is_blocked: e.is_blocked,
+        email: e.email,
       })) || defaultArr,
     [candidateListQueryData],
   );
@@ -559,6 +622,7 @@ interface CandidateListItem {
   id: number;
   title: string;
   description: string;
+  email: string;
 
   departments: { id: number; name: string }[];
   location: { id: number; name: string }[];
