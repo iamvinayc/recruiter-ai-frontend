@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Pencil, TrashIcon, Download, Mail } from "lucide-react";
+import { Download, Mail, Pencil, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -177,8 +177,8 @@ export function AdminListCandidatePage() {
     }) => {
       return axiosApi({
         url: replaceWith(
-          "data-sourcing/candidate/resume_download/:id",
-          "data-sourcing/candidate/resume_download/:id".replace(
+          "data-sourcing/candidate/resume_download/:id/",
+          "data-sourcing/candidate/resume_download/:id/".replace(
             ":id",
             id.toString(),
           ),
@@ -193,12 +193,12 @@ export function AdminListCandidatePage() {
       })
         .then((response) => response.data)
         .then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response as Blob]));
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", `${candidate_name} Resume.pdf`);
-            document.body.appendChild(link);
-            link.click();
+          const url = window.URL.createObjectURL(new Blob([response as Blob]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", `${candidate_name} Resume.pdf`);
+          document.body.appendChild(link);
+          link.click();
         })
         .catch((error) => {
           toast.error("Error downloading file");
@@ -302,10 +302,12 @@ export function AdminListCandidatePage() {
                 </button>
               ) : null}
               <button
-                onClick={() => downloadCandidateResumeMutation.mutateAsync({
-                  id: info.row.original.id,
-                  candidate_name: info.row.original.title
-                })}
+                onClick={() =>
+                  downloadCandidateResumeMutation.mutateAsync({
+                    id: info.row.original.id,
+                    candidate_name: info.row.original.title,
+                  })
+                }
                 className="rounded-none bg-teal-500 p-3 text-white hover:bg-opacity-70"
               >
                 <Download className="h-4 w-4 " />
@@ -314,8 +316,8 @@ export function AdminListCandidatePage() {
                 className="rounded-none bg-blue-500 p-3 text-white hover:bg-opacity-70"
                 onClick={() => {
                   window.open(
-                    `mailto:${info.row.original.email}?subject=Your Subject Here`
-                  )
+                    `mailto:${info.row.original.email}?subject=Your Subject Here`,
+                  );
                 }}
               >
                 <Mail className="h-4 w-4 " />

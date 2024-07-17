@@ -535,7 +535,7 @@ interface AllApiEndpoints {
       data: ResumeFileUploadResponse;
     };
   };
-  "data-sourcing/candidate/resume_download/:id": {
+  "data-sourcing/candidate/resume_download/:id/": {
     request: {
       method: "GET";
       params?: undefined;
