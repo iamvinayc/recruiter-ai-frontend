@@ -191,7 +191,24 @@ export function AdminListCandidatePage() {
           "Content-Type": "application/pdf",
         },
       })
-        .then((response) => response.data)
+        .then(async (response) => {
+          const blob = response.data;
+          if (blob instanceof Blob) {
+            if (blob.type === "application/pdf") {
+              return blob;
+            } else {
+              const txt = await blob.text();
+              const { message } = JSON.parse(txt) as {
+                message?: string;
+                isSuccess?: boolean;
+                status?: number;
+                data?: undefined;
+              };
+              throw new CustomError(message || "Error downloading file");
+            }
+          }
+          return response.data;
+        })
         .then((response) => {
           const url = window.URL.createObjectURL(new Blob([response as Blob]));
           const link = document.createElement("a");
@@ -200,8 +217,12 @@ export function AdminListCandidatePage() {
           document.body.appendChild(link);
           link.click();
         })
-        .catch((error) => {
-          toast.error("Error downloading file");
+        .catch((error: Error) => {
+          if (error instanceof CustomError) {
+            toast.error(error?.message);
+          } else {
+            toast.error("Error downloading file");
+          }
           console.error("File could not be downloaded:", error);
         });
     },
@@ -986,3 +1007,9 @@ const formSchema = z.object({
     .min(1, "Please Select at-least one skill"),
   city: z.string().min(1, "Please enter a city"),
 });
+class CustomError extends Error {
+  __name = "CustomError";
+  constructor(msg?: string) {
+    super(msg);
+  }
+}
