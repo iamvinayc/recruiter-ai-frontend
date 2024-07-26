@@ -17,6 +17,7 @@ import { ChipGroup } from "@/components/common/ChipGroup";
 import toast from "react-hot-toast";
 import { AxiosResponse } from "axios";
 import OpenUrlButton from "@/components/OpenUrlButton";
+import { format } from "date-fns";
 
 const columnHelper = createColumnHelper<CandidateReportListItem>();
 
@@ -48,6 +49,11 @@ export function CandidateReportListPage() {
         header: "No",
         cell: (info) => info.row.index + 1,
       }),
+      columnHelper.accessor("created_at", {
+        header: "DATE",
+        cell: (info) => format(info.getValue(), "yyyy-MM-dd"),
+        footer: (info) => info.column.id,
+      }),
       columnHelper.accessor("name", {
         header: "CANDIDATE",
         cell: (info) => info.getValue(),
@@ -56,7 +62,7 @@ export function CandidateReportListPage() {
       columnHelper.accessor("email", {
         header: "EMAIL",
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
+          <div className="max-w-[250px] truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -143,6 +149,7 @@ export function CandidateReportListPage() {
         responded: e.responded,
         matching_jobs: e.matching_jobs.map((e) => ({ job_title: e.job_title })),
         location: { id: e.location.id, name: e.location.name },
+        created_at: e.created_at,
       })) || [],
     [candidateReportListQuery],
   );
@@ -256,4 +263,5 @@ export interface CandidateReportListItem {
   responded: boolean;
   platform: string;
   matching_jobs: { job_title: string }[];
+  created_at: string;
 }

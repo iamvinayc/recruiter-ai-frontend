@@ -16,6 +16,7 @@ import { EmployerReportListFilter } from "./Filter/EmployetReportListFilter";
 import { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import OpenUrlButton from "@/components/OpenUrlButton";
+import { format } from "date-fns";
 
 const columnHelper = createColumnHelper<EmployerReportListItem>();
 
@@ -47,6 +48,11 @@ export function EmployerReportListPage() {
         header: "No",
         cell: (info) => info.row.index + 1,
       }),
+      columnHelper.accessor("created_at", {
+        header: "DATE",
+        cell: (info) => format(info.getValue(), "yyyy-MM-dd"),
+        footer: (info) => info.column.id,
+      }),
       columnHelper.accessor("title", {
         header: "TITLE",
         cell: (info) => info.getValue(),
@@ -64,7 +70,7 @@ export function EmployerReportListPage() {
       columnHelper.accessor("email", {
         header: "EMAIL",
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
+          <div className="max-w-[250px] truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -158,6 +164,7 @@ export function EmployerReportListPage() {
         platform: e.platform,
         responded: e.responded,
         location: { id: e.location.id, name: e.location.name },
+        created_at: e.created_at,
       })) || [],
     [employerReportListQuery],
   );
@@ -273,4 +280,5 @@ export interface EmployerReportListItem {
   responded: boolean;
   is_mail_sent: boolean;
   platform: string;
+  created_at: string;
 }
