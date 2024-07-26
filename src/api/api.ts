@@ -593,16 +593,6 @@ interface AllApiEndpoints {
     };
     response: ReportListResponse;
   };
-  // "report/candidate": {
-  //   request: {
-  //     method: "GET";
-  //     params?: {
-
-  //     };
-  //     data?: any;
-  //   };
-  //   response: any;
-  // };
   "report/candidate/": {
     request: {
       method: "GET";

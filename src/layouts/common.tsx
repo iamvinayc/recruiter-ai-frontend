@@ -278,8 +278,8 @@ export const SideBar = ({
           <ArrowLeftIcon className="h-6 w-6 text-white" />
         </button>
       </div>
-      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-        <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
+      <div className="no-scrollbar hide-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+        <nav className=" mt-5 px-4 py-4 lg:mt-9 lg:px-6">
           <div className="gap-y-2 ">
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
               MENU

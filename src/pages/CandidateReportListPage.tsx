@@ -16,6 +16,7 @@ import { CandidateReportListFilter } from "./Filter/CandidateReportListFilter";
 import { ChipGroup } from "@/components/common/ChipGroup";
 import toast from "react-hot-toast";
 import { AxiosResponse } from "axios";
+import OpenUrlButton from "@/components/OpenUrlButton";
 
 const columnHelper = createColumnHelper<CandidateReportListItem>();
 
@@ -82,11 +83,7 @@ export function CandidateReportListPage() {
       }),
       columnHelper.accessor("profile_url", {
         header: "PROFILE_URL",
-        cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
-        ),
+        cell: (info) => <OpenUrlButton url={info.getValue()} />,
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("platform", {
@@ -173,13 +170,24 @@ export function CandidateReportListPage() {
             "Content-Type": "application/ms-excel",
           },
         });
+
+        const contentDisposition = response.headers["content-disposition"];
+        let filename = "Candidate_Report.xlsx";
+
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+          if (filenameMatch.length > 1) {
+            filename = filenameMatch[1];
+          }
+        }
+
         const blob = new Blob([response.data], {
           type: "application/ms-excel",
         });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "Candidate_Report.xls");
+        link.setAttribute("download", filename);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

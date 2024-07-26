@@ -88,7 +88,7 @@ const SideBarLinks = {
       icon: <GaugeCircleIcon className="h-5 w-5" />,
     },
     {
-      title: "Reports",
+      title: "Onboarding Reports",
       link: ROUTES.ADMIN.LIST_REPORT.path,
       icon: <GaugeCircleIcon className="h-5 w-5" />,
     },

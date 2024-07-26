@@ -15,6 +15,7 @@ import { TableLoader } from "./common/TableLoader";
 import { EmployerReportListFilter } from "./Filter/EmployetReportListFilter";
 import { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
+import OpenUrlButton from "@/components/OpenUrlButton";
 
 const columnHelper = createColumnHelper<EmployerReportListItem>();
 
@@ -90,20 +91,12 @@ export function EmployerReportListPage() {
       }),
       columnHelper.accessor("hr_url", {
         header: "HR_URL",
-        cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
-        ),
+        cell: (info) => <OpenUrlButton url={info.getValue()} />,
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("job_link", {
         header: "JOB_LINK",
-        cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
-        ),
+        cell: (info) => <OpenUrlButton url={info.getValue()} />,
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("platform", {
@@ -177,7 +170,7 @@ export function EmployerReportListPage() {
   });
 
   const downloadEmployerReportMutation = useMutation({
-    mutationKey: ["downloadCandidateReportMutation"],
+    mutationKey: ["downloadEmployerReportMutation"],
     mutationFn: async () => {
       try {
         const response: AxiosResponse = await axiosApi({
@@ -192,13 +185,24 @@ export function EmployerReportListPage() {
             "Content-Type": "application/ms-excel",
           },
         });
+
+        const contentDisposition = response.headers["content-disposition"];
+        let filename = "Employer_Report.xlsx";
+
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+          if (filenameMatch.length > 1) {
+            filename = filenameMatch[1];
+          }
+        }
+
         const blob = new Blob([response.data], {
           type: "application/ms-excel",
         });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "Employer_Report.xls");
+        link.setAttribute("download", filename);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
