@@ -59,7 +59,7 @@ export function EmployerReportListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("employer", {
-        header: "Employer",
+        header: "EMPLOYER",
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -96,12 +96,12 @@ export function EmployerReportListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("hr_url", {
-        header: "HR_URL",
+        header: "HR URL",
         cell: (info) => <OpenUrlButton url={info.getValue()} />,
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("job_link", {
-        header: "JOB_LINK",
+        header: "JOB LINK",
         cell: (info) => <OpenUrlButton url={info.getValue()} />,
         footer: (info) => info.column.id,
       }),
@@ -129,7 +129,7 @@ export function EmployerReportListPage() {
         },
       }),
       columnHelper.accessor("is_mail_sent", {
-        header: "IS_MAIL_SENT",
+        header: "MAIL",
         cell: (info) => {
           const responded = info.getValue() as boolean;
           return (

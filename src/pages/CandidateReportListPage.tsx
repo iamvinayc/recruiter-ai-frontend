@@ -88,7 +88,7 @@ export function CandidateReportListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("profile_url", {
-        header: "PROFILE_URL",
+        header: "PROFILE URL",
         cell: (info) => <OpenUrlButton url={info.getValue()} />,
         footer: (info) => info.column.id,
       }),
@@ -116,7 +116,7 @@ export function CandidateReportListPage() {
         },
       }),
       columnHelper.accessor("matching_jobs", {
-        header: "MACTHING_JOBS",
+        header: "MACTHING JOBS",
         cell: (info) => {
           return (
             <ChipGroup
