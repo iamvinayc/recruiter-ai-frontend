@@ -469,7 +469,10 @@ export function AdminListJobPage() {
                     {[
                       ["Employer Name", selectedUser?.employer?.employer_label],
                       ["Email", selectedUser?.employer?.email],
-                      ["HR Profile", selectedUser?.employer?.hr_url || "Not Found"],
+                      [
+                        "HR Profile",
+                        selectedUser?.employer?.hr_url || "Not Found",
+                      ],
                       ["Contact Number", selectedUser?.employer?.phone1],
                       ["Alternate Number", selectedUser?.employer?.phone2],
                       ["Platform", selectedUser?.platform],

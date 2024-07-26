@@ -26,6 +26,8 @@ import { ChangePasswordPage } from "../pages/ChangePasswordPage";
 import { ForgotPasswordPage } from "../pages/ForgotPasswordPage";
 import { LoginPage } from "../pages/LoginPage";
 import { ROUTES } from "./routes";
+import { CandidateReportListPage } from "@/pages/CandidateReportListPage";
+import { EmployerReportListPage } from "@/pages/EmployerReportListPage";
 
 export function AppRouter() {
   return (
@@ -75,6 +77,14 @@ export function AppRouter() {
             <Route
               path={ROUTES.ADMIN.LIST_REPORT.path}
               element={<ReportListPage />}
+            />
+            <Route
+              path={ROUTES.ADMIN.CANDIDATE_REPORT.path}
+              element={<CandidateReportListPage />}
+            />
+            <Route
+              path={ROUTES.ADMIN.EMPLOYER_REPORT.path}
+              element={<EmployerReportListPage />}
             />
             <Route
               path={ROUTES.ADMIN.LIST_EMPLOYER.path}
@@ -156,7 +166,10 @@ export function AppRouter() {
             path={ROUTES.EMPLOYER.AGREEMENT.path}
             element={<EmployerAgreementPage />}
           />
-          <Route path={ROUTES.PUBLICCANDIDATEADD.path} element={<PublicCandidateAddPage />} />
+          <Route
+            path={ROUTES.PUBLICCANDIDATEADD.path}
+            element={<PublicCandidateAddPage />}
+          />
           <Route path={ROUTES.FEEDBACKSUBMIT.path} element={<FeedbackPage />} />
           <Route path={ROUTES.SUCCESS.path} element={<SuccessPage />} />
         </Routes>

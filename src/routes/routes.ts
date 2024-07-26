@@ -51,7 +51,7 @@ export const ROUTES = {
         },
       }),
       LIST_CANDIDATE: route("list-candidate", {
-        searchParams: { 
+        searchParams: {
           skill: string().default(""),
           location: string().default(""),
           scrape_from: string().default(""),
@@ -92,6 +92,18 @@ export const ROUTES = {
           employer_name: string().default(""),
         },
       }),
+      CANDIDATE_REPORT: route("candidate-report-list", {
+        searchParams: {
+          from_date: string().default(""),
+          to_date: string().default(""),
+        },
+      }),
+      EMPLOYER_REPORT: route("employer-report-list", {
+        searchParams: {
+          from_date: string().default(""),
+          to_date: string().default(""),
+        },
+      }),
       LIST_NOTIFICATION: route("list-notification", {
         searchParams: {
           notification_id: string().default(""),
@@ -107,12 +119,12 @@ export const ROUTES = {
       LOGIN: route("login"),
       DASHBOARD: route("dashboard"),
       CHANGE_PASSWORD: route("change-password"),
-      LIST_EMPLOYER: route("list-employer" , {
+      LIST_EMPLOYER: route("list-employer", {
         searchParams: {
           name: string().default(""),
           id: string().default(""),
           final_followedup_employers: string().default(""),
-        }
+        },
       }),
       LIST_JOBS: route("list-jobs", {
         searchParams: {
@@ -131,10 +143,10 @@ export const ROUTES = {
           today_scrapped_jobs: string().default(""),
           responded_jobs: string().default(""),
           non_matched_jobs: string().default(""),
-        }
+        },
       }),
       LIST_CANDIDATE: route("list-candidate", {
-        searchParams: { 
+        searchParams: {
           skill: string().default(""),
           location: string().default(""),
           scrape_from: string().default(""),

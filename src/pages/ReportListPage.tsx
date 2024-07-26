@@ -1,4 +1,9 @@
-import { OnboardingStatus, axiosApi, formatOnboardingStatus, OnboardingStatusColorMap } from "@/api/api";
+import {
+  OnboardingStatus,
+  axiosApi,
+  formatOnboardingStatus,
+  OnboardingStatusColorMap,
+} from "@/api/api";
 import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -81,13 +86,13 @@ export function ReportListPage() {
                     info.getValue() === OnboardingStatus.REJECTED
                     ? "bg-red-500"
                     : info.getValue() === OnboardingStatus.EMPLOYER_SELECTED
-                      ? "bg-green-500"
-                      : "bg-blue-500",
+                    ? "bg-green-500"
+                    : "bg-blue-500",
                 )}
                 style={{
                   background:
                     OnboardingStatusColorMap[
-                    info.getValue() as keyof typeof OnboardingStatusColorMap
+                      info.getValue() as keyof typeof OnboardingStatusColorMap
                     ] ?? "rgb(59 130 246);",
                 }}
               >
