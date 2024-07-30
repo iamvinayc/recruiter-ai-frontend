@@ -1,6 +1,8 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 import { API_BASE_URL } from "../utils/constants";
+import { CandidateReportListItem } from "@/pages/CandidateReportListPage";
+import { EmployerReportListItem } from "@/pages/EmployerReportListPage";
 
 axios.interceptors.request.use((val) => {
   try {
@@ -541,12 +543,14 @@ interface AllApiEndpoints {
       params?: undefined;
       data?: undefined;
     };
-    response: {
-      message?: string;
-      isSuccess?: boolean;
-      status?: number;
-      data?: undefined;
-    } | Blob;
+    response:
+      | {
+          message?: string;
+          isSuccess?: boolean;
+          status?: number;
+          data?: undefined;
+        }
+      | Blob;
   };
   "onboarding/employee_onboarding/": {
     request: {
@@ -588,6 +592,30 @@ interface AllApiEndpoints {
       data?: undefined;
     };
     response: ReportListResponse;
+  };
+  "report/candidate/": {
+    request: {
+      method: "GET";
+      params?: {
+        from_date?: string;
+        to_date?: string;
+        export_to_excel?: boolean;
+      };
+      data?: undefined;
+    };
+    response: CandidateReportListResponse;
+  };
+  "report/employer/": {
+    request: {
+      method: "GET";
+      params?: {
+        from_date?: string;
+        to_date?: string;
+        export_to_excel?: boolean;
+      };
+      data?: undefined;
+    };
+    response: EmployerReportListResponse;
   };
   "data-sourcing/employer/": {
     request: {
@@ -751,7 +779,7 @@ interface AllApiEndpoints {
       method: "GET";
       params?: {
         candidate_name?: string;
-      } 
+      };
       data?: undefined;
     };
     response: CandidateSummaryResponse;
@@ -759,7 +787,7 @@ interface AllApiEndpoints {
   "data-sourcing/employer/history/{{employerId}}/": {
     request: {
       method: "GET";
-      params?: undefined,
+      params?: undefined;
       data?: undefined;
     };
     response: EmployerHistoryResponse;
@@ -907,12 +935,12 @@ interface DashboardOverviewResponse {
     total_interview_scheduled_jobs: number;
     total_candt_scrapped_tdy: number;
     total_jobs_scrapped_tdy: number;
-    total_responded_candidates: number,
-    total_responded_jobs: number,
-    total_non_matched_candidates: number,
-    total_non_matched_jobs: number,
-    total_final_followedup_candidates: number,
-    total_final_followedup_employers: number,
+    total_responded_candidates: number;
+    total_responded_jobs: number;
+    total_non_matched_candidates: number;
+    total_non_matched_jobs: number;
+    total_final_followedup_candidates: number;
+    total_final_followedup_employers: number;
   };
   message: string;
   isSuccess: boolean;
@@ -1015,7 +1043,7 @@ interface JobListingResponseData {
   platform: string;
   city: string;
   job_link: string | null;
-  job_type: string
+  job_type: string;
 }
 
 interface Department {
@@ -1242,7 +1270,7 @@ interface EmployerMatchingCandidatesData {
     candidate_id: string;
     candidate_name: string;
     skills: {
-      name: string
+      name: string;
     }[];
     reasons: string | string[];
     details: string;
@@ -1376,6 +1404,25 @@ interface ReportListResponseData {
   employer_name: string;
   status: string;
 }
+
+interface CandidateReportListResponse {
+  data: CandidateReportListItem[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+  next?: string | null;
+  previous?: string | null;
+}
+
+interface EmployerReportListResponse {
+  data: EmployerReportListItem[];
+  message: string;
+  isSuccess: boolean;
+  status: number;
+  next?: string | null;
+  previous?: string | null;
+}
+
 interface ListEmployerResponse {
   data: ListEmployerResponseData[];
   status: number;
@@ -1404,29 +1451,31 @@ interface EmployerHistoryResponse {
     candidates: {
       candidate_id: number;
       candidate_name: string;
-      data: {
-        type: "comment" | "notification" | "status_change";
-        datetime: string;
-        title: string;
-        related_message?: null | string;
-        related_date?: null | string;
-        status?:
-          | "CANCELLED"
-          | "REJECTED"
-          | "PLACED"
-          | "EMPLOYER_SELECTED"
-          | "EMPLOYER_INTERVIEWED_F2F"
-          | "EMPLOYER_INTERVIEW_RESCHEDULED_F2F"
-          | "EMPLOYER_INTERVIEW_SCHEDULED_F2F"
-          | "EMPLOYER_INTERVIEWED_VIDEO"
-          | "EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO"
-          | "EMPLOYER_INTERVIEW_SCHEDULED_VIDEO"
-          | "RECRUITER_INTERVIEWED"
-          | "Recruiter Followup"
-          | "FEEDBACK_SUBMITTED_BY_CANDIDATE"
-          | "FEEDBACK_SUBMITTED_BY_EMPLOYER";
-        notification_id?: number;
-      }[] | [];
+      data:
+        | {
+            type: "comment" | "notification" | "status_change";
+            datetime: string;
+            title: string;
+            related_message?: null | string;
+            related_date?: null | string;
+            status?:
+              | "CANCELLED"
+              | "REJECTED"
+              | "PLACED"
+              | "EMPLOYER_SELECTED"
+              | "EMPLOYER_INTERVIEWED_F2F"
+              | "EMPLOYER_INTERVIEW_RESCHEDULED_F2F"
+              | "EMPLOYER_INTERVIEW_SCHEDULED_F2F"
+              | "EMPLOYER_INTERVIEWED_VIDEO"
+              | "EMPLOYER_INTERVIEW_RESCHEDULED_VIDEO"
+              | "EMPLOYER_INTERVIEW_SCHEDULED_VIDEO"
+              | "RECRUITER_INTERVIEWED"
+              | "Recruiter Followup"
+              | "FEEDBACK_SUBMITTED_BY_CANDIDATE"
+              | "FEEDBACK_SUBMITTED_BY_EMPLOYER";
+            notification_id?: number;
+          }[]
+        | [];
     }[];
   }[];
   message: string;

@@ -89,9 +89,9 @@ export const Header = ({
           <button
             aria-controls="sidebar"
             onClick={() => setSidebarOpen((b) => !b)}
-            className="dark:bg-boxdark dark:border-strokedark z-99999 block rounded-none bg-white p-1.5 mt-1.5"
+            className="dark:bg-boxdark dark:border-strokedark z-99999 mt-1.5 block rounded-none bg-white p-1.5"
           >
-            <Bars3Icon className="relative block h-5.5 w-5.5 cursor-pointer scale-y-[3.5] scale-x-[2.5] stroke-1 text-[#55BCE7]" />
+            <Bars3Icon className="relative block h-5.5 w-5.5 scale-x-[2.5] scale-y-[3.5] cursor-pointer stroke-1 text-[#55BCE7]" />
           </button>
           <div className="block flex-shrink-0">
             {/* <div className="text-3xl text-black">AI-RECRUIT</div> */}
@@ -150,7 +150,7 @@ export const Header = ({
                         <button
                           onClick={logout}
                           type="button"
-                          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base uppercase"
+                          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium uppercase duration-300 ease-in-out hover:text-primary lg:text-base"
                         >
                           <ArrowLeftOnRectangleIcon className="h-6 w-6" />
                           Log Out
@@ -263,7 +263,7 @@ export const SideBar = ({
   return (
     <aside
       className={cn(
-        "dark:bg-boxdark flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear 2xl:static 2xl:translate-x-0 ",
+        "dark:bg-boxdark flex h-screen w-72.5 flex-col overflow-y-hidden  bg-black duration-300 ease-linear 2xl:static 2xl:translate-x-0 ",
         sidebarOpen ? "translate-x-0" : " hidden -translate-x-full",
         // "absolute left-0 top-0 z-9999 "
       )}
@@ -278,8 +278,8 @@ export const SideBar = ({
           <ArrowLeftIcon className="h-6 w-6 text-white" />
         </button>
       </div>
-      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-        <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
+      <div className="no-scrollbar hide-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+        <nav className=" mt-5 px-4 py-4 lg:mt-9 lg:px-6">
           <div className="gap-y-2 ">
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
               MENU
