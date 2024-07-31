@@ -599,6 +599,7 @@ interface AllApiEndpoints {
       params?: {
         from_date?: string;
         to_date?: string;
+        sector?: string | null;
         export_to_excel?: boolean;
       };
       data?: undefined;
@@ -611,6 +612,7 @@ interface AllApiEndpoints {
       params?: {
         from_date?: string;
         to_date?: string;
+        sector?: string | null;
         export_to_excel?: boolean;
       };
       data?: undefined;
@@ -1585,4 +1587,9 @@ export const OnboardingStatusMap = {
 };
 export const formatOnboardingStatus = (status: string) =>
   OnboardingStatusMap[status as OnboardingStatus] || status;
+
+export const sectorsMap = [
+  { value: "IT", label: "IT" },
+  { value: "Finance", label: "Finance" },
+];
 //#endregion

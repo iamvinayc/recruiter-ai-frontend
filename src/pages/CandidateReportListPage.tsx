@@ -18,16 +18,18 @@ import toast from "react-hot-toast";
 import { AxiosResponse } from "axios";
 import OpenUrlButton from "@/components/OpenUrlButton";
 import { format } from "date-fns";
+import { useLogin } from "@/hooks/useLogin";
 
 const columnHelper = createColumnHelper<CandidateReportListItem>();
 
 export function CandidateReportListPage() {
-  const [{ from_date, to_date }] = useTypedSearchParams(
-    ROUTES.ADMIN.CANDIDATE_REPORT,
+  const { isRecruiter } = useLogin();
+  const [{ from_date, to_date, sector }] = useTypedSearchParams(
+    isRecruiter ? ROUTES.RECRUITER.CANDIDATE_REPORT : ROUTES.ADMIN.CANDIDATE_REPORT,
   );
 
   const reportListingQuery = useInfiniteQuery({
-    queryKey: ["candidate-reportListingQuery", from_date, to_date],
+    queryKey: ["candidate-reportListingQuery", from_date, to_date, sector],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: (pageParam || "report/candidate/") as "report/candidate/",
@@ -35,6 +37,7 @@ export function CandidateReportListPage() {
         params: {
           from_date,
           to_date,
+          sector,
         },
       }).then((e) => e.data),
     getNextPageParam(e) {
@@ -101,6 +104,20 @@ export function CandidateReportListPage() {
         ),
         footer: (info) => info.column.id,
       }),
+      columnHelper.accessor("sector", {
+        header: "SECTOR",
+        cell: (info) => {
+          const sector = info.getValue() as string;
+          return (
+            <div
+              className="max-w-[200px] truncate"
+              title={sector ? sector : "Not Available"}
+            >
+              {sector ? sector : "Not Available"}
+            </div>
+          );
+        },
+      }),
       columnHelper.accessor("responded", {
         header: "RESPONSE",
         cell: (info) => {
@@ -146,6 +163,7 @@ export function CandidateReportListPage() {
         phone: e.phone,
         platform: e.platform,
         profile_url: e.profile_url,
+        sector: e.sector,
         responded: e.responded,
         matching_jobs: e.matching_jobs.map((e) => ({ job_title: e.job_title })),
         location: { id: e.location.id, name: e.location.name },
@@ -170,6 +188,9 @@ export function CandidateReportListPage() {
           method: "GET",
           params: {
             export_to_excel: true,
+            to_date: to_date,
+            from_date: from_date,
+            sector: sector,
           },
           responseType: "blob",
           data: undefined,
@@ -217,6 +238,7 @@ export function CandidateReportListPage() {
           onSearch={() => reportListingQuery.refetch()}
           onClick={() => downloadCandidateReportMutation.mutateAsync()}
           isLoading={downloadCandidateReportMutation.isPending}
+          isEmpty={candidateReportList.length === 0}
         />
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div
@@ -262,6 +284,7 @@ export interface CandidateReportListItem {
   profile_url: string;
   responded: boolean;
   platform: string;
+  sector: string | null;
   matching_jobs: { job_title: string }[];
   created_at: string;
 }
