@@ -34,6 +34,7 @@ import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationS
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
+import { SectorSelector } from "@/components/SectorSelector";
 
 const defaultArr: [] = [];
 
@@ -611,6 +612,10 @@ export function AdminListCandidatePage() {
                 ),
               )}
               <div className="space-y-1">
+                <div className="font-medium">Sector</div>
+                <div className="text-sm ">{selectedUser?.sector || "N/A"}</div>
+              </div>
+              <div className="space-y-1">
                 <div className="font-medium">Skills</div>
                 <div className="text-sm ">
                   <ChipGroup
@@ -693,6 +698,7 @@ const AddCandidatePopup = ({
       phone: "",
       profile_url: "",
       resume_file: "",
+      sector: "",
     });
     uploadResumeFile.reset();
   };
@@ -722,6 +728,7 @@ const AddCandidatePopup = ({
             name: data.city,
           },
           platform: "SYSTEM",
+          sector: data.sector,
           resume_data: data.resume_data,
         },
       }).then((e) => e.data),
@@ -916,6 +923,18 @@ const AddCandidatePopup = ({
                   />
                 )}
               />
+
+              <Controller
+                control={control}
+                name="sector"
+                render={({ field: { onChange, value } }) => (
+                  <SectorSelector
+                    selectedItem={value}
+                    setSelectedItem={onChange}
+                    error={errors.sector?.message}
+                  />
+                )}
+              />
             </div>
             <div className="flex flex-1 flex-col">
               {isRecruiter ? (
@@ -1002,6 +1021,7 @@ const formSchema = z.object({
   phone: z.string().min(1, "Please enter phone"),
   profile_url: z.string(),
   resume_file: z.string().optional(),
+  sector: z.string().min(1, "Please select a sector"),
   department: z
     .array(
       z.object({

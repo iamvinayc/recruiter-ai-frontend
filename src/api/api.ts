@@ -256,6 +256,7 @@ interface AllApiEndpoints {
         };
         handle: string;
         platform: string;
+        sector: string;
       };
     };
     response: {
@@ -468,6 +469,7 @@ interface AllApiEndpoints {
         resume_file?: string | null;
         handle: string;
         platform: string;
+        sector: string;
         resume_data?: ResumeFileUploadResponse;
       };
     };
@@ -1046,6 +1048,7 @@ interface JobListingResponseData {
   city: string;
   job_link: string | null;
   job_type: string;
+  sector: string;
 }
 
 interface Department {
@@ -1092,6 +1095,7 @@ interface CandidateListResponseData {
   platform: string;
   city: string;
   is_blocked: boolean;
+  sector: string;
 }
 
 interface Location {

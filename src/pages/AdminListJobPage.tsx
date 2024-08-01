@@ -39,6 +39,7 @@ import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationS
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
+import { SectorSelector } from "@/components/SectorSelector";
 
 const defaultArr: [] = [];
 
@@ -435,6 +436,7 @@ export function AdminListJobPage() {
                   ["Job Link", selectedUser?.job_link || "Not Found"],
                   ["Job Type", selectedUser?.job_type],
                   ["Location", selectedUser?.location?.name],
+                  ["Sector", selectedUser?.sector || "N/A"],
                 ] as const
               ).map(([key, value]) => (
                 <div key={key} className="space-y-1">
@@ -561,6 +563,7 @@ const AddJobPopup = ({
       phone1: "",
       phone2: "",
       title: "",
+      sector: "",
     });
   };
   const addJobMutation = useMutation({
@@ -588,6 +591,7 @@ const AddJobPopup = ({
             name: data.city,
           },
           platform: "SYSTEM",
+          sector: data.sector,
         },
       }).then((e) => e.data.isSuccess),
   });
@@ -705,6 +709,18 @@ const AddJobPopup = ({
                   />
                 )}
               />
+
+              <Controller
+                control={control}
+                name="sector"
+                render={({ field: { onChange, value } }) => (
+                  <SectorSelector
+                    selectedItem={value}
+                    setSelectedItem={onChange}
+                    error={errors.sector?.message}
+                  />
+                )}
+              />
             </div>
             <div className="flex flex-1 flex-col">
               {isRecruiter ? (
@@ -770,6 +786,7 @@ const formSchema = z
     email: z.string().email(),
     phone1: z.string().min(1, "Please enter phone1"),
     phone2: z.string(),
+    sector: z.string().min(1, "Please Select a sector"),
     department: z
       .array(
         z.object({

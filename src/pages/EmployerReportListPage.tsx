@@ -24,7 +24,9 @@ const columnHelper = createColumnHelper<EmployerReportListItem>();
 export function EmployerReportListPage() {
   const { isRecruiter } = useLogin();
   const [{ from_date, to_date, sector }] = useTypedSearchParams(
-    isRecruiter ? ROUTES.RECRUITER.EMPLOYER_REPORT : ROUTES.ADMIN.EMPLOYER_REPORT,
+    isRecruiter
+      ? ROUTES.RECRUITER.EMPLOYER_REPORT
+      : ROUTES.ADMIN.EMPLOYER_REPORT,
   );
 
   const reportListingQuery = useInfiniteQuery({
@@ -214,16 +216,7 @@ export function EmployerReportListPage() {
           },
         });
 
-        const contentDisposition = response.headers["content-disposition"];
         let filename = "Employer_Report.xlsx";
-
-        if (contentDisposition) {
-          const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-          if (filenameMatch.length > 1) {
-            filename = filenameMatch[1];
-          }
-        }
-
         const blob = new Blob([response.data], {
           type: "application/ms-excel",
         });
