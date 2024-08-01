@@ -96,12 +96,14 @@ export const ROUTES = {
         searchParams: {
           from_date: string().default(""),
           to_date: string().default(""),
+          sector: string().default(""),
         },
       }),
       EMPLOYER_REPORT: route("employer-report-list", {
         searchParams: {
           from_date: string().default(""),
           to_date: string().default(""),
+          sector: string().default(""),
         },
       }),
       LIST_NOTIFICATION: route("list-notification", {
@@ -185,6 +187,20 @@ export const ROUTES = {
           to_date: string().default(""),
           employer: string().default(""),
           employer_name: string().default(""),
+        },
+      }),
+      CANDIDATE_REPORT: route("candidate-report-list", {
+        searchParams: {
+          from_date: string().default(""),
+          to_date: string().default(""),
+          sector: string().default(""),
+        },
+      }),
+      EMPLOYER_REPORT: route("employer-report-list", {
+        searchParams: {
+          from_date: string().default(""),
+          to_date: string().default(""),
+          sector: string().default(""),
         },
       }),
       LIST_NOTIFICATION: route("list-notification"),

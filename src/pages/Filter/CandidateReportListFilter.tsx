@@ -1,3 +1,4 @@
+import { Combobox } from "@/components/Combobox";
 import { Button } from "@/components/common/Button";
 import { Input } from "@/components/common/Input";
 import { ROUTES } from "@/routes/routes";
@@ -5,22 +6,27 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useEffect, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
+import { sectorsMap } from "@/api/api";
+
 dayjs.extend(customParseFormat);
 
 export function CandidateReportListFilter({
   onSearch,
   isLoading,
   onClick,
+  isEmpty,
 }: {
   onSearch: VoidFunction;
   isLoading?: boolean;
   onClick?: () => void;
+  isEmpty?: boolean;
 }) {
-  const [{ from_date, to_date }, setTypedParams] = useTypedSearchParams(
+  const [{ from_date, to_date, sector }, setTypedParams] = useTypedSearchParams(
     ROUTES.ADMIN.CANDIDATE_REPORT,
   );
   const [selectedFromDate, setSelectedFromDate] = useState("");
   const [selectedToDate, setSelectedToDate] = useState("");
+  const [selectedSector, setSelectedSector] = useState("");
   useState<ListItem | null>(null);
 
   useEffect(() => {
@@ -29,12 +35,24 @@ export function CandidateReportListFilter({
   useEffect(() => {
     setSelectedToDate(to_date);
   }, [to_date]);
+  useEffect(() => {
+    setSelectedSector(sector);
+  }, [sector]);
 
-  const isNotDirty = from_date == selectedFromDate && to_date == selectedToDate;
+  const isNotDirty =
+    from_date == selectedFromDate &&
+    to_date == selectedToDate &&
+    sector == selectedSector;
   const isDirty = !isNotDirty;
   const isAllEmpty =
-    [from_date, to_date, selectedFromDate, selectedToDate].filter(Boolean)
-      .length == 0;
+    [
+      from_date,
+      to_date,
+      sector,
+      selectedFromDate,
+      selectedToDate,
+      selectedSector,
+    ].filter(Boolean).length == 0;
 
   return (
     <div className="mb-2">
@@ -74,25 +92,39 @@ export function CandidateReportListFilter({
               );
             }}
           />
-          <div className="mb-1 flex items-end">
-            <Button
-              className="h-8 rounded-lg text-center"
-              isLoading={isLoading}
-              onClick={onClick}
-            >
-              Download
-            </Button>
-          </div>
+          <Combobox
+            className="h-[43px]"
+            label="Sector"
+            items={sectorsMap}
+            selectedValue={selectedSector}
+            setSelectedValue={setSelectedSector}
+          />
+          {isEmpty ? null : (
+            <div className="mb-1 flex items-end">
+              <Button
+                className="h-8 rounded-lg text-center"
+                isLoading={isLoading}
+                onClick={onClick}
+              >
+                Download
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
           {isAllEmpty ? null : (
             <button
               onClick={() => {
-                setTypedParams({
-                  from_date: "",
-                  to_date: "",
-                });
+                from_date === "" && to_date === "" && sector === ""
+                  ? (setSelectedFromDate(""),
+                    setSelectedToDate(""),
+                    setSelectedSector(""))
+                  : setTypedParams({
+                      from_date: "",
+                      to_date: "",
+                      sector: "",
+                    });
               }}
               className="rounded-none bg-red-600 px-14 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
             >
@@ -109,6 +141,7 @@ export function CandidateReportListFilter({
                   setTypedParams({
                     from_date: selectedFromDate,
                     to_date: selectedToDate,
+                    sector: selectedSector,
                   });
                 }}
                 className="rounded-none bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"

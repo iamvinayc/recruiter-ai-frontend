@@ -322,17 +322,19 @@ export function AdminListCandidatePage() {
                   <TrashIcon className="h-4 w-4 " />
                 </button>
               ) : null}
-              <button
-                onClick={() =>
-                  downloadCandidateResumeMutation.mutateAsync({
-                    id: info.row.original.id,
-                    candidate_name: info.row.original.title,
-                  })
-                }
-                className="rounded-none bg-teal-500 p-3 text-white hover:bg-opacity-70"
-              >
-                <Download className="h-4 w-4 " />
-              </button>
+              {info.row.original.resume_file && (
+                <button
+                  onClick={() =>
+                    downloadCandidateResumeMutation.mutateAsync({
+                      id: info.row.original.id,
+                      candidate_name: info.row.original.title,
+                    })
+                  }
+                  className="rounded-none bg-teal-500 p-3 text-white hover:bg-opacity-70"
+                >
+                  <Download className="h-4 w-4 " />
+                </button>
+              )}
               <button
                 className="rounded-none bg-blue-500 p-3 text-white hover:bg-opacity-70"
                 onClick={() => {
@@ -382,6 +384,7 @@ export function AdminListCandidatePage() {
         city: e.city,
         is_blocked: e.is_blocked,
         email: e.email,
+        resume_file: e.resume_file,
       })) || defaultArr,
     [candidateListQueryData],
   );
@@ -644,6 +647,7 @@ interface CandidateListItem {
   title: string;
   description: string;
   email: string;
+  resume_file: string;
 
   departments: { id: number; name: string }[];
   location: { id: number; name: string }[];
@@ -938,6 +942,7 @@ const AddCandidatePopup = ({
                   name="city"
                   label="Location"
                   placeholder="Location"
+                  className="px-3 py-3"
                   error={errors.city?.message?.replace("city", "location")}
                 />
               )}
