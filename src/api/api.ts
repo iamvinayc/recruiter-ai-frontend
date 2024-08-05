@@ -272,6 +272,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params: {
+        resume?: string;
         department?: string;
         location?: string;
         from_date?: string;

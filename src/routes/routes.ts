@@ -52,6 +52,7 @@ export const ROUTES = {
       }),
       LIST_CANDIDATE: route("list-candidate", {
         searchParams: {
+          resume: string().default(""),
           skill: string().default(""),
           location: string().default(""),
           scrape_from: string().default(""),
@@ -149,6 +150,7 @@ export const ROUTES = {
       }),
       LIST_CANDIDATE: route("list-candidate", {
         searchParams: {
+          resume: string().default(""),
           skill: string().default(""),
           location: string().default(""),
           scrape_from: string().default(""),
