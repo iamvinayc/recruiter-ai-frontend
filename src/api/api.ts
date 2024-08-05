@@ -600,6 +600,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params?: {
+        location?:  string;
         from_date?: string;
         to_date?: string;
         sector?: string | null;
@@ -613,6 +614,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params?: {
+        location?:  string;
         from_date?: string;
         to_date?: string;
         sector?: string | null;

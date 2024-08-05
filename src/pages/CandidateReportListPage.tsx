@@ -24,19 +24,20 @@ const columnHelper = createColumnHelper<CandidateReportListItem>();
 
 export function CandidateReportListPage() {
   const { isRecruiter } = useLogin();
-  const [{ from_date, to_date, sector }] = useTypedSearchParams(
+  const [{ location, from_date, to_date, sector }] = useTypedSearchParams(
     isRecruiter
       ? ROUTES.RECRUITER.CANDIDATE_REPORT
       : ROUTES.ADMIN.CANDIDATE_REPORT,
   );
 
   const reportListingQuery = useInfiniteQuery({
-    queryKey: ["candidate-reportListingQuery", from_date, to_date, sector],
+    queryKey: ["candidate-reportListingQuery", location, from_date, to_date, sector],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: (pageParam || "report/candidate/") as "report/candidate/",
         method: "GET",
         params: {
+          location,
           from_date,
           to_date,
           sector,
@@ -137,13 +138,20 @@ export function CandidateReportListPage() {
       columnHelper.accessor("matching_jobs", {
         header: "MACTHING JOBS",
         cell: (info) => {
+          const items = info
+            .getValue()
+            .map((e, index) => ({ id: index, name: e.job_title }))
           return (
-            <ChipGroup
-              items={info
-                .getValue()
-                .map((e, index) => ({ id: index, name: e.job_title }))}
-              className="whitespace-nowrap bg-[#55BCE7] text-white"
-            />
+            items.length > 0 ? (
+              <ChipGroup
+                items={items}
+                className="whitespace-nowrap bg-[#55BCE7] text-white"
+              />
+            ) : (
+              <div className="" title="No Matches">
+                No Matches
+              </div>
+            )
           );
         },
       }),
@@ -189,6 +197,7 @@ export function CandidateReportListPage() {
           url: "report/candidate/",
           method: "GET",
           params: {
+            location: location,
             export_to_excel: true,
             to_date: to_date,
             from_date: from_date,

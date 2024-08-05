@@ -58,7 +58,7 @@ export function LocationSelector({
         );
   return (
     <div className=" ">
-      <label className="mb-2.5 block font-medium text-black dark:text-white">
+      <label className="mb-2.5 block font-medium text-black dark:text-white px-3">
         Location
       </label>
       <Combobox
@@ -70,7 +70,7 @@ export function LocationSelector({
         }}
       >
         <div className="relative  ">
-          <div className="relative w-full cursor-default space-y-2 divide-y divide-slate-200 overflow-hidden rounded-lg border border-slate-200 bg-white p-2 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+          <div className="relative w-full cursor-default space-y-2 divide-y divide-slate-200 overflow-hidden rounded-none border border-slate-200 bg-white p-1 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
             <div className="relative flex items-center">
               <Combobox.Input
                 placeholder="Select a location"
@@ -329,7 +329,7 @@ export function LocationSelectorMultiple({
   );
 }
 
-type Item = {
+export type Item = {
   name: string;
   id?: number | undefined;
 };

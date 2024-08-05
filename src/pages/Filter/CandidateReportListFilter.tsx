@@ -7,6 +7,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useEffect, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { sectorsMap } from "@/api/api";
+import { LocationSelector, Item as LocationType } from "@/components/LocationSelector";
 
 dayjs.extend(customParseFormat);
 
@@ -21,14 +22,19 @@ export function CandidateReportListFilter({
   onClick?: () => void;
   isEmpty?: boolean;
 }) {
-  const [{ from_date, to_date, sector }, setTypedParams] = useTypedSearchParams(
+  const [{ location, from_date, to_date, sector }, setTypedParams] = useTypedSearchParams(
     ROUTES.ADMIN.CANDIDATE_REPORT,
   );
+  const [selectedLocation, setSelectedLocation] = useState<LocationType>({ name: "" });
   const [selectedFromDate, setSelectedFromDate] = useState("");
   const [selectedToDate, setSelectedToDate] = useState("");
   const [selectedSector, setSelectedSector] = useState("");
   useState<ListItem | null>(null);
 
+
+  useEffect(() => {
+    setSelectedLocation(location ? { name: location } : { name: "" });
+  }, [location]);
   useEffect(() => {
     setSelectedFromDate(from_date);
   }, [from_date]);
@@ -40,15 +46,18 @@ export function CandidateReportListFilter({
   }, [sector]);
 
   const isNotDirty =
+    location == selectedLocation.name  &&
     from_date == selectedFromDate &&
     to_date == selectedToDate &&
     sector == selectedSector;
   const isDirty = !isNotDirty;
   const isAllEmpty =
     [
+      location,
       from_date,
       to_date,
       sector,
+      selectedLocation.name,
       selectedFromDate,
       selectedToDate,
       selectedSector,
@@ -93,11 +102,15 @@ export function CandidateReportListFilter({
             }}
           />
           <Combobox
-            className="h-[43px]"
+            className="h-[44.7px]"
             label="Sector"
             items={sectorsMap}
             selectedValue={selectedSector}
             setSelectedValue={setSelectedSector}
+          />
+          <LocationSelector
+            selected={selectedLocation}
+            setSelected={setSelectedLocation}
           />
           {isEmpty ? null : (
             <div className="mb-1 flex items-end">
@@ -116,11 +129,13 @@ export function CandidateReportListFilter({
           {isAllEmpty ? null : (
             <button
               onClick={() => {
-                from_date === "" && to_date === "" && sector === ""
-                  ? (setSelectedFromDate(""),
+                location === "" && from_date === "" && to_date === "" && sector === ""
+                  ? (setSelectedLocation({ name: "" }),
+                    setSelectedFromDate(""),
                     setSelectedToDate(""),
                     setSelectedSector(""))
                   : setTypedParams({
+                      location: "",
                       from_date: "",
                       to_date: "",
                       sector: "",
@@ -139,6 +154,7 @@ export function CandidateReportListFilter({
                     onSearch();
                   }
                   setTypedParams({
+                    location: selectedLocation.name,
                     from_date: selectedFromDate,
                     to_date: selectedToDate,
                     sector: selectedSector,

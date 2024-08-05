@@ -95,6 +95,7 @@ export const ROUTES = {
       }),
       CANDIDATE_REPORT: route("candidate-report-list", {
         searchParams: {
+          location: string().default(""),
           from_date: string().default(""),
           to_date: string().default(""),
           sector: string().default(""),
@@ -102,6 +103,7 @@ export const ROUTES = {
       }),
       EMPLOYER_REPORT: route("employer-report-list", {
         searchParams: {
+          location: string().default(""),
           from_date: string().default(""),
           to_date: string().default(""),
           sector: string().default(""),
@@ -193,6 +195,7 @@ export const ROUTES = {
       }),
       CANDIDATE_REPORT: route("candidate-report-list", {
         searchParams: {
+          location: string().default(""),
           from_date: string().default(""),
           to_date: string().default(""),
           sector: string().default(""),
@@ -200,6 +203,7 @@ export const ROUTES = {
       }),
       EMPLOYER_REPORT: route("employer-report-list", {
         searchParams: {
+          location: string().default(""),
           from_date: string().default(""),
           to_date: string().default(""),
           sector: string().default(""),
