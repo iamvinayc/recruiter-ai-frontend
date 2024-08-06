@@ -43,6 +43,7 @@ const columnHelper = createColumnHelper<CandidateListItem>();
 export function AdminListCandidatePage() {
   const [
     {
+      resume,
       skill: department,
       location,
       scrape_from,
@@ -76,12 +77,22 @@ export function AdminListCandidatePage() {
       common: event.target.checked ? "True" : "",
     }));
   };
+  
+  const handleFilterResumeCandidates = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setTypeSearch((prevParams) => ({
+      ...prevParams,
+      resume: event.target.checked ? "True" : "",
+    }));
+  };
 
   //#region query/mutation
 
   const candidateListQuery = useInfiniteQuery({
     queryKey: [
       "candidateListQuery",
+      resume,
       department,
       location,
       scrape_from,
@@ -109,6 +120,7 @@ export function AdminListCandidatePage() {
         ),
         method: "GET",
         params: {
+          resume: resume || undefined,
           department: department || undefined,
           location: location || undefined,
           from_date: scrape_from || undefined,
@@ -450,6 +462,20 @@ export function AdminListCandidatePage() {
                 className="form-checkbox h-6 w-6 border-black accent-black focus:ring-0"
               />
               <span className="ml-2">Common Candidates</span>
+            </label>
+            
+            <label
+              htmlFor="resume-filter"
+              className="inline-flex items-center text-lg font-semibold"
+            >
+              <input
+                type="checkbox"
+                id="resume-filter"
+                checked={resume === "True"}
+                onChange={handleFilterResumeCandidates}
+                className="form-checkbox h-6 w-6 border-black accent-black focus:ring-0"
+              />
+              <span className="ml-2">Resume</span>
             </label>
 
             <button

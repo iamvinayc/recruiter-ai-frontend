@@ -23,19 +23,20 @@ const columnHelper = createColumnHelper<EmployerReportListItem>();
 
 export function EmployerReportListPage() {
   const { isRecruiter } = useLogin();
-  const [{ from_date, to_date, sector }] = useTypedSearchParams(
+  const [{ location, from_date, to_date, sector }] = useTypedSearchParams(
     isRecruiter
       ? ROUTES.RECRUITER.EMPLOYER_REPORT
       : ROUTES.ADMIN.EMPLOYER_REPORT,
   );
 
   const reportListingQuery = useInfiniteQuery({
-    queryKey: ["employer-reportListingQuery", from_date, to_date, sector],
+    queryKey: ["employer-reportListingQuery", location, from_date, to_date, sector],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: (pageParam || "report/employer/") as "report/employer/",
         method: "GET",
         params: {
+          location,
           from_date,
           to_date,
           sector,
@@ -204,6 +205,7 @@ export function EmployerReportListPage() {
           url: "report/employer/",
           method: "GET",
           params: {
+            location: location,
             export_to_excel: true,
             to_date: to_date,
             from_date: from_date,

@@ -272,6 +272,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params: {
+        resume?: string;
         department?: string;
         location?: string;
         from_date?: string;
@@ -362,6 +363,7 @@ interface AllApiEndpoints {
       method: "GET";
       params?: {
         search: string;
+        employer: string;
       };
       data?: undefined;
     };
@@ -599,6 +601,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params?: {
+        location?:  string;
         from_date?: string;
         to_date?: string;
         sector?: string | null;
@@ -612,6 +615,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params?: {
+        location?:  string;
         from_date?: string;
         to_date?: string;
         sector?: string | null;
