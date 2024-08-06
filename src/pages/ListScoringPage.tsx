@@ -39,9 +39,10 @@ export function ListScoringPage() {
     ROUTES.ADMIN.LIST_SCORING,
   );
   const [search, setSearch] = useState("");
+  const [employer, setEmployer] = useState("");
   //#region list query
   const listJobQuery = useInfiniteQuery({
-    queryKey: ["listScoringListQuery", department, location, search],
+    queryKey: ["listScoringListQuery", department, location, search, employer],
     queryFn: ({ pageParam }) => {
       console.log("department, location, search", department, location);
       return axiosApi({
@@ -49,6 +50,7 @@ export function ListScoringPage() {
         method: "GET",
         params: {
           search,
+          employer,
         },
         // params: {
         //   department,
@@ -104,6 +106,11 @@ export function ListScoringPage() {
       }),
       jobColumnHelper.accessor("job_title", {
         header: () => <div className="uppercase">Position</div>,
+        cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
+        footer: (info) => info.column.id,
+      }),
+      jobColumnHelper.accessor("employer", {
+        header: () => <div className="uppercase">Company</div>,
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
@@ -257,6 +264,7 @@ export function ListScoringPage() {
         job_title: e.title,
         department: e.departments,
         job_location: e.location.name,
+        employer: e.employer.employer_label,
       })) || emptyArray,
     [listJobQueryData],
   );
@@ -305,17 +313,28 @@ export function ListScoringPage() {
   return (
     <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-          {selectedJobId ? "Candidate score list" : "Select a job"}
-        </h2>
+        <div>
+          <h2 className="text-title-md2 font-semibold text-black dark:text-white">
+            {selectedJobId ? "Candidate score list" : "Select a job"}
+          </h2>
+        </div>
         {selectedJobId ? null : (
-          <DebouncedSearchInput
-            placeholder="Search by Position"
-            value={search}
-            onChange={(val) => {
-              setSearch("" + val);
-            }}
-          />
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <DebouncedSearchInput
+              placeholder="Search by Position"
+              value={search}
+              onChange={(val) => {
+                setSearch("" + val);
+              }}
+            />
+            <DebouncedSearchInput
+              placeholder="Search by Company"
+              value={employer}
+              onChange={(val) => {
+                setEmployer("" + val);
+              }}
+            />
+          </div>
         )}
       </div>
       {selectedJob ? (
@@ -597,6 +616,7 @@ interface ScoringJobItem {
   job_title: string;
   job_location: string;
   department: { name: string; id: number }[];
+  employer: string;
 }
 
 interface ScoringCandidateItem {

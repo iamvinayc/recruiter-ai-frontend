@@ -156,10 +156,10 @@ export function DebouncedInput({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  const handleClear = () => {
-    setValue('');
-    onChange('');
-  };
+  // const handleClear = () => {
+  //   setValue('');
+  //   onChange('');
+  // };
 
   return (
     <div className="relative inline-block">
@@ -168,7 +168,7 @@ export function DebouncedInput({
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      {value && (
+      {/* {value && (
         <button
           type="button"
           onClick={handleClear}
@@ -176,7 +176,7 @@ export function DebouncedInput({
         >
           &times;
         </button>
-      )}
+      )} */}
     </div>
   );
 }
@@ -195,7 +195,7 @@ export const DebouncedSearchInput = ({
       <SearchIcon size={20} />
       <DebouncedInput
         className=" field-sizing w-52 text-base outline-none "
-        type="text"
+        type="search"
         placeholder={placeholder}
         value={value}
         onChange={(val) => {

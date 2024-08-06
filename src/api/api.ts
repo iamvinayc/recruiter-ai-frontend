@@ -363,6 +363,7 @@ interface AllApiEndpoints {
       method: "GET";
       params?: {
         search: string;
+        employer: string;
       };
       data?: undefined;
     };
