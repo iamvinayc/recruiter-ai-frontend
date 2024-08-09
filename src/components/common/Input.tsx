@@ -185,16 +185,18 @@ export const DebouncedSearchInput = ({
   placeholder,
   value,
   onChange,
+  className,
 }: {
   placeholder: string;
   value: string;
   onChange: (val: string) => void;
+  className?: string;
 }) => {
   return (
     <div className="flex items-center justify-center gap-2 rounded-none border border-slate-200 px-2 py-1 shadow-sm">
       <SearchIcon size={20} />
       <DebouncedInput
-        className=" field-sizing w-52 text-base outline-none "
+        className={` field-sizing w-52 text-base outline-none ${className} `}
         type="search"
         placeholder={placeholder}
         value={value}

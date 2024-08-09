@@ -1,6 +1,6 @@
 import { Combobox } from "@/components/Combobox";
 import { Button } from "@/components/common/Button";
-import { Input } from "@/components/common/Input";
+import { DebouncedSearchInput, Input } from "@/components/common/Input";
 import { ROUTES } from "@/routes/routes";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -16,11 +16,15 @@ export function CandidateReportListFilter({
   isLoading,
   onClick,
   isEmpty,
+  candidate,
+  setCandidate
 }: {
   onSearch: VoidFunction;
   isLoading?: boolean;
   onClick?: () => void;
   isEmpty?: boolean;
+  candidate: string;
+  setCandidate: React.Dispatch<React.SetStateAction<string>>
 }) {
   const [{ location, from_date, to_date, sector }, setTypedParams] = useTypedSearchParams(
     ROUTES.ADMIN.CANDIDATE_REPORT,
@@ -112,6 +116,16 @@ export function CandidateReportListFilter({
             selected={selectedLocation}
             setSelected={setSelectedLocation}
           />
+          <div className="h-[44.7px] w-full overflow-hidden">
+            <DebouncedSearchInput
+                  placeholder="Search by Candidate Name"
+                  value={candidate}
+                  onChange={(val) => {
+                    setCandidate("" + val);
+                  }}
+                  className="py-1 lg:w-72"
+            />  
+          </div>
           {isEmpty ? null : (
             <div className="mb-1 flex items-end">
               <Button
