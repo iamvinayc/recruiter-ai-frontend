@@ -9,22 +9,29 @@ export function Table<T>({
   loader,
   flat,
   theadClassName,
+  tableClassName,
+  thClassName,
+  tdClassName,
 }: {
   table: ITable<T>;
   loader: JSX.Element;
   flat?: boolean;
   theadClassName?: string;
+  tableClassName?: string;
+  thClassName?: string;
+  tdClassName?: string;
 }) {
   return (
-    <table className={cn("min-w-full   table-fixed overflow-scroll")}>
+    <table className={cn(`min-w-full table-fixed overflow-scroll ${tableClassName}`)}>
       <thead className={`${theadClassName} bg-[#55BCE7]`}>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
               <th
                 className={cn(
-                  "border-b border-slate-200  text-left font-medium text-slate-800 dark:border-slate-600 dark:text-slate-200",
+                  `border-b border-slate-200  text-left font-medium text-slate-800 dark:border-slate-600 dark:text-slate-200`,
                   flat ? "p-2 pl-3 " : "p-4 pb-3 pl-8 ",
+                  thClassName ? `${thClassName}` : "",
                 )}
                 key={header.id}
               >
@@ -50,6 +57,7 @@ export function Table<T>({
                 className={cn(
                   "border-b border-slate-200 text-slate-500 dark:border-slate-600 dark:text-slate-400",
                   flat ? "p-2 pl-3 " : "p-4 pl-8 ",
+                  tdClassName ? `${tdClassName}` : "",
                 )}
                 key={`td-${cell.id}`}
               >

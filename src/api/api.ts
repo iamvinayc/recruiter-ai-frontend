@@ -601,6 +601,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params?: {
+        candidate?: string;
         location?:  string;
         from_date?: string;
         to_date?: string;

@@ -7,13 +7,13 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
 import { CandidateReportListFilter } from "./Filter/CandidateReportListFilter";
-import { ChipGroup } from "@/components/common/ChipGroup";
+import { MatchingJobsChipGroup } from "@/components/MatchingJobsChipGroup";
 import toast from "react-hot-toast";
 import { AxiosResponse } from "axios";
 import OpenUrlButton from "@/components/OpenUrlButton";
@@ -24,6 +24,9 @@ const columnHelper = createColumnHelper<CandidateReportListItem>();
 
 export function CandidateReportListPage() {
   const { isRecruiter } = useLogin();
+  
+  const [candidate, setCandidate] = useState("");
+
   const [{ location, from_date, to_date, sector }] = useTypedSearchParams(
     isRecruiter
       ? ROUTES.RECRUITER.CANDIDATE_REPORT
@@ -31,13 +34,14 @@ export function CandidateReportListPage() {
   );
 
   const reportListingQuery = useInfiniteQuery({
-    queryKey: ["candidate-reportListingQuery", location, from_date, to_date, sector],
+    queryKey: ["candidate-reportListingQuery", location, candidate, from_date, to_date, sector],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: (pageParam || "report/candidate/") as "report/candidate/",
         method: "GET",
         params: {
           location,
+          candidate,
           from_date,
           to_date,
           sector,
@@ -50,11 +54,11 @@ export function CandidateReportListPage() {
   });
   const columns = useMemo(
     () => [
-      columnHelper.display({
-        id: "SLNo",
-        header: "No",
-        cell: (info) => info.row.index + 1,
-      }),
+      // columnHelper.display({
+      //   id: "SLNo",
+      //   header: "No",
+      //   cell: (info) => info.row.index + 1,
+      // }),
       columnHelper.accessor("created_at", {
         header: "DATE",
         cell: (info) => format(info.getValue(), "yyyy-MM-dd"),
@@ -62,13 +66,17 @@ export function CandidateReportListPage() {
       }),
       columnHelper.accessor("name", {
         header: "CANDIDATE",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div className="max-w-[100px] truncate" title={info.getValue()}>
+            {info.getValue()}
+          </div>
+        ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("email", {
         header: "EMAIL",
         cell: (info) => (
-          <div className="max-w-[250px] truncate" title={info.getValue()}>
+          <div className="max-w-[100px] truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -78,7 +86,7 @@ export function CandidateReportListPage() {
       columnHelper.accessor("phone", {
         header: "PHONE",
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
+          <div className="max-w-[100px] truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -87,7 +95,7 @@ export function CandidateReportListPage() {
       columnHelper.accessor("location", {
         header: "LOCATION",
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue().name}>
+          <div className="max-w-[100px] truncate" title={info.getValue().name}>
             {info.getValue().name}
           </div>
         ),
@@ -101,7 +109,7 @@ export function CandidateReportListPage() {
       columnHelper.accessor("platform", {
         header: "PLATFORM",
         cell: (info) => (
-          <div className="max-w-[200px] truncate" title={info.getValue()}>
+          <div className="max-w-[100px] truncate" title={info.getValue()}>
             {info.getValue()}
           </div>
         ),
@@ -113,7 +121,7 @@ export function CandidateReportListPage() {
           const sector = info.getValue() as string;
           return (
             <div
-              className="max-w-[200px] truncate"
+              className="max-w-[100px] truncate px-2"
               title={sector ? sector : "Not Available"}
             >
               {sector ? sector : "Not Available"}
@@ -127,7 +135,7 @@ export function CandidateReportListPage() {
           const responded = info.getValue() as boolean;
           return (
             <div
-              className="max-w-[200px] truncate"
+              className="max-w-[100px] truncate"
               title={responded ? "Responded" : "Not Responded"}
             >
               {responded ? "Responded" : "Not Responded"}
@@ -140,12 +148,13 @@ export function CandidateReportListPage() {
         cell: (info) => {
           const items = info
             .getValue()
-            .map((e, index) => ({ id: index, name: e.job_title }))
+            .map((e, _) => ({ id: e.job_id, name: e.job_title, score: e.score }))
           return (
             items.length > 0 ? (
-              <ChipGroup
+              <MatchingJobsChipGroup
+                navigate={true}
                 items={items}
-                className="whitespace-nowrap bg-[#55BCE7] text-white"
+                className="whitespace-wrap bg-[#55BCE7] text-white"
               />
             ) : (
               <div className="" title="No Matches">
@@ -175,7 +184,7 @@ export function CandidateReportListPage() {
         profile_url: e.profile_url,
         sector: e.sector,
         responded: e.responded,
-        matching_jobs: e.matching_jobs.map((e) => ({ job_title: e.job_title })),
+        matching_jobs: e.matching_jobs.map((e) => ({ job_id: e.job_id, job_title: e.job_title, score: e.score })),
         location: { id: e.location.id, name: e.location.name },
         created_at: e.created_at,
       })) || [],
@@ -198,6 +207,7 @@ export function CandidateReportListPage() {
           method: "GET",
           params: {
             location: location,
+            candidate: candidate,
             export_to_excel: true,
             to_date: to_date,
             from_date: from_date,
@@ -241,6 +251,8 @@ export function CandidateReportListPage() {
           onClick={() => downloadCandidateReportMutation.mutateAsync()}
           isLoading={downloadCandidateReportMutation.isPending}
           isEmpty={candidateReportList.length === 0}
+          candidate={candidate}
+          setCandidate={setCandidate}
         />
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
           <div
@@ -257,6 +269,8 @@ export function CandidateReportListPage() {
               }}
             >
               <Table
+                thClassName="md:w-1/12 md:pl-5"
+                tdClassName="md:pl-5 md:text-sm"
                 table={table}
                 loader={
                   <TableLoader
@@ -287,6 +301,6 @@ export interface CandidateReportListItem {
   responded: boolean;
   platform: string;
   sector: string | null;
-  matching_jobs: { job_title: string }[];
+  matching_jobs: { job_id: number; job_title: string; score: number }[];
   created_at: string;
 }

@@ -49,11 +49,11 @@ export function EmployerReportListPage() {
   });
   const columns = useMemo(
     () => [
-      columnHelper.display({
-        id: "SLNo",
-        header: "No",
-        cell: (info) => info.row.index + 1,
-      }),
+      // columnHelper.display({
+      //   id: "SLNo",
+      //   header: "No",
+      //   cell: (info) => info.row.index + 1,
+      // }),
       columnHelper.accessor("created_at", {
         header: "DATE",
         cell: (info) => format(info.getValue(), "yyyy-MM-dd"),
@@ -61,7 +61,11 @@ export function EmployerReportListPage() {
       }),
       columnHelper.accessor("title", {
         header: "TITLE",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div className="max-w-[200px] truncate" title={info.getValue()}>
+            {info.getValue()}
+          </div>
+        ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("employer", {
@@ -265,6 +269,9 @@ export function EmployerReportListPage() {
               }}
             >
               <Table
+                tableClassName="md:w-full"
+                thClassName="md:w-1/12 md:pl-5"
+                tdClassName="md:pl-5"
                 table={table}
                 loader={
                   <TableLoader
