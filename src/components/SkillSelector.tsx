@@ -29,7 +29,7 @@ export const SkillSelector = ({
 
   return (
     <div className=" ">
-      <label className="mb-2.5 block font-medium text-black dark:text-white mx-3">
+      <label className="mx-3 mb-2.5 block font-medium text-black dark:text-white">
         Skill
       </label>
 
@@ -47,7 +47,7 @@ export const SkillSelector = ({
               displayValue={() => selectedItem}
               onChange={(event) => setQuery(event.target.value)}
               className={cn(
-                "text-gray-900 w-full py-2 pl-3 pr-10 text-sm leading-5 focus:ring-0 dark:bg-form-input dark:outline-form-strokedark focus:outline-primary focus-visible:shadow-none disabled:bg-opacity-80 dark:focus:outline-primary",
+                "text-gray-900 dark:bg-form-input dark:outline-form-strokedark w-full py-2 pl-3 pr-10 text-sm leading-5 focus:outline-primary focus:ring-0 focus-visible:shadow-none disabled:bg-opacity-80 dark:focus:outline-primary",
               )}
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">

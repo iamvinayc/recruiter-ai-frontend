@@ -6,9 +6,9 @@ import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 import { axiosApi } from "@/api/api";
 import { Combobox } from "@/components/Combobox";
-import { SkillSelector } from "@/components/SkillSelector";
 import { Input } from "@/components/common/Input";
 import { ROUTES } from "@/routes/routes";
+import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
 
 dayjs.extend(customParseFormat);
 
@@ -60,13 +60,15 @@ export function DepartmentLocationScrapeFromSearch({
   return (
     <div className="mb-2">
       <div className=" dark:border-strokedark rounded-sm border border-sky-300 bg-white p-4 shadow-default">
-        <h2 className="text-xl font-bold uppercase text-stone-700">
-          Filters
-        </h2>
+        <h2 className="text-xl font-bold uppercase text-stone-700">Filters</h2>
         <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          <SkillSelector
+          {/* <SkillSelector
             selectedItem={selectedDepartment}
             setSelectedItem={setSelectedDepartment}
+          /> */}
+          <MultipleSkillSelector
+            selectedItems={selectedDepartment}
+            setSelectedItems={setSelectedDepartment}
           />
           <Combobox
             className="h-[43px]"
@@ -131,7 +133,7 @@ export function DepartmentLocationScrapeFromSearch({
                 search: "",
               });
             }}
-            className="bg-red-600 text-white rounded-none px-14 py-2 font-medium hover:opacity-90 focus:ring active:scale-95"
+            className="rounded-none bg-red-600 px-14 py-2 font-medium text-white hover:opacity-90 focus:ring active:scale-95"
           >
             Reset
           </button>
