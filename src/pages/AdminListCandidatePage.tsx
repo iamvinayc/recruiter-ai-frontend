@@ -77,7 +77,7 @@ export function AdminListCandidatePage() {
       common: event.target.checked ? "True" : "",
     }));
   };
-  
+
   const handleFilterResumeCandidates = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -121,7 +121,9 @@ export function AdminListCandidatePage() {
         method: "GET",
         params: {
           resume: resume || undefined,
-          department: department || undefined,
+          department: department
+            ? JSON.stringify(department.split(",").map(Number))
+            : undefined,
           location: location || undefined,
           from_date: scrape_from || undefined,
           to_date: scrape_to || undefined,
@@ -463,7 +465,7 @@ export function AdminListCandidatePage() {
               />
               <span className="ml-2">Common Candidates</span>
             </label>
-            
+
             <label
               htmlFor="resume-filter"
               className="inline-flex items-center text-lg font-semibold"

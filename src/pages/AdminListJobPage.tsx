@@ -115,7 +115,9 @@ export function AdminListJobPage() {
         ),
         method: "GET",
         params: {
-          department: department || undefined,
+          department: department
+            ? JSON.stringify(department.split(",").map(Number))
+            : undefined,
           location: location || undefined,
           from_date: scrape_from || undefined,
           to_date: scrape_to || undefined,
