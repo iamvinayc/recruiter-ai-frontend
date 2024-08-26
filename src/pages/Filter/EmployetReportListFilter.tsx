@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { sectorsMap } from "@/api/api";
 import { LocationSelector, Item as LocationType } from "@/components/LocationSelector";
+import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
 
 dayjs.extend(customParseFormat);
 
@@ -22,13 +23,14 @@ export function EmployerReportListFilter({
   onClick?: () => void;
   isEmpty?: boolean;
 }) {
-  const [{ location, from_date, to_date, sector }, setTypedParams] = useTypedSearchParams(
+  const [{ location, from_date, to_date, sector, skill: department }, setTypedParams] = useTypedSearchParams(
     ROUTES.ADMIN.EMPLOYER_REPORT,
   );
   const [selectedLocation, setSelectedLocation] = useState<LocationType>({ name: "" });
   const [selectedFromDate, setSelectedFromDate] = useState("");
   const [selectedToDate, setSelectedToDate] = useState("");
   const [selectedSector, setSelectedSector] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   useState<ListItem | null>(null);
 
 
@@ -44,8 +46,12 @@ export function EmployerReportListFilter({
   useEffect(() => {
     setSelectedSector(sector);
   }, [sector]);
+  useEffect(() => {
+    setSelectedDepartment(department);
+  }, [department]);
 
   const isNotDirty =
+    department == selectedDepartment &&
     location == selectedLocation.name &&
     from_date == selectedFromDate &&
     to_date == selectedToDate &&
@@ -53,10 +59,12 @@ export function EmployerReportListFilter({
   const isDirty = !isNotDirty;
   const isAllEmpty =
     [
+      department,
       location,
       from_date,
       to_date,
       sector,
+      selectedDepartment,
       selectedLocation.name,
       selectedFromDate,
       selectedToDate,
@@ -112,10 +120,14 @@ export function EmployerReportListFilter({
             selected={selectedLocation}
             setSelected={setSelectedLocation}
           />
+          <MultipleSkillSelector
+            selectedItems={selectedDepartment}
+            setSelectedItems={setSelectedDepartment}
+          />
           {isEmpty ? null : (
-            <div className="mb-1 flex items-end">
+            <div className="flex items-end">
               <Button
-                className="h-8 rounded-lg text-center"
+                className="rounded-none py-2 text-center bg-success"
                 isLoading={isLoading}
                 onClick={onClick}
               >
@@ -129,16 +141,19 @@ export function EmployerReportListFilter({
           {isAllEmpty ? null : (
             <button
               onClick={() => {
-                location === "" && from_date === "" && to_date === "" && sector === ""
+                location === "" && from_date === "" && to_date === "" && sector === "" && department === ""
                   ? (setSelectedLocation({ name: "" }),
                     setSelectedFromDate(""),
                     setSelectedToDate(""),
-                    setSelectedSector(""))
+                    setSelectedSector(""),
+                    setSelectedDepartment("")
+                  )
                   : setTypedParams({
                       location: "",
                       from_date: "",
                       to_date: "",
                       sector: "",
+                      skill: "",
                     });
               }}
               className="rounded-none bg-red-600 px-14 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
@@ -158,6 +173,7 @@ export function EmployerReportListFilter({
                     from_date: selectedFromDate,
                     to_date: selectedToDate,
                     sector: selectedSector,
+                    skill: selectedDepartment,
                   });
                 }}
                 className="rounded-none bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"

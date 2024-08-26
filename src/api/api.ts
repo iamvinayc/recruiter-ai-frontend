@@ -601,6 +601,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params?: {
+        department?: any;
         candidate?: string;
         location?: string;
         from_date?: string;
@@ -616,6 +617,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params?: {
+        department?: any;
         location?: string;
         from_date?: string;
         to_date?: string;

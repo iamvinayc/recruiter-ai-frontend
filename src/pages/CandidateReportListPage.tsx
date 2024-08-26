@@ -27,19 +27,22 @@ export function CandidateReportListPage() {
   
   const [candidate, setCandidate] = useState("");
 
-  const [{ location, from_date, to_date, sector }] = useTypedSearchParams(
+  const [{ location, from_date, to_date, sector, skill: department }] = useTypedSearchParams(
     isRecruiter
       ? ROUTES.RECRUITER.CANDIDATE_REPORT
       : ROUTES.ADMIN.CANDIDATE_REPORT,
   );
 
   const reportListingQuery = useInfiniteQuery({
-    queryKey: ["candidate-reportListingQuery", location, candidate, from_date, to_date, sector],
+    queryKey: ["candidate-reportListingQuery", location, candidate, from_date, to_date, sector, department],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: (pageParam || "report/candidate/") as "report/candidate/",
         method: "GET",
         params: {
+          department: department
+          ? JSON.stringify(department.split(",").map(Number))
+          : undefined,
           location,
           candidate,
           from_date,

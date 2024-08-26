@@ -99,6 +99,7 @@ export const ROUTES = {
           from_date: string().default(""),
           to_date: string().default(""),
           sector: string().default(""),
+          skill: string().default(""),
         },
       }),
       EMPLOYER_REPORT: route("employer-report-list", {
@@ -107,6 +108,7 @@ export const ROUTES = {
           from_date: string().default(""),
           to_date: string().default(""),
           sector: string().default(""),
+          skill: string().default(""),
         },
       }),
       LIST_NOTIFICATION: route("list-notification", {
@@ -199,6 +201,7 @@ export const ROUTES = {
           from_date: string().default(""),
           to_date: string().default(""),
           sector: string().default(""),
+          skill: string().default(""),
         },
       }),
       EMPLOYER_REPORT: route("employer-report-list", {
@@ -207,6 +210,7 @@ export const ROUTES = {
           from_date: string().default(""),
           to_date: string().default(""),
           sector: string().default(""),
+          skill: string().default(""),
         },
       }),
       LIST_NOTIFICATION: route("list-notification"),

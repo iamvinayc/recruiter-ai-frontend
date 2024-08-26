@@ -193,7 +193,7 @@ export const DebouncedSearchInput = ({
   className?: string;
 }) => {
   return (
-    <div className="flex items-center justify-center gap-2 rounded-none border border-slate-200 px-2 py-1 shadow-sm">
+    <div className={` flex items-center justify-center sm:justify-start md:justify-start gap-2 rounded-none border border-slate-200 px-2 py-1 shadow-sm `}>
       <SearchIcon size={20} />
       <DebouncedInput
         className={` field-sizing w-52 text-base outline-none ${className} `}
