@@ -353,6 +353,7 @@ interface AllApiEndpoints {
         department?: string;
         location?: string;
         job_id?: string;
+        candidate_id?: string; // TODO: check if it implemented
         is_employer_notified?: boolean;
         name?: string;
         email?: string;

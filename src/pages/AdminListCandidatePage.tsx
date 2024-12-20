@@ -30,7 +30,7 @@ import { DepartmentSelector } from "../components/DepartmentSelector";
 import { PopupDialog } from "../components/PopupDialog";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
-import { Input, TextArea } from "../components/common/Input";
+import { DebouncedInput, Input, TextArea } from "../components/common/Input";
 import { cn, emptyArray, makeUrlWithParams, replaceWith } from "../utils";
 import { EditCandidateDialog } from "./AdminListCandidatePage.dialogs";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
@@ -65,8 +65,7 @@ export function AdminListCandidatePage() {
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_CANDIDATE);
   const showAllSkillProps = useShowAllSkill(null);
-
-  const [{ id: candidateId }] = useTypedSearchParams(
+  const [{ id: candidateId }, setSearchParams] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_CANDIDATE,
   );
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
@@ -272,8 +271,21 @@ export function AdminListCandidatePage() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "No",
-        cell: (info) => info.row.index + 1,
+        header: () => (
+          <div>
+            <div className="uppercase">Candidate ID</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Candidate Id"
+              value={candidateId}
+              onChange={(val) => {
+                setSearchParams({ id: "" + val });
+              }}
+            />
+          </div>
+        ),
+        cell: (info) => info.row.original.id,
       }),
       columnHelper.accessor("title", {
         header: "CANDIDATE",
@@ -346,16 +358,6 @@ export function AdminListCandidatePage() {
               >
                 <DownloadIcon className="h-4 w-4 " />
               </button>
-              <ShowAllSkill.Button
-                className="p-2"
-                dialogProps={{
-                  selectedSkills: showAllSkillProps.selectedSkills,
-                  setSelectedSkills: () =>
-                    showAllSkillProps.setSelectedSkills(
-                      info.row.original.departments,
-                    ),
-                }}
-              />
               {info.row.original.platform === "SYSTEM" ? (
                 <button
                   onClick={() => setShowUserDeleteId(info.row.original.id)}
@@ -387,6 +389,17 @@ export function AdminListCandidatePage() {
               >
                 <Mail className="h-4 w-4 " />
               </button>
+
+              <ShowAllSkill.Button
+                className="p-2"
+                dialogProps={{
+                  selectedSkills: showAllSkillProps.selectedSkills,
+                  setSelectedSkills: () =>
+                    showAllSkillProps.setSelectedSkills(
+                      info.row.original.departments,
+                    ),
+                }}
+              />
               <BlockButton
                 isLoading={
                   blockCandidateMutation.variables?.id ===

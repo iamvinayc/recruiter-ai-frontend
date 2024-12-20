@@ -34,6 +34,7 @@ export function ListScoringPage() {
   const [isEmployerNotified, setIsEmployerNotified] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const [searchCandidateName, setSearchCandidateName] = useState("");
+  const [searchCandidateId, setSearchCandidateId] = useState("");
   const [searchCandidateEmail, setSearchCandidateEmail] = useState("");
   const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(
     null,
@@ -73,6 +74,7 @@ export function ListScoringPage() {
       selectedJobId,
       isEmployerNotified,
       searchCandidateName,
+      searchCandidateId,
       searchCandidateEmail,
       department,
       location,
@@ -89,6 +91,7 @@ export function ListScoringPage() {
           is_employer_notified: isEmployerNotified ? true : undefined,
           name: searchCandidateName,
           email: searchCandidateEmail,
+          candidate_id: searchCandidateId,
         },
       }).then((e) => e.data);
     },
@@ -166,8 +169,21 @@ export function ListScoringPage() {
     () => [
       candidateColumnHelper.display({
         id: "SLNo",
-        header: "No",
-        cell: (info) => info.row.index + 1,
+        header: () => (
+          <div>
+            <div className="uppercase">Candidate ID</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Candidate Id"
+              value={searchCandidateId}
+              onChange={(val) => {
+                setSearchCandidateId("" + val);
+              }}
+            />
+          </div>
+        ),
+        cell: (info) => info.row.original.candidate_id,
       }),
       candidateColumnHelper.accessor("candidate_name", {
         header: () => (
@@ -275,7 +291,7 @@ export function ListScoringPage() {
         },
       }),
     ],
-    [searchCandidateEmail, searchCandidateName],
+    [],
   );
 
   const listJobQueryData = useMemo(
