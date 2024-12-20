@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
-import { API_BASE_URL } from "../utils/constants";
 import { CandidateReportListItem } from "@/pages/CandidateReportListPage";
 import { EmployerReportListItem } from "@/pages/EmployerReportListPage";
+import { API_BASE_URL } from "../utils/constants";
 
 axios.interceptors.request.use((val) => {
   try {
@@ -105,7 +106,9 @@ interface AllApiEndpoints {
   "data-sourcing/location/": {
     request: {
       method: "GET";
-      params?: undefined;
+      params?: {
+        name?: string;
+      };
       data?: undefined;
     };
     response: ListLocationResponse;

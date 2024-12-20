@@ -10,11 +10,12 @@ import { z } from "zod";
 
 import { axiosApi } from "../api/api";
 import { Button } from "../components/common/Button";
-import { Input } from "../components/common/Input";
+import { DebouncedSearchInput, Input } from "../components/common/Input";
 import { PopupDialog } from "../components/PopupDialog";
 
 export function AdminListLocationPage() {
   const [showAddLocationDialog, setShowAddLocationDialog] = useState(false);
+  const [search, setSearch] = useState("");
 
   const {
     register,
@@ -26,11 +27,14 @@ export function AdminListLocationPage() {
   });
 
   const locationListQuery = useQuery({
-    queryKey: ["AdminListLocationPage"],
+    queryKey: ["AdminListLocationPage", search],
     queryFn: async () =>
       axiosApi({
         url: "data-sourcing/location/",
         method: "GET",
+        params: {
+          name: search,
+        },
       }).then((e) => e.data.data),
   });
   const addLocationMutation = useMutation({
@@ -77,7 +81,14 @@ export function AdminListLocationPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Location
           </h2>
-          <div>
+          <div className="flex items-center gap-2">
+            <DebouncedSearchInput
+              placeholder="Search by location"
+              value={search}
+              onChange={(val) => {
+                setSearch("" + val);
+              }}
+            />
             <button
               type="button"
               onClick={() => setShowAddLocationDialog(true)}
@@ -88,6 +99,24 @@ export function AdminListLocationPage() {
             </button>
           </div>
         </div>
+        {locationListQuery.isPending ? (
+          <div className="flex h-[30vh] items-center justify-center text-2xl font-bold">
+            Loading....
+          </div>
+        ) : null}
+        {!locationListQuery.isPending &&
+        locationListQuery.data?.length === 0 ? (
+          <div className="flex h-[30vh] items-center justify-center text-2xl font-normal">
+            {search
+              ? `No location found for the search '${search}'`
+              : "No location found"}
+          </div>
+        ) : null}
+        {locationListQuery.isPending ? (
+          <div className="flex h-[30vh] items-center justify-center text-2xl font-bold">
+            Loading....
+          </div>
+        ) : null}
         <div className="flex flex-wrap items-center gap-2 text-xs sm:gap-2">
           {locationListQuery.data?.map(({ id, name }) => (
             <span

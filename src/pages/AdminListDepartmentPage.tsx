@@ -8,13 +8,14 @@ import { z } from "zod";
 
 import { PopupDialog } from "@/components/PopupDialog";
 import { Button } from "@/components/common/Button";
-import { Input } from "@/components/common/Input";
+import { DebouncedSearchInput, Input } from "@/components/common/Input";
 import { emptyArray } from "@/utils";
 import { axiosApi } from "../api/api";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 
 export function AdminListDepartmentPage() {
   const [showAddDepartmentPopup, setShowAddDepartmentPopup] = useState(false);
+  const [search, setSearch] = useState("");
 
   const {
     register,
@@ -25,14 +26,14 @@ export function AdminListDepartmentPage() {
     resolver: zodResolver(formState),
   });
   const departmentListQuery = useInfiniteQuery({
-    queryKey: ["AdminListDepartmentPage", showAddDepartmentPopup],
+    queryKey: ["AdminListDepartmentPage", showAddDepartmentPopup, search],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: (pageParam
           ? pageParam
           : "data-sourcing/department/") as "data-sourcing/department/",
         method: "GET",
-        params: { type: 1, page_size: 200 },
+        params: { type: 1, page_size: 200, name: search },
       }).then((e) => e.data),
     getNextPageParam(lastPage) {
       return lastPage?.next;
@@ -87,16 +88,25 @@ export function AdminListDepartmentPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Skills
           </h2>
-          <button
-            type="button"
-            onClick={() => {
-              setShowAddDepartmentPopup(true);
-            }}
-            className="flex items-center gap-2 rounded-none bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
-          >
-            <PlusIcon className="h-6 w-6 stroke-2" />
-            Add Skills
-          </button>
+          <div className="flex items-center gap-2">
+            <DebouncedSearchInput
+              placeholder="Search by skill"
+              value={search}
+              onChange={(val) => {
+                setSearch("" + val);
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setShowAddDepartmentPopup(true);
+              }}
+              className="flex items-center gap-2 rounded-none bg-primary px-4.5 py-2 font-medium text-white hover:bg-opacity-80"
+            >
+              <PlusIcon className="h-6 w-6 stroke-2" />
+              Add Skills
+            </button>
+          </div>
         </div>
         {departmentListQuery.isLoading ? (
           <div className="flex h-[30vh] items-center justify-center text-2xl font-bold">
