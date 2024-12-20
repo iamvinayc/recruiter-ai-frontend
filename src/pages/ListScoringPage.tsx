@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronRight, EyeIcon, PencilIcon } from "lucide-react";
+import { ChevronRight, DownloadIcon, EyeIcon, PencilIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
@@ -18,6 +18,7 @@ import {
   DebouncedInput,
   DebouncedSearchInput,
 } from "@/components/common/Input";
+import { downloadCandidatePDF } from "@/lib/downloadCandidatePDF";
 import { ROUTES } from "@/routes/routes";
 import { cn, emptyArray, replaceWith } from "@/utils";
 import { Switch } from "@headlessui/react";
@@ -248,7 +249,7 @@ export function ListScoringPage() {
         id: "action",
         cell: (info) => {
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() =>
                   setSelectedCandidateId(info.row.original.candidate_id)
@@ -256,6 +257,18 @@ export function ListScoringPage() {
                 className="flex items-center rounded-none bg-[#55BCE7] p-3 text-white hover:bg-opacity-80"
               >
                 <EyeIcon className="h-5 w-5 " />
+              </button>
+              <button
+                title="Download Resume"
+                onClick={() => {
+                  downloadCandidatePDF(
+                    info.row.original.candidate_id,
+                    info.row.original.description,
+                  );
+                }}
+                className="rounded-none bg-purple-600 p-3 text-white hover:bg-opacity-70"
+              >
+                <DownloadIcon className="h-4 w-4 " />
               </button>
             </div>
           );
@@ -297,6 +310,7 @@ export function ListScoringPage() {
         reasons: e.reasons,
         summary: e.symmary,
         is_employer_notified: e.is_employer_notified,
+        description: e.candidate.description,
       })) || emptyArray,
     [candidateListQueryData],
   );
@@ -641,4 +655,5 @@ interface ScoringCandidateItem {
   overall_score?: string | null;
   reasons?: string | string[] | null;
   is_employer_notified: boolean;
+  description: string;
 }

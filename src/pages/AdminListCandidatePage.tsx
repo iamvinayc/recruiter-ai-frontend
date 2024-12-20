@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Download, Mail, Pencil, TrashIcon } from "lucide-react";
+import { Download, DownloadIcon, Mail, Pencil, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -23,6 +23,8 @@ import { BlockButton } from "@/components/common/BlockButton";
 import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES, SortBy } from "@/routes/routes";
+
+import { downloadCandidatePDF } from "@/lib/downloadCandidatePDF";
 import { ResumeFileUploadResponse, axiosApi } from "../api/api";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { PopupDialog } from "../components/PopupDialog";
@@ -331,6 +333,18 @@ export function AdminListCandidatePage() {
                 className="rounded-none bg-[#55BCE7] p-3 text-white hover:bg-opacity-70"
               >
                 <EyeIcon className="h-4 w-4 " />
+              </button>
+              <button
+                title="Download Resume"
+                onClick={() => {
+                  downloadCandidatePDF(
+                    info.row.original.id,
+                    info.row.original.description,
+                  );
+                }}
+                className="rounded-none bg-purple-600 p-3 text-white hover:bg-opacity-70"
+              >
+                <DownloadIcon className="h-4 w-4 " />
               </button>
               <ShowAllSkill.Button
                 className="p-2"
