@@ -14,9 +14,11 @@ import { Document, Page } from "react-pdf";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { z } from "zod";
 
+import { ShowAllSkill, useShowAllSkill } from "@/components/AllSkill";
 import { Combobox } from "@/components/Combobox";
 import { LineClamp } from "@/components/LineClamp";
 import { LocationSelector } from "@/components/LocationSelector";
+import { SectorSelector } from "@/components/SectorSelector";
 import { BlockButton } from "@/components/common/BlockButton";
 import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { useLogin } from "@/hooks/useLogin";
@@ -34,7 +36,6 @@ import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationS
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
-import { SectorSelector } from "@/components/SectorSelector";
 
 const defaultArr: [] = [];
 
@@ -61,6 +62,8 @@ export function AdminListCandidatePage() {
     },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_CANDIDATE);
+  const showAllSkillProps = useShowAllSkill(null);
+
   const [{ id: candidateId }] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_CANDIDATE,
   );
@@ -285,12 +288,12 @@ export function AdminListCandidatePage() {
         footer: (info) => info.column.id,
       }),
 
-      columnHelper.accessor("departments", {
-        header: "SKILLS",
-        cell: (info) => {
-          return <ChipGroup items={info.getValue()} />;
-        },
-      }),
+      // columnHelper.accessor("departments", {
+      //   header: "SKILLS",
+      //   cell: (info) => {
+      //     return <ChipGroup items={info.getValue()} />;
+      //   },
+      // }),
       columnHelper.accessor("location", {
         header: "PROVINCIE",
         cell: (info) => {
@@ -329,6 +332,16 @@ export function AdminListCandidatePage() {
               >
                 <EyeIcon className="h-4 w-4 " />
               </button>
+              <ShowAllSkill.Button
+                className="p-2"
+                dialogProps={{
+                  selectedSkills: showAllSkillProps.selectedSkills,
+                  setSelectedSkills: () =>
+                    showAllSkillProps.setSelectedSkills(
+                      info.row.original.departments,
+                    ),
+                }}
+              />
               {info.row.original.platform === "SYSTEM" ? (
                 <button
                   onClick={() => setShowUserDeleteId(info.row.original.id)}
@@ -669,6 +682,7 @@ export function AdminListCandidatePage() {
         }}
         selectedUser={editingUser}
       />
+      <ShowAllSkill.Dialog dialogProps={showAllSkillProps} />
     </main>
   );
 }

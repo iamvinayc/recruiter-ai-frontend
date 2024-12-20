@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 import { axiosApi } from "@/api/api";
+import { ShowAllSkill, useShowAllSkill } from "@/components/AllSkill";
 import { LineClamp } from "@/components/LineClamp";
 import { PopupDialog } from "@/components/PopupDialog";
 import { ReasonRenderer } from "@/components/ReasonRenderer";
@@ -28,6 +29,7 @@ const jobColumnHelper = createColumnHelper<ScoringJobItem>();
 const candidateColumnHelper = createColumnHelper<ScoringCandidateItem>();
 
 export function ListScoringPage() {
+  const showAllSkillProps = useShowAllSkill(null);
   const [isEmployerNotified, setIsEmployerNotified] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const [searchCandidateName, setSearchCandidateName] = useState("");
@@ -119,22 +121,22 @@ export function ListScoringPage() {
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
-      jobColumnHelper.accessor("department", {
-        header: "SKILLS",
-        cell: (info) => (
-          <div>
-            <ChipGroup items={info.getValue() || []} />
-          </div>
-        ),
-        footer: (info) => info.column.id,
-      }),
+      // jobColumnHelper.accessor("department", {
+      //   header: "SKILLS",
+      //   cell: (info) => (
+      //     <div>
+      //       <ChipGroup items={info.getValue() || []} />
+      //     </div>
+      //   ),
+      //   footer: (info) => info.column.id,
+      // }),
 
       jobColumnHelper.display({
         header: "ACTION",
         id: "action",
         cell: (info) => {
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setSelectedJobId(info.row.original.job_id)}
                 className="flex items-center rounded-none bg-primary p-3 text-sm text-white hover:bg-opacity-80"
@@ -142,6 +144,16 @@ export function ListScoringPage() {
                 {/* <span>View matching candidates</span> */}
                 <ChevronRight className="h-5 w-5 " />
               </button>
+
+              <ShowAllSkill.Button
+                dialogProps={{
+                  selectedSkills: showAllSkillProps.selectedSkills,
+                  setSelectedSkills: () =>
+                    showAllSkillProps.setSelectedSkills(
+                      info.row.original.department,
+                    ),
+                }}
+              />
             </div>
           );
         },
@@ -607,6 +619,7 @@ export function ListScoringPage() {
           </div>
         </div>
       </PopupDialog>
+      <ShowAllSkill.Dialog dialogProps={showAllSkillProps} />
     </div>
   );
 }
