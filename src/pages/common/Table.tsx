@@ -12,6 +12,7 @@ export function Table<T>({
   tableClassName,
   thClassName,
   tdClassName,
+  applyWidth,
 }: {
   table: ITable<T>;
   loader: JSX.Element;
@@ -20,9 +21,12 @@ export function Table<T>({
   tableClassName?: string;
   thClassName?: string;
   tdClassName?: string;
+  applyWidth?: boolean;
 }) {
   return (
-    <table className={cn(`min-w-full table-fixed overflow-scroll ${tableClassName}`)}>
+    <table
+      className={cn(`min-w-full table-fixed overflow-scroll ${tableClassName}`)}
+    >
       <thead className={`${theadClassName} bg-[#55BCE7]`}>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
@@ -34,6 +38,9 @@ export function Table<T>({
                   thClassName ? `${thClassName}` : "",
                 )}
                 key={header.id}
+                style={{
+                  width: applyWidth ? `${header.getSize()}px` : undefined,
+                }}
               >
                 {header.isPlaceholder
                   ? null

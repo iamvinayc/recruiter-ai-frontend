@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronRight, DownloadIcon, EyeIcon, PencilIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, DownloadIcon, EyeIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
@@ -107,8 +107,8 @@ export function ListScoringPage() {
     () => [
       jobColumnHelper.display({
         id: "SLNo",
-        header: "No",
-        cell: (info) => info.row.index + 1,
+        header: "JOB#",
+        cell: (info) => "JOB" + info.row.original.job_id,
       }),
       jobColumnHelper.accessor("job_title", {
         header: () => <div className="uppercase">Position</div>,
@@ -355,9 +355,18 @@ export function ListScoringPage() {
   return (
     <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="flex items-center gap-1">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            {selectedJobId ? "Candidate score list" : "Select a job"}
+            {selectedJobId ? (
+              <div className="flex items-center gap-1">
+                <button onClick={() => setSelectedJobId(null)}>
+                  <ChevronLeft className="inline-block h-8 w-8 text-blue-700" />
+                </button>
+                <span>Candidate score list</span>
+              </div>
+            ) : (
+              "Select a job"
+            )}
           </h2>
         </div>
         {selectedJobId ? null : (
@@ -435,7 +444,7 @@ export function ListScoringPage() {
             </div>
             {/* <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> */}
             {/* </div> */}
-            <div className="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
+            {/* <div className="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
               <button
                 onClick={() => {
                   setSelectedJobId(null);
@@ -445,7 +454,7 @@ export function ListScoringPage() {
                 <PencilIcon className="h-4 w-4" />
                 <span>Change Job</span>
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       ) : null}
