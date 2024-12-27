@@ -1,4 +1,12 @@
 import { axiosApi } from "@/api/api";
+import { MatchingJobsChipGroup } from "@/components/MatchingJobsChipGroup";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
@@ -7,42 +15,55 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { AxiosResponse } from "axios";
+import { format } from "date-fns";
+import {
+  AtSignIcon,
+  CheckCircleIcon,
+  ExternalLinkIcon,
+  PhoneIcon,
+  XCircleIcon,
+} from "lucide-react";
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
 import { CandidateReportListFilter } from "./Filter/CandidateReportListFilter";
-import { MatchingJobsChipGroup } from "@/components/MatchingJobsChipGroup";
-import toast from "react-hot-toast";
-import { AxiosResponse } from "axios";
-import OpenUrlButton from "@/components/OpenUrlButton";
-import { format } from "date-fns";
-import { useLogin } from "@/hooks/useLogin";
 
 const columnHelper = createColumnHelper<CandidateReportListItem>();
 
 export function CandidateReportListPage() {
   const { isRecruiter } = useLogin();
-  
+
   const [candidate, setCandidate] = useState("");
 
-  const [{ location, from_date, to_date, sector, skill: department }] = useTypedSearchParams(
-    isRecruiter
-      ? ROUTES.RECRUITER.CANDIDATE_REPORT
-      : ROUTES.ADMIN.CANDIDATE_REPORT,
-  );
+  const [{ location, from_date, to_date, sector, skill: department }] =
+    useTypedSearchParams(
+      isRecruiter
+        ? ROUTES.RECRUITER.CANDIDATE_REPORT
+        : ROUTES.ADMIN.CANDIDATE_REPORT,
+    );
 
   const reportListingQuery = useInfiniteQuery({
-    queryKey: ["candidate-reportListingQuery", location, candidate, from_date, to_date, sector, department],
+    queryKey: [
+      "candidate-reportListingQuery",
+      location,
+      candidate,
+      from_date,
+      to_date,
+      sector,
+      department,
+    ],
     queryFn: async ({ pageParam }) =>
       axiosApi({
         url: (pageParam || "report/candidate/") as "report/candidate/",
         method: "GET",
         params: {
           department: department
-          ? JSON.stringify(department.split(",").map(Number))
-          : undefined,
+            ? JSON.stringify(department.split(",").map(Number))
+            : undefined,
           location,
           candidate,
           from_date,
@@ -70,31 +91,53 @@ export function CandidateReportListPage() {
       columnHelper.accessor("name", {
         header: "CANDIDATE",
         cell: (info) => (
-          <div className="max-w-[100px] truncate" title={info.getValue()}>
+          <div
+            className="flex max-w-[100px] flex-wrap  gap-x-4 gap-y-2 truncate"
+            title={info.getValue()}
+          >
             {info.getValue()}
+            {info.row.original.email ? (
+              <Tooltip>
+                <TooltipTrigger className="h-5 w-5 ">
+                  <AtSignIcon className="h-full w-full " />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{info.row.original.email}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : null}
+            {info.row.original.phone ? (
+              <Tooltip>
+                <TooltipTrigger className="h-5 w-5 ">
+                  <PhoneIcon className="h-full w-full " />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{info.row.original.phone}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : null}
           </div>
         ),
         footer: (info) => info.column.id,
       }),
-      columnHelper.accessor("email", {
-        header: "EMAIL",
-        cell: (info) => (
-          <div className="max-w-[100px] truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
-        ),
-        footer: (info) => info.column.id,
-      }),
-
-      columnHelper.accessor("phone", {
-        header: "PHONE",
-        cell: (info) => (
-          <div className="max-w-[100px] truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
-        ),
-        footer: (info) => info.column.id,
-      }),
+      // columnHelper.accessor("email", {
+      //   header: "EMAIL",
+      //   cell: (info) => (
+      //     <div className="max-w-[100px] truncate" title={info.getValue()}>
+      //       {info.getValue()}
+      //     </div>
+      //   ),
+      //   footer: (info) => info.column.id,
+      // }),
+      // columnHelper.accessor("phone", {
+      //   header: "PHONE",
+      //   cell: (info) => (
+      //     <div className="max-w-[100px] truncate" title={info.getValue()}>
+      //       {info.getValue()}
+      //     </div>
+      //   ),
+      //   footer: (info) => info.column.id,
+      // }),
       columnHelper.accessor("location", {
         header: "LOCATION",
         cell: (info) => (
@@ -106,25 +149,53 @@ export function CandidateReportListPage() {
       }),
       columnHelper.accessor("profile_url", {
         header: "PROFILE URL",
-        cell: (info) => <OpenUrlButton url={info.getValue()} />,
+        enableResizing: false,
+        size: 90,
         footer: (info) => info.column.id,
-      }),
-      columnHelper.accessor("platform", {
-        header: "PLATFORM",
         cell: (info) => (
-          <div className="max-w-[100px] truncate" title={info.getValue()}>
-            {info.getValue()}
-          </div>
+          <a
+            className="flex w-full max-w-[200px] items-center justify-center gap-2 truncate"
+            title={info.getValue()}
+            href={info.row.original.profile_url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {info?.getValue()?.includes("linkedin") ? (
+              <svg
+                className="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="xMidYMid"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M218.123 218.127h-37.931v-59.403c0-14.165-.253-32.4-19.728-32.4-19.756 0-22.779 15.434-22.779 31.369v60.43h-37.93V95.967h36.413v16.694h.51a39.907 39.907 0 0 1 35.928-19.733c38.445 0 45.533 25.288 45.533 58.186l-.016 67.013ZM56.955 79.27c-12.157.002-22.014-9.852-22.016-22.009-.002-12.157 9.851-22.014 22.008-22.016 12.157-.003 22.014 9.851 22.016 22.008A22.013 22.013 0 0 1 56.955 79.27m18.966 138.858H37.95V95.967h37.97v122.16ZM237.033.018H18.89C8.58-.098.125 8.161-.001 18.471v219.053c.122 10.315 8.576 18.582 18.89 18.474h218.144c10.336.128 18.823-8.139 18.966-18.474V18.454c-.147-10.33-8.635-18.588-18.966-18.453"
+                  fill="#0A66C2"
+                />
+              </svg>
+            ) : (
+              <ExternalLinkIcon />
+            )}
+          </a>
         ),
-        footer: (info) => info.column.id,
       }),
+      // columnHelper.accessor("platform", {
+      //   header: "PLATFORM",
+      //   cell: (info) => (
+      //     <div className="max-w-[100px] truncate" title={info.getValue()}>
+      //       {info.getValue()}
+      //     </div>
+      //   ),
+      //   footer: (info) => info.column.id,
+      // }),
       columnHelper.accessor("sector", {
         header: "SECTOR",
+        enableResizing: false,
+        size: 65,
         cell: (info) => {
           const sector = info.getValue() as string;
           return (
             <div
-              className="max-w-[100px] truncate px-2"
+              className="max-w-[100px] truncate px-2 text-center"
               title={sector ? sector : "Not Available"}
             >
               {sector ? sector : "Not Available"}
@@ -134,36 +205,40 @@ export function CandidateReportListPage() {
       }),
       columnHelper.accessor("responded", {
         header: "RESPONSE",
+        size: 80,
         cell: (info) => {
           const responded = info.getValue() as boolean;
           return (
             <div
-              className="max-w-[100px] truncate"
+              className="flex max-w-[100px] items-center justify-center truncate"
               title={responded ? "Responded" : "Not Responded"}
             >
-              {responded ? "Responded" : "Not Responded"}
+              {responded ? (
+                <CheckCircleIcon className="h-8 w-8 text-green-500" />
+              ) : (
+                <XCircleIcon className="h-8 w-8 text-red-500" />
+              )}
             </div>
           );
         },
       }),
       columnHelper.accessor("matching_jobs", {
         header: "MACTHING JOBS",
+        size: 105,
         cell: (info) => {
           const items = info
             .getValue()
-            .map((e, _) => ({ id: e.job_id, name: e.job_title, score: e.score }))
-          return (
-            items.length > 0 ? (
-              <MatchingJobsChipGroup
-                navigate={true}
-                items={items}
-                className="whitespace-wrap bg-[#55BCE7] text-white"
-              />
-            ) : (
-              <div className="" title="No Matches">
-                No Matches
-              </div>
-            )
+            .map((e) => ({ id: e.job_id, name: e.job_title, score: e.score }));
+          return items.length > 0 ? (
+            <MatchingJobsChipGroup
+              navigate={true}
+              items={items}
+              className="whitespace-wrap bg-[#55BCE7] text-white"
+            />
+          ) : (
+            <div className="" title="No Matches">
+              No Matches
+            </div>
           );
         },
       }),
@@ -187,7 +262,11 @@ export function CandidateReportListPage() {
         profile_url: e.profile_url,
         sector: e.sector,
         responded: e.responded,
-        matching_jobs: e.matching_jobs.map((e) => ({ job_id: e.job_id, job_title: e.job_title, score: e.score })),
+        matching_jobs: e.matching_jobs.map((e) => ({
+          job_id: e.job_id,
+          job_title: e.job_title,
+          score: e.score,
+        })),
         location: { id: e.location.id, name: e.location.name },
         created_at: e.created_at,
       })) || [],
@@ -223,7 +302,7 @@ export function CandidateReportListPage() {
           },
         });
 
-        let filename = "Candidate_Report.xlsx";
+        const filename = "Candidate_Report.xlsx";
         const blob = new Blob([response.data], {
           type: "application/ms-excel",
         });
@@ -242,7 +321,7 @@ export function CandidateReportListPage() {
   });
 
   return (
-    <main>
+    <TooltipProvider>
       <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
@@ -272,9 +351,11 @@ export function CandidateReportListPage() {
               }}
             >
               <Table
+                tableClassName="md:w-full"
                 thClassName="md:w-1/12 md:pl-5"
-                tdClassName="md:pl-5 md:text-sm"
+                tdClassName="md:pl-5"
                 table={table}
+                applyWidth
                 loader={
                   <TableLoader
                     colSpan={columns.length}
@@ -291,7 +372,7 @@ export function CandidateReportListPage() {
           </div>
         </div>
       </div>
-    </main>
+    </TooltipProvider>
   );
 }
 
