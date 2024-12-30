@@ -365,7 +365,7 @@ export default function OnboardingListing() {
     ?.status;
   return (
     <main>
-      <div className="mx-auto max-w-screen-2xl py-8">
+      <div className="mx-auto w-full py-8">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-bold text-black dark:text-white">
             Candidate Summary

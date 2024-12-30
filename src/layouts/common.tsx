@@ -1,6 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
 import ArrowLeftIcon from "@heroicons/react/24/outline/ArrowLeftIcon";
-import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
 import ArrowLeftOnRectangleIcon from "@heroicons/react/24/solid/ArrowLeftOnRectangleIcon";
 import ChevronDownIcon from "@heroicons/react/24/solid/ChevronDownIcon";
 // import Cog6ToothIcon from "@heroicons/react/24/solid/Cog6ToothIcon";
@@ -9,7 +8,9 @@ import { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { axiosApi } from "@/api/api";
+import { useSidebar } from "@/components/ui/sidebar";
 import { ROUTES } from "@/routes/routes";
+import { Bars3Icon } from "@heroicons/react/20/solid";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -49,11 +50,7 @@ dayjs.extend(relativeTime);
 //     link: "#",
 //   },
 // ];
-export const Header = ({
-  setSidebarOpen,
-}: {
-  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+export const Header = () => {
   const { user, logout, isRecruiter } = useLogin();
   const notificationListQuery = useQuery({
     queryKey: ["notificationList"],
@@ -82,16 +79,19 @@ export const Header = ({
     (_, i) => i <= 5,
   );
   const unreadCount = notificationListQuery.data?.unread_count || 0;
+  const { toggleSidebar } = useSidebar();
+
   return (
     <header className="dark:bg-boxdark sticky top-0 z-[100] flex w-full bg-white drop-shadow-1 dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
         <div className="flex items-center gap-2 sm:gap-4">
+          {/* {trigger} */}
           <button
             aria-controls="sidebar"
-            onClick={() => setSidebarOpen((b) => !b)}
+            onClick={() => toggleSidebar()}
             className="dark:bg-boxdark dark:border-strokedark z-99999 mt-1.5 block rounded-none bg-white p-1.5"
           >
-            <Bars3Icon className="relative block h-5.5 w-5.5 scale-x-[2.5] scale-y-[3.5] cursor-pointer stroke-1 text-[#55BCE7]" />
+            <Bars3Icon className="relative block h-8 w-8 cursor-pointer stroke-1 text-[#55BCE7]" />
           </button>
           <div className="block flex-shrink-0">
             {/* <div className="text-3xl text-black">AI-RECRUIT</div> */}

@@ -4,11 +4,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronRight, EyeIcon, PencilIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, DownloadIcon, EyeIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 import { axiosApi } from "@/api/api";
+import { ShowAllSkill, useShowAllSkill } from "@/components/AllSkill";
 import { LineClamp } from "@/components/LineClamp";
 import { PopupDialog } from "@/components/PopupDialog";
 import { ReasonRenderer } from "@/components/ReasonRenderer";
@@ -17,6 +18,7 @@ import {
   DebouncedInput,
   DebouncedSearchInput,
 } from "@/components/common/Input";
+import { downloadCandidatePDF } from "@/lib/downloadCandidatePDF";
 import { ROUTES } from "@/routes/routes";
 import { cn, emptyArray, replaceWith } from "@/utils";
 import { Switch } from "@headlessui/react";
@@ -28,9 +30,11 @@ const jobColumnHelper = createColumnHelper<ScoringJobItem>();
 const candidateColumnHelper = createColumnHelper<ScoringCandidateItem>();
 
 export function ListScoringPage() {
+  const showAllSkillProps = useShowAllSkill(null);
   const [isEmployerNotified, setIsEmployerNotified] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const [searchCandidateName, setSearchCandidateName] = useState("");
+  const [searchCandidateId, setSearchCandidateId] = useState("");
   const [searchCandidateEmail, setSearchCandidateEmail] = useState("");
   const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(
     null,
@@ -70,6 +74,7 @@ export function ListScoringPage() {
       selectedJobId,
       isEmployerNotified,
       searchCandidateName,
+      searchCandidateId,
       searchCandidateEmail,
       department,
       location,
@@ -86,6 +91,7 @@ export function ListScoringPage() {
           is_employer_notified: isEmployerNotified ? true : undefined,
           name: searchCandidateName,
           email: searchCandidateEmail,
+          candidate_id: searchCandidateId,
         },
       }).then((e) => e.data);
     },
@@ -101,8 +107,8 @@ export function ListScoringPage() {
     () => [
       jobColumnHelper.display({
         id: "SLNo",
-        header: "No",
-        cell: (info) => info.row.index + 1,
+        header: "JOB#",
+        cell: (info) => "JOB" + info.row.original.job_id,
       }),
       jobColumnHelper.accessor("job_title", {
         header: () => <div className="uppercase">Position</div>,
@@ -119,22 +125,22 @@ export function ListScoringPage() {
         cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
         footer: (info) => info.column.id,
       }),
-      jobColumnHelper.accessor("department", {
-        header: "SKILLS",
-        cell: (info) => (
-          <div>
-            <ChipGroup items={info.getValue() || []} />
-          </div>
-        ),
-        footer: (info) => info.column.id,
-      }),
+      // jobColumnHelper.accessor("department", {
+      //   header: "SKILLS",
+      //   cell: (info) => (
+      //     <div>
+      //       <ChipGroup items={info.getValue() || []} />
+      //     </div>
+      //   ),
+      //   footer: (info) => info.column.id,
+      // }),
 
       jobColumnHelper.display({
         header: "ACTION",
         id: "action",
         cell: (info) => {
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setSelectedJobId(info.row.original.job_id)}
                 className="flex items-center rounded-none bg-primary p-3 text-sm text-white hover:bg-opacity-80"
@@ -142,6 +148,16 @@ export function ListScoringPage() {
                 {/* <span>View matching candidates</span> */}
                 <ChevronRight className="h-5 w-5 " />
               </button>
+
+              <ShowAllSkill.Button
+                dialogProps={{
+                  selectedSkills: showAllSkillProps.selectedSkills,
+                  setSelectedSkills: () =>
+                    showAllSkillProps.setSelectedSkills(
+                      info.row.original.department,
+                    ),
+                }}
+              />
             </div>
           );
         },
@@ -153,8 +169,21 @@ export function ListScoringPage() {
     () => [
       candidateColumnHelper.display({
         id: "SLNo",
-        header: "No",
-        cell: (info) => info.row.index + 1,
+        header: () => (
+          <div>
+            <div className="uppercase">Candidate ID</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Candidate Id"
+              value={searchCandidateId}
+              onChange={(val) => {
+                setSearchCandidateId("" + val);
+              }}
+            />
+          </div>
+        ),
+        cell: (info) => info.row.original.candidate_id,
       }),
       candidateColumnHelper.accessor("candidate_name", {
         header: () => (
@@ -236,7 +265,7 @@ export function ListScoringPage() {
         id: "action",
         cell: (info) => {
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() =>
                   setSelectedCandidateId(info.row.original.candidate_id)
@@ -245,12 +274,24 @@ export function ListScoringPage() {
               >
                 <EyeIcon className="h-5 w-5 " />
               </button>
+              <button
+                title="Download Resume"
+                onClick={() => {
+                  downloadCandidatePDF(
+                    info.row.original.candidate_id,
+                    info.row.original.description,
+                  );
+                }}
+                className="rounded-none bg-purple-600 p-3 text-white hover:bg-opacity-70"
+              >
+                <DownloadIcon className="h-4 w-4 " />
+              </button>
             </div>
           );
         },
       }),
     ],
-    [searchCandidateEmail, searchCandidateName],
+    [],
   );
 
   const listJobQueryData = useMemo(
@@ -285,6 +326,7 @@ export function ListScoringPage() {
         reasons: e.reasons,
         summary: e.symmary,
         is_employer_notified: e.is_employer_notified,
+        description: e.candidate.description,
       })) || emptyArray,
     [candidateListQueryData],
   );
@@ -311,11 +353,20 @@ export function ListScoringPage() {
     (e) => e.candidate.id == selectedCandidateId,
   );
   return (
-    <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+    <div className="mx-auto w-full p-4 md:p-6 2xl:p-10">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        <div className="flex items-center gap-1">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
-            {selectedJobId ? "Candidate score list" : "Select a job"}
+            {selectedJobId ? (
+              <div className="flex items-center gap-1">
+                <button onClick={() => setSelectedJobId(null)}>
+                  <ChevronLeft className="inline-block h-8 w-8 text-blue-700" />
+                </button>
+                <span>Candidate score list</span>
+              </div>
+            ) : (
+              "Select a job"
+            )}
           </h2>
         </div>
         {selectedJobId ? null : (
@@ -393,7 +444,7 @@ export function ListScoringPage() {
             </div>
             {/* <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"> */}
             {/* </div> */}
-            <div className="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
+            {/* <div className="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
               <button
                 onClick={() => {
                   setSelectedJobId(null);
@@ -403,7 +454,7 @@ export function ListScoringPage() {
                 <PencilIcon className="h-4 w-4" />
                 <span>Change Job</span>
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       ) : null}
@@ -607,6 +658,7 @@ export function ListScoringPage() {
           </div>
         </div>
       </PopupDialog>
+      <ShowAllSkill.Dialog dialogProps={showAllSkillProps} />
     </div>
   );
 }
@@ -628,4 +680,5 @@ interface ScoringCandidateItem {
   overall_score?: string | null;
   reasons?: string | string[] | null;
   is_employer_notified: boolean;
+  description: string;
 }

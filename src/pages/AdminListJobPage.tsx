@@ -14,8 +14,10 @@ import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { z } from "zod";
 
+import { ShowAllSkill, useShowAllSkill } from "@/components/AllSkill";
 import { Combobox } from "@/components/Combobox";
 import { LocationSelector } from "@/components/LocationSelector";
+import { SectorSelector } from "@/components/SectorSelector";
 import { useLogin } from "@/hooks/useLogin";
 import { useNavigate } from "react-router-dom";
 import { axiosApi } from "../api/api";
@@ -39,7 +41,6 @@ import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationS
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
-import { SectorSelector } from "@/components/SectorSelector";
 
 const defaultArr: [] = [];
 
@@ -47,6 +48,7 @@ const columnHelper = createColumnHelper<Person>();
 
 export function AdminListJobPage() {
   const [showAddJobPopup, _setShowAddJobPopup] = useState(false);
+  const showAllSkillProps = useShowAllSkill(null);
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
@@ -206,12 +208,12 @@ export function AdminListJobPage() {
         ),
         footer: (info) => info.column.id,
       }),
-      columnHelper.accessor("departments", {
-        header: "SKILLS",
-        cell: (info) => {
-          return <ChipGroup items={info.getValue()} />;
-        },
-      }),
+      // columnHelper.accessor("departments", {
+      //   header: "SKILLS",
+      //   cell: (info) => {
+      //     return <ChipGroup items={info.getValue()} />;
+      //   },
+      // }),
       columnHelper.accessor("location", {
         header: "PROVINCIE",
         cell: (info) => {
@@ -240,7 +242,7 @@ export function AdminListJobPage() {
         id: "action",
         cell: (info) => {
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 className={cn(
                   "rounded-none bg-orange-500 p-3 text-white hover:bg-opacity-70 ",
@@ -258,6 +260,15 @@ export function AdminListJobPage() {
               >
                 <EyeIcon className="h-5 w-5 " />
               </button>
+              <ShowAllSkill.Button
+                dialogProps={{
+                  selectedSkills: showAllSkillProps.selectedSkills,
+                  setSelectedSkills: () =>
+                    showAllSkillProps.setSelectedSkills(
+                      info.row.original.departments,
+                    ),
+                }}
+              />
               {info.row.original.platform === "SYSTEM" ? (
                 <button
                   onClick={() => setShowJobDeleteId(info.row.original.id)}
@@ -315,7 +326,7 @@ export function AdminListJobPage() {
 
   return (
     <main>
-      <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mx-auto w-full p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold uppercase text-black dark:text-white">
             Jobs
@@ -513,6 +524,7 @@ export function AdminListJobPage() {
         selectedJobId={selectedJobId}
         closeDialog={() => navigate(-1)}
       />
+      <ShowAllSkill.Dialog dialogProps={showAllSkillProps} />
     </main>
   );
 }

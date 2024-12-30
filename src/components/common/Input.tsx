@@ -13,11 +13,10 @@ export function Input<
   const { icon, label, containerClassName, error, register, ...rest } = props;
   return (
     <div className={containerClassName}>
-      <label className="mb-2.5 block font-medium text-black dark:text-white mx-4">
+      <label className="mx-4 mb-2.5 block font-medium text-black dark:text-white">
         {label}
       </label>
       <div className="relative">
-        
         <input
           {...rest}
           {...(register && rest.name ? register(rest.name) : {})}
@@ -193,7 +192,9 @@ export const DebouncedSearchInput = ({
   className?: string;
 }) => {
   return (
-    <div className={` flex items-center justify-center sm:justify-start md:justify-start gap-2 rounded-none border border-slate-200 px-2 py-1 shadow-sm `}>
+    <div
+      className={` flex items-center justify-center gap-2 rounded-none border border-slate-200 px-2 py-2 shadow-sm sm:justify-start md:justify-start `}
+    >
       <SearchIcon size={20} />
       <DebouncedInput
         className={` field-sizing w-52 text-base outline-none ${className} `}

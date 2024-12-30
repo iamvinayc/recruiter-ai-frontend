@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Download, Mail, Pencil, TrashIcon } from "lucide-react";
+import { Download, DownloadIcon, Mail, Pencil, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -14,19 +14,23 @@ import { Document, Page } from "react-pdf";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { z } from "zod";
 
+import { ShowAllSkill, useShowAllSkill } from "@/components/AllSkill";
 import { Combobox } from "@/components/Combobox";
 import { LineClamp } from "@/components/LineClamp";
 import { LocationSelector } from "@/components/LocationSelector";
+import { SectorSelector } from "@/components/SectorSelector";
 import { BlockButton } from "@/components/common/BlockButton";
 import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES, SortBy } from "@/routes/routes";
+
+import { downloadCandidatePDF } from "@/lib/downloadCandidatePDF";
 import { ResumeFileUploadResponse, axiosApi } from "../api/api";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { PopupDialog } from "../components/PopupDialog";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
-import { Input, TextArea } from "../components/common/Input";
+import { DebouncedInput, Input, TextArea } from "../components/common/Input";
 import { cn, emptyArray, makeUrlWithParams, replaceWith } from "../utils";
 import { EditCandidateDialog } from "./AdminListCandidatePage.dialogs";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
@@ -34,7 +38,6 @@ import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationS
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
-import { SectorSelector } from "@/components/SectorSelector";
 
 const defaultArr: [] = [];
 
@@ -61,7 +64,8 @@ export function AdminListCandidatePage() {
     },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_CANDIDATE);
-  const [{ id: candidateId }] = useTypedSearchParams(
+  const showAllSkillProps = useShowAllSkill(null);
+  const [{ id: candidateId }, setSearchParams] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_CANDIDATE,
   );
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
@@ -267,8 +271,21 @@ export function AdminListCandidatePage() {
     () => [
       columnHelper.display({
         id: "SLNo",
-        header: "No",
-        cell: (info) => info.row.index + 1,
+        header: () => (
+          <div>
+            <div className="uppercase">Candidate ID</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Candidate Id"
+              value={candidateId}
+              onChange={(val) => {
+                setSearchParams({ id: "" + val });
+              }}
+            />
+          </div>
+        ),
+        cell: (info) => info.row.original.id,
       }),
       columnHelper.accessor("title", {
         header: "CANDIDATE",
@@ -285,12 +302,12 @@ export function AdminListCandidatePage() {
         footer: (info) => info.column.id,
       }),
 
-      columnHelper.accessor("departments", {
-        header: "SKILLS",
-        cell: (info) => {
-          return <ChipGroup items={info.getValue()} />;
-        },
-      }),
+      // columnHelper.accessor("departments", {
+      //   header: "SKILLS",
+      //   cell: (info) => {
+      //     return <ChipGroup items={info.getValue()} />;
+      //   },
+      // }),
       columnHelper.accessor("location", {
         header: "PROVINCIE",
         cell: (info) => {
@@ -329,6 +346,18 @@ export function AdminListCandidatePage() {
               >
                 <EyeIcon className="h-4 w-4 " />
               </button>
+              <button
+                title="Download Resume"
+                onClick={() => {
+                  downloadCandidatePDF(
+                    info.row.original.id,
+                    info.row.original.description,
+                  );
+                }}
+                className="rounded-none bg-purple-600 p-3 text-white hover:bg-opacity-70"
+              >
+                <DownloadIcon className="h-4 w-4 " />
+              </button>
               {info.row.original.platform === "SYSTEM" ? (
                 <button
                   onClick={() => setShowUserDeleteId(info.row.original.id)}
@@ -360,6 +389,17 @@ export function AdminListCandidatePage() {
               >
                 <Mail className="h-4 w-4 " />
               </button>
+
+              <ShowAllSkill.Button
+                className="p-2"
+                dialogProps={{
+                  selectedSkills: showAllSkillProps.selectedSkills,
+                  setSelectedSkills: () =>
+                    showAllSkillProps.setSelectedSkills(
+                      info.row.original.departments,
+                    ),
+                }}
+              />
               <BlockButton
                 isLoading={
                   blockCandidateMutation.variables?.id ===
@@ -425,7 +465,7 @@ export function AdminListCandidatePage() {
   };
   return (
     <main>
-      <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mx-auto w-full p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold uppercase text-black dark:text-white">
             Candidates
@@ -669,6 +709,7 @@ export function AdminListCandidatePage() {
         }}
         selectedUser={editingUser}
       />
+      <ShowAllSkill.Dialog dialogProps={showAllSkillProps} />
     </main>
   );
 }
