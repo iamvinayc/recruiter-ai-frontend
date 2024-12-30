@@ -1,14 +1,28 @@
+import {
+  AdjustmentsHorizontalIcon,
+  AdjustmentsVerticalIcon,
+  BuildingOfficeIcon,
+  ExclamationTriangleIcon,
+  NoSymbolIcon,
+  PhoneIcon,
+} from "@heroicons/react/24/outline";
 import BriefcaseIcon from "@heroicons/react/24/outline/BriefcaseIcon";
-import { NoSymbolIcon, ExclamationTriangleIcon, PhoneIcon, BuildingOfficeIcon, AdjustmentsHorizontalIcon, AdjustmentsVerticalIcon } from "@heroicons/react/24/outline";
-import { UserRoundCheck, BadgeCheck, UserRoundX, BadgeX, MailCheck, MailPlus } from 'lucide-react';
+import {
+  BadgeCheck,
+  BadgeX,
+  MailCheck,
+  MailPlus,
+  UserRoundCheck,
+  UserRoundX,
+} from "lucide-react";
 
 import UserCircleIcon from "@heroicons/react/24/outline/UserCircleIcon";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 import { EventCalendar, EventItem } from "@/components/EventCalendar";
-import OnboardingListing from "@/components/OnboardingListing";
 import { EventTodo } from "@/components/EventTodo";
+import OnboardingListing from "@/components/OnboardingListing";
 import { useLogin } from "@/hooks/useLogin";
 import { ROUTES } from "@/routes/routes";
 import dayjs from "dayjs";
@@ -60,7 +74,7 @@ export function AdminDashboardPage() {
 
   return (
     <main>
-      <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mx-auto w-full p-4 md:p-6 2xl:p-10">
         <div className="mb-5 ">
           <h2 className="mb-1.5 text-title-md2 font-bold text-black dark:text-white">
             Highlights
@@ -219,7 +233,9 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<ExclamationTriangleIcon className="h-8 w-8 text-yellow-600" />}
+                icon={
+                  <ExclamationTriangleIcon className="h-8 w-8 text-yellow-600" />
+                }
                 title="Total Non-Responsive Jobs"
                 value={
                   String(
@@ -252,8 +268,7 @@ export function AdminDashboardPage() {
                 title="Total Responded Candidates"
                 value={
                   String(
-                    dashboardOverviewQuery.data
-                      ?.total_responded_candidates,
+                    dashboardOverviewQuery.data?.total_responded_candidates,
                   ) || ""
                 }
                 isLoading={dashboardOverviewQuery.isLoading}
@@ -280,9 +295,8 @@ export function AdminDashboardPage() {
                 icon={<BadgeCheck className="h-8 w-8 text-sky-500" />}
                 title="Total Responded Jobs"
                 value={
-                  String(
-                    dashboardOverviewQuery.data?.total_responded_jobs,
-                  ) || ""
+                  String(dashboardOverviewQuery.data?.total_responded_jobs) ||
+                  ""
                 }
                 isLoading={dashboardOverviewQuery.isLoading}
               />
@@ -309,8 +323,7 @@ export function AdminDashboardPage() {
                 title="Total Non Matched Candidates"
                 value={
                   String(
-                    dashboardOverviewQuery.data
-                      ?.total_non_matched_candidates,
+                    dashboardOverviewQuery.data?.total_non_matched_candidates,
                   ) || ""
                 }
                 isLoading={dashboardOverviewQuery.isLoading}
@@ -337,9 +350,8 @@ export function AdminDashboardPage() {
                 icon={<BadgeX className="h-8 w-8 text-amber-500" />}
                 title="Total Non Matched Jobs"
                 value={
-                  String(
-                    dashboardOverviewQuery.data?.total_non_matched_jobs,
-                  ) || ""
+                  String(dashboardOverviewQuery.data?.total_non_matched_jobs) ||
+                  ""
                 }
                 isLoading={dashboardOverviewQuery.isLoading}
               />
@@ -478,7 +490,9 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<AdjustmentsVerticalIcon className="h-8 w-8 text-fuchsia-700" />}
+                icon={
+                  <AdjustmentsVerticalIcon className="h-8 w-8 text-fuchsia-700" />
+                }
                 title="Total Candidates Scraped Today"
                 value={
                   String(
@@ -506,7 +520,9 @@ export function AdminDashboardPage() {
               }
             >
               <Card
-                icon={<AdjustmentsHorizontalIcon className="h-8 w-8 text-purple-700" />}
+                icon={
+                  <AdjustmentsHorizontalIcon className="h-8 w-8 text-purple-700" />
+                }
                 title="Total Jobs Scraped Today"
                 value={
                   String(

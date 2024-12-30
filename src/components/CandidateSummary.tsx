@@ -1,29 +1,27 @@
+import { axiosApi, formatOnboardingStatus } from "@/api/api";
+import { DebouncedInput } from "@/components/common/Input";
+import { PopupDialog } from "@/components/PopupDialog";
+import { useLogin } from "@/hooks/useLogin";
+import { InfinityLoaderComponent } from "@/pages/common/InfinityLoaderComponent";
+import { Table } from "@/pages/common/Table";
+import { TableLoader } from "@/pages/common/TableLoader";
+import { ROUTES } from "@/routes/routes";
+import { replaceWith } from "@/utils";
 import {
   CheckCircleIcon,
   EyeIcon,
-  XMarkIcon,
   XCircleIcon,
+  XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
-import { useMemo, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { axiosApi, formatOnboardingStatus } from "@/api/api";
-import { Link } from "react-router-dom";
 import {
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { InfinityLoaderComponent } from "@/pages/common/InfinityLoaderComponent";
-import { Table } from "@/pages/common/Table";
-import { TableLoader } from "@/pages/common/TableLoader";
-import {
-  DebouncedInput,
-} from "@/components/common/Input";
-import { PopupDialog } from "@/components/PopupDialog";
-import { useLogin } from "@/hooks/useLogin";
-import { ROUTES } from "@/routes/routes";
-import { replaceWith } from "@/utils";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
 const columnHelper = createColumnHelper<CandidateSummaryResponseData>();
 
@@ -47,7 +45,7 @@ export function CandidateSummary() {
         method: "GET",
         params: {
           candidate_name: searchCandidateName,
-        }
+        },
       }).then((e) => e.data),
     getNextPageParam: (lastPage) => lastPage.next,
     initialPageParam: "",
@@ -93,19 +91,13 @@ export function CandidateSummary() {
                   )
             }
           >
-            <div  title={info.getValue()}>
-              {info.getValue()}
-            </div>
+            <div title={info.getValue()}>{info.getValue()}</div>
           </Link>
         ),
       }),
       columnHelper.accessor("email", {
         header: () => <div>Candidate Email</div>,
-        cell: (info) => (
-          <div  title={info.getValue()}>
-            {info.getValue()}
-          </div>
-        ),
+        cell: (info) => <div title={info.getValue()}>{info.getValue()}</div>,
       }),
       columnHelper.display({
         id: "action",
@@ -144,7 +136,7 @@ export function CandidateSummary() {
 
   return (
     <main>
-      <div className="mx-auto max-w-screen-2xl py-8">
+      <div className="mx-auto w-full py-8">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-bold text-black dark:text-white">
             Candidate Summary

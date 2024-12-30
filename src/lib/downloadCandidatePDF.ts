@@ -23,5 +23,5 @@ export function downloadCandidatePDF(id: number, description: string) {
       },
     },
   });
-  pdf.download();
+  pdf.download(`CAND${id}.pdf`);
 }

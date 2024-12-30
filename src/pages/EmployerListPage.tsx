@@ -1,6 +1,9 @@
 import { axiosApi } from "@/api/api";
 import { BlockButton } from "@/components/common/BlockButton";
-import { DebouncedSearchInput } from "@/components/common/Input";
+import {
+  DebouncedInput,
+  DebouncedSearchInput,
+} from "@/components/common/Input";
 import { useLogin } from "@/hooks/useLogin";
 import { cn, replaceWith } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
@@ -22,6 +25,7 @@ const columnHelper = createColumnHelper<EmployerListItem>();
 
 export default function EmployerListPage() {
   const [search, setSearch] = useState("");
+  const [emailSearch, setEmailSearch] = useState("");
 
   const [selectedEmployerId, setSelectedEmployerId] = useState<string | null>(
     null,
@@ -68,6 +72,7 @@ export default function EmployerListPage() {
       search,
       employerId,
       final_followedup_employers,
+      emailSearch,
     ],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
@@ -79,6 +84,7 @@ export default function EmployerListPage() {
           name: search,
           id: employerId,
           final_followedup_employers: final_followedup_employers || undefined,
+          email: emailSearch,
         },
       }).then((e) => e.data);
     },
@@ -124,7 +130,19 @@ export default function EmployerListPage() {
         enableColumnFilter: false,
       }),
       columnHelper.accessor("email", {
-        header: "EMAIL",
+        header: () => (
+          <div>
+            <div>EMAIL</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              placeholder="Search by Email"
+              value={emailSearch}
+              onChange={(val) => {
+                setEmailSearch("" + val);
+              }}
+            />
+          </div>
+        ),
         cell: (info) => (
           <div className="truncate" title={info.getValue()}>
             {info.getValue()}
@@ -223,7 +241,7 @@ export default function EmployerListPage() {
   });
   return (
     <main>
-      <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mx-auto w-full p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             Company List
