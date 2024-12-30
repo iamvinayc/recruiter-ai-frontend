@@ -76,7 +76,7 @@ export function AdminListLocationPage() {
 
   return (
     <main>
-      <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mx-auto w-full p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Location
@@ -112,11 +112,7 @@ export function AdminListLocationPage() {
               : "No location found"}
           </div>
         ) : null}
-        {locationListQuery.isPending ? (
-          <div className="flex h-[30vh] items-center justify-center text-2xl font-bold">
-            Loading....
-          </div>
-        ) : null}
+
         <div className="flex flex-wrap items-center gap-2 text-xs sm:gap-2">
           {locationListQuery.data?.map(({ id, name }) => (
             <span

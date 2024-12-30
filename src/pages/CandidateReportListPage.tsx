@@ -85,6 +85,7 @@ export function CandidateReportListPage() {
       // }),
       columnHelper.accessor("created_at", {
         header: "DATE",
+        size: 75,
         cell: (info) => format(info.getValue(), "yyyy-MM-dd"),
         footer: (info) => info.column.id,
       }),
@@ -140,6 +141,7 @@ export function CandidateReportListPage() {
       // }),
       columnHelper.accessor("location", {
         header: "LOCATION",
+        size: 100,
         cell: (info) => (
           <div className="max-w-[100px] truncate" title={info.getValue().name}>
             {info.getValue().name}
@@ -148,9 +150,9 @@ export function CandidateReportListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("profile_url", {
-        header: "PROFILE URL",
+        header: "PROFILE",
         enableResizing: false,
-        size: 90,
+        size: 60,
         footer: (info) => info.column.id,
         cell: (info) => (
           <a
@@ -190,7 +192,7 @@ export function CandidateReportListPage() {
       columnHelper.accessor("sector", {
         header: "SECTOR",
         enableResizing: false,
-        size: 65,
+        size: 60,
         cell: (info) => {
           const sector = info.getValue() as string;
           return (
@@ -205,7 +207,7 @@ export function CandidateReportListPage() {
       }),
       columnHelper.accessor("responded", {
         header: "RESPONSE",
-        size: 80,
+        size: 70,
         cell: (info) => {
           const responded = info.getValue() as boolean;
           return (
@@ -223,7 +225,7 @@ export function CandidateReportListPage() {
         },
       }),
       columnHelper.accessor("matching_jobs", {
-        header: "MACTHING JOBS",
+        header: "MATCHING JOBS",
         size: 105,
         cell: (info) => {
           const items = info
@@ -322,7 +324,7 @@ export function CandidateReportListPage() {
 
   return (
     <TooltipProvider>
-      <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <div className="mx-auto w-full p-4 md:p-6 2xl:p-10">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             Candidate Report List

@@ -353,7 +353,7 @@ export function ListScoringPage() {
     (e) => e.candidate.id == selectedCandidateId,
   );
   return (
-    <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+    <div className="mx-auto w-full p-4 md:p-6 2xl:p-10">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-1">
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
