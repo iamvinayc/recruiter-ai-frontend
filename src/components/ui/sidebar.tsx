@@ -150,7 +150,7 @@ const SidebarProvider = React.forwardRef<
               "group/sidebar-wrapper min-h-svh has-[[data-variant=inset]]:bg-sidebar flex w-full",
               className,
             )}
-            ref={ref}
+            ref={ref as React.Ref<HTMLDivElement>}
             {...props}
           >
             {children}
@@ -190,7 +190,7 @@ const Sidebar = React.forwardRef<
             "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
             className,
           )}
-          ref={ref}
+          ref={ref as React.Ref<HTMLDivElement>}
           {...props}
         >
           {children}
@@ -220,7 +220,7 @@ const Sidebar = React.forwardRef<
 
     return (
       <div
-        ref={ref}
+        ref={ref as React.Ref<HTMLDivElement>}
         className="group peer hidden text-sidebar-foreground md:block"
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
@@ -273,7 +273,7 @@ const SidebarTrigger = React.forwardRef<
 
   return (
     <Button
-      ref={ref}
+      ref={ref as React.Ref<HTMLButtonElement>}
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
@@ -438,12 +438,11 @@ const SidebarGroupLabel = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & { asChild?: boolean }
 >(({ className, asChild = false, ...props }, ref) => {
-  const Comp = asChild ? Slot : "div";
+  const Comp = (asChild ? Slot : "div") as unknown as React.ElementType;
 
   return (
     <Comp
-      // @ts-expect-error
-      ref={ref}
+      ref={ref as React.Ref<HTMLElement>}
       data-sidebar="group-label"
       className={cn(
         "[&>svg]:size-4 flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opa] duration-200 ease-linear focus-visible:ring-2 [&>svg]:shrink-0",
@@ -460,11 +459,10 @@ const SidebarGroupAction = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<"button"> & { asChild?: boolean }
 >(({ className, asChild = false, ...props }, ref) => {
-  const Comp = asChild ? Slot : "button";
+  const Comp = (asChild ? Slot : "button") as unknown as React.ElementType;
 
   return (
     <Comp
-      // @ts-expect-error
       ref={ref}
       data-sidebar="group-action"
       className={cn(
@@ -561,13 +559,12 @@ const SidebarMenuButton = React.forwardRef<
     },
     ref,
   ) => {
-    const Comp = asChild ? Slot : "button";
+    const Comp = (asChild ? Slot : "button") as unknown as React.ElementType;
     const { isMobile, state } = useSidebar();
 
     const button = (
       <Comp
-        // @ts-expect-error
-        ref={ref}
+        ref={ref as React.Ref<HTMLButtonElement>}
         data-sidebar="menu-button"
         data-size={size}
         data-active={isActive}
@@ -608,11 +605,10 @@ const SidebarMenuAction = React.forwardRef<
     showOnHover?: boolean;
   }
 >(({ className, asChild = false, showOnHover = false, ...props }, ref) => {
-  const Comp = asChild ? Slot : "button";
+  const Comp = (asChild ? Slot : "button") as unknown as React.ElementType;
 
   return (
     <Comp
-      // @ts-expect-error
       ref={ref}
       data-sidebar="menu-action"
       className={cn(
@@ -723,11 +719,10 @@ const SidebarMenuSubButton = React.forwardRef<
     isActive?: boolean;
   }
 >(({ asChild = false, size = "md", isActive, className, ...props }, ref) => {
-  const Comp = asChild ? Slot : "a";
+  const Comp = (asChild ? Slot : "a") as unknown as React.ElementType;
 
   return (
     <Comp
-      // @ts-expect-error
       ref={ref}
       data-sidebar="menu-sub-button"
       data-size={size}
