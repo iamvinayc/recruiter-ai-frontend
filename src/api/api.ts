@@ -205,6 +205,8 @@ interface AllApiEndpoints {
         today_scrapped_jobs?: string;
         responded_jobs?: string;
         non_matched_jobs?: string;
+        employer_name?: string;
+        job_id?: string;
       };
       data?: undefined;
     };
@@ -641,6 +643,7 @@ interface AllApiEndpoints {
         page?: number;
         name?: string;
         final_followedup_employers?: string;
+        email?: string;
       };
       data?: undefined;
     };

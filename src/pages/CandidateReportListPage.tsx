@@ -1,5 +1,5 @@
 import { axiosApi } from "@/api/api";
-import { MatchingJobsChipGroup } from "@/components/MatchingJobsChipGroup";
+import { PopupDialog } from "@/components/PopupDialog";
 import {
   Tooltip,
   TooltipContent,
@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
@@ -36,6 +37,9 @@ const columnHelper = createColumnHelper<CandidateReportListItem>();
 
 export function CandidateReportListPage() {
   const { isRecruiter } = useLogin();
+  const [selectedMatchingJobs, setSelectedMatchingJobs] = useState<
+    (CandidateMatchingJobs & { candidate_id: string })[]
+  >([]);
 
   const [candidate, setCandidate] = useState("");
 
@@ -92,31 +96,30 @@ export function CandidateReportListPage() {
       columnHelper.accessor("name", {
         header: "CANDIDATE",
         cell: (info) => (
-          <div
-            className="flex max-w-[100px] flex-wrap  gap-x-4 gap-y-2 truncate"
-            title={info.getValue()}
-          >
-            {info.getValue()}
-            {info.row.original.email ? (
-              <Tooltip>
-                <TooltipTrigger className="h-5 w-5 ">
-                  <AtSignIcon className="h-full w-full " />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{info.row.original.email}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : null}
-            {info.row.original.phone ? (
-              <Tooltip>
-                <TooltipTrigger className="h-5 w-5 ">
-                  <PhoneIcon className="h-full w-full " />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{info.row.original.phone}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : null}
+          <div className="flex flex-col flex-wrap  gap-x-4 gap-y-2 truncate">
+            <div title={info.getValue()}>{info.getValue()}</div>
+            <div className="flex gap-x-4">
+              {info.row.original.email ? (
+                <Tooltip>
+                  <TooltipTrigger className="h-5 w-5 ">
+                    <AtSignIcon className="h-full w-full " />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{info.row.original.email}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : null}
+              {info.row.original.phone ? (
+                <Tooltip>
+                  <TooltipTrigger className="h-5 w-5 ">
+                    <PhoneIcon className="h-full w-full " />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{info.row.original.phone}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : null}
+            </div>
           </div>
         ),
         footer: (info) => info.column.id,
@@ -143,14 +146,14 @@ export function CandidateReportListPage() {
         header: "LOCATION",
         size: 100,
         cell: (info) => (
-          <div className="max-w-[100px] truncate" title={info.getValue().name}>
+          <div className=" truncate" title={info.getValue().name}>
             {info.getValue().name}
           </div>
         ),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("profile_url", {
-        header: "PROFILE",
+        header: () => <div className="w-full text-center">PROFILE</div>,
         enableResizing: false,
         size: 60,
         footer: (info) => info.column.id,
@@ -190,8 +193,8 @@ export function CandidateReportListPage() {
       //   footer: (info) => info.column.id,
       // }),
       columnHelper.accessor("sector", {
-        header: "SECTOR",
-        enableResizing: false,
+        header: () => <div className="w-full text-center">SECTOR</div>,
+        enableResizing: true,
         size: 60,
         cell: (info) => {
           const sector = info.getValue() as string;
@@ -206,7 +209,7 @@ export function CandidateReportListPage() {
         },
       }),
       columnHelper.accessor("responded", {
-        header: "RESPONSE",
+        header: () => <div className="w-full text-center">RESPONSE</div>,
         size: 70,
         cell: (info) => {
           const responded = info.getValue() as boolean;
@@ -225,21 +228,38 @@ export function CandidateReportListPage() {
         },
       }),
       columnHelper.accessor("matching_jobs", {
-        header: "MATCHING JOBS",
+        header: () => <div className="w-full text-center">MATCHING JOBS</div>,
         size: 105,
         cell: (info) => {
           const items = info
             .getValue()
             .map((e) => ({ id: e.job_id, name: e.job_title, score: e.score }));
-          return items.length > 0 ? (
-            <MatchingJobsChipGroup
-              navigate={true}
-              items={items}
-              className="whitespace-wrap bg-[#55BCE7] text-white"
-            />
-          ) : (
-            <div className="" title="No Matches">
-              No Matches
+          return (
+            <div className="flex w-full items-center justify-center">
+              {items.length > 0 ? (
+                <button
+                  onClick={() =>
+                    setSelectedMatchingJobs(
+                      info.getValue().map((e) => ({
+                        ...e,
+                        candidate_id: info.row.original.id.toString(),
+                      })),
+                    )
+                  }
+                  className="block bg-yellow-500 p-2 text-center text-white "
+                >
+                  View Matches
+                </button>
+              ) : (
+                // <MatchingJobsChipGroup
+                //   navigate={true}
+                //   items={items}
+                //   className="whitespace-wrap bg-[#55BCE7] text-white"
+                // />
+                <div className="" title="No Matches">
+                  No Matches
+                </div>
+              )}
             </div>
           );
         },
@@ -257,6 +277,7 @@ export function CandidateReportListPage() {
   const candidateReportList = useMemo(
     () =>
       candidateReportListQuery?.map<CandidateReportListItem>((e) => ({
+        id: e.id,
         email: e.email,
         name: e.name,
         phone: e.phone,
@@ -265,9 +286,11 @@ export function CandidateReportListPage() {
         sector: e.sector,
         responded: e.responded,
         matching_jobs: e.matching_jobs.map((e) => ({
-          job_id: e.job_id,
+          job_id: +e.job_id,
           job_title: e.job_title,
           score: e.score,
+          employer_id: e.employer_id,
+          employer_name: e.employer_name,
         })),
         location: { id: e.location.id, name: e.location.name },
         created_at: e.created_at,
@@ -373,12 +396,72 @@ export function CandidateReportListPage() {
             </InfinityLoaderComponent>
           </div>
         </div>
+        <PopupDialog
+          isOpen={selectedMatchingJobs.length != 0}
+          setIsOpen={() => setSelectedMatchingJobs([])}
+          title="Matching Jobs"
+          showXMarkIcon
+        >
+          <div className="relative mt-4 overflow-x-auto border sm:rounded-lg">
+            <table className="w-full text-left text-sm text-slate-500 rtl:text-right dark:text-slate-400">
+              <thead className="bg-slate-50 text-xs uppercase text-slate-700 dark:bg-slate-700 dark:text-slate-400">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    Designation
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Company
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Score
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    <span className="sr-only">Action</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedMatchingJobs.map((e) => (
+                  <tr
+                    key={e.job_id + e.employer_id}
+                    className="border-b bg-white hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-600"
+                  >
+                    <th
+                      scope="row"
+                      className="whitespace-nowrap px-6 py-4 font-medium text-slate-900 dark:text-white"
+                    >
+                      {e.job_title}
+                    </th>
+                    <td className="px-6 py-4">{e.employer_name}</td>
+                    <td className="px-6 py-4">{e.score}</td>
+                    <td className="px-6 py-4 text-right">
+                      <Link
+                        target="_blank"
+                        to={ROUTES.ADMIN.LIST_SCORING.buildPath(
+                          {},
+                          {
+                            jobId: e.job_id.toString(),
+                            candidateId: e.candidate_id,
+                          },
+                        )}
+                        className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                      >
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </PopupDialog>
       </div>
     </TooltipProvider>
   );
 }
 
 export interface CandidateReportListItem {
+  id: number;
   name: string;
   email: string;
   phone: string;
@@ -387,6 +470,14 @@ export interface CandidateReportListItem {
   responded: boolean;
   platform: string;
   sector: string | null;
-  matching_jobs: { job_id: number; job_title: string; score: number }[];
+  matching_jobs: CandidateMatchingJobs[];
   created_at: string;
+}
+
+interface CandidateMatchingJobs {
+  job_id: number;
+  job_title: string;
+  score: number;
+  employer_id: string;
+  employer_name: string;
 }

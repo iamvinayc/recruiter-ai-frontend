@@ -1,8 +1,8 @@
+import { useLogin } from "@/hooks/useLogin";
+import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ROUTES } from "@/routes/routes";
-import { useLogin } from "@/hooks/useLogin";
 
 export function MatchingJobsChipGroup({
   items,
@@ -43,13 +43,15 @@ export function MatchingJobsChipGroup({
             <button
               key={id}
               className={cn(
-                " inline-flex items-center  text-ellipsis  rounded-none  bg-purple-600 px-2 py-1 text-white hover:bg-opacity-90 p-3 font-bold",
+                " inline-flex items-center  text-ellipsis  rounded-none  bg-purple-600 p-3 px-2 py-1 font-bold text-white hover:bg-opacity-90",
                 className,
               )}
             >
               {name}
             </button>
-            <span className="bg-black block text-center p-2 text-white ">Score: {score}</span>
+            <span className="block bg-black p-2 text-center text-white ">
+              Score: {score}
+            </span>
           </Link>
         ))}
       {items.length > 2 && !showMore ? (

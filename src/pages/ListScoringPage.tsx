@@ -32,16 +32,46 @@ const candidateColumnHelper = createColumnHelper<ScoringCandidateItem>();
 export function ListScoringPage() {
   const showAllSkillProps = useShowAllSkill(null);
   const [isEmployerNotified, setIsEmployerNotified] = useState(false);
-  const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
+  // const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
   const [searchCandidateName, setSearchCandidateName] = useState("");
-  const [searchCandidateId, setSearchCandidateId] = useState("");
+  // const [searchCandidateId, setSearchCandidateId] = useState("");
   const [searchCandidateEmail, setSearchCandidateEmail] = useState("");
   const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(
     null,
   );
-  const [{ skill: department, location }] = useTypedSearchParams(
+  const [searchParams, setSearchParams] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_SCORING,
   );
+  const {
+    skill: department,
+    location,
+    jobId: selectedJobId,
+    candidateId: searchCandidateId,
+  } = searchParams;
+  const setSelectedJobId = (id: number | string | null) => {
+    const searchParams = {} as Record<string, string>;
+    for (const [key, val] of new URLSearchParams(
+      window.location.search,
+    ).entries()) {
+      searchParams[key] = val;
+    }
+
+    setSearchParams({
+      ...searchParams,
+      jobId: id?.toString() || undefined,
+      candidateId: "",
+    });
+  };
+  const setSearchCandidateId = (id: string) => {
+    const searchParams = {} as Record<string, string>;
+    for (const [key, val] of new URLSearchParams(
+      window.location.search,
+    ).entries()) {
+      searchParams[key] = val;
+    }
+    setSearchParams({ ...searchParams, candidateId: id });
+  };
+
   const [search, setSearch] = useState("");
   const [employer, setEmployer] = useState("");
   //#region list query
@@ -291,7 +321,7 @@ export function ListScoringPage() {
         },
       }),
     ],
-    [],
+    [selectedJobId],
   );
 
   const listJobQueryData = useMemo(
@@ -347,7 +377,9 @@ export function ListScoringPage() {
     getCoreRowModel: getCoreRowModel(),
     enableFilters: false,
   });
-  const selectedJob = listJobQueryData?.find((e) => e.id == selectedJobId);
+  const selectedJob = listJobQueryData?.find(
+    (e) => e.id.toString() == selectedJobId.toString(),
+  );
 
   const selectedUser = candidateListQueryData?.find(
     (e) => e.candidate.id == selectedCandidateId,
@@ -394,6 +426,7 @@ export function ListScoringPage() {
             {/* <h2 className="text-xl font-bold text-stone-700">Selected Job</h2> */}
             <div className="flex flex-wrap gap-x-12 gap-y-4">
               {[
+                { title: "JOB ID", value: `JOB${selectedJob.id}` },
                 { title: "Position", value: selectedJob.title },
                 { title: "Job Location", value: selectedJob.location.name },
               ].map(({ title, value }) => (
@@ -458,14 +491,13 @@ export function ListScoringPage() {
           </div>
         </div>
       ) : null}
-
       <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
-        {selectedJobId !== null ? null : (
+        {selectedJobId ? null : (
           <div
             className={cn(
               "dark:bg-boxdark dark:border-strokedark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default",
               listJobQuery.isLoading && "min-h-[20rem]",
-              selectedJobId !== null && "hidden",
+              // !!selectedJobId && "hidden",
             )}
           >
             <InfinityLoaderComponent
@@ -495,7 +527,7 @@ export function ListScoringPage() {
           className={cn(
             "dark:bg-boxdark dark:border-strokedark relative overflow-x-auto rounded-sm border border-stroke bg-white shadow-default",
             listJobQuery.isLoading && "min-h-[20rem]",
-            selectedJobId === null && "hidden",
+            !selectedJobId && "hidden",
           )}
         >
           <InfinityLoaderComponent

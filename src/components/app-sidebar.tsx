@@ -17,7 +17,7 @@ export function AppSidebar({
   items: NavMainItemProps[];
 }) {
   return (
-    <Sidebar collapsible="icon" className="z-99999" {...props}>
+    <Sidebar collapsible="icon" className="z-[101]" {...props}>
       <SidebarHeader className="mt-2">
         <img className="w-[80%]" src="/logo.svg" />
       </SidebarHeader>

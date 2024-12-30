@@ -26,7 +26,7 @@ import { LineClamp } from "../components/LineClamp";
 import { PopupDialog } from "../components/PopupDialog";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
-import { Input, TextArea } from "../components/common/Input";
+import { DebouncedInput, Input, TextArea } from "../components/common/Input";
 import { ROUTES, SortBy } from "../routes/routes";
 import {
   cn,
@@ -49,6 +49,8 @@ const columnHelper = createColumnHelper<Person>();
 export function AdminListJobPage() {
   const [showAddJobPopup, _setShowAddJobPopup] = useState(false);
   const showAllSkillProps = useShowAllSkill(null);
+  const [searchCompanyName, setSearchCompanyName] = useState("");
+  const [searchJobId, setSearchJobId] = useState("");
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
@@ -104,6 +106,8 @@ export function AdminListJobPage() {
       today_scrapped_jobs,
       responded_jobs,
       non_matched_jobs,
+      searchCompanyName,
+      searchJobId,
     ],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
@@ -132,6 +136,8 @@ export function AdminListJobPage() {
           today_scrapped_jobs: today_scrapped_jobs || undefined,
           responded_jobs: responded_jobs || undefined,
           non_matched_jobs: non_matched_jobs || undefined,
+          job_id: searchJobId || undefined,
+          employer_name: searchCompanyName || undefined,
         },
       }).then((e) => e.data);
     },
@@ -177,9 +183,21 @@ export function AdminListJobPage() {
   const columns = useMemo(
     () => [
       columnHelper.display({
-        id: "SLNo",
-        header: "No",
-        cell: (info) => info.row.index + 1,
+        id: "ID",
+        header: () => (
+          <div>
+            <div>JOB#</div>
+            <DebouncedInput
+              className="mt-2 w-20 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              placeholder="job id"
+              value={searchJobId}
+              onChange={(val) => {
+                setSearchJobId("" + val);
+              }}
+            />
+          </div>
+        ),
+        cell: (info) => `${info.row.original.id}`,
       }),
       columnHelper.accessor("title", {
         header: "POSITION",
@@ -200,7 +218,19 @@ export function AdminListJobPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("employer", {
-        header: "COMPANY",
+        header: () => (
+          <div>
+            <div>COMPANY</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              placeholder="company"
+              value={searchCompanyName}
+              onChange={(val) => {
+                setSearchCompanyName("" + val);
+              }}
+            />
+          </div>
+        ),
         cell: (info) => (
           <div className="max-w-[150px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -399,6 +429,7 @@ export function AdminListJobPage() {
               }}
             >
               <Table
+                applyWidth
                 table={table}
                 loader={
                   <TableLoader

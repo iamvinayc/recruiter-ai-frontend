@@ -95,30 +95,32 @@ export function EmployerReportListPage() {
         header: "EMPLOYER",
         cell: (info) => (
           <div
-            className="flex max-w-[200px] flex-wrap gap-x-4 gap-y-2 truncate"
+            className="flex max-w-[200px] flex-col flex-wrap gap-x-4 gap-y-2 truncate"
             title={info.getValue()}
           >
-            <span>{info.getValue()}</span>
-            {info.row.original.email ? (
-              <Tooltip>
-                <TooltipTrigger className="h-5 w-5 ">
-                  <AtSignIcon className="h-full w-full " />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{info.row.original.email}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : null}
-            {info.row.original.phone ? (
-              <Tooltip>
-                <TooltipTrigger className="h-5 w-5 ">
-                  <PhoneIcon className="h-full w-full " />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{info.row.original.phone}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : null}
+            <div>{info.getValue()}</div>
+            <div className="flex  gap-x-4 ">
+              {info.row.original.email ? (
+                <Tooltip>
+                  <TooltipTrigger className="h-5 w-5 ">
+                    <AtSignIcon className="h-full w-full " />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{info.row.original.email}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : null}
+              {info.row.original.phone ? (
+                <Tooltip>
+                  <TooltipTrigger className="h-5 w-5 ">
+                    <PhoneIcon className="h-full w-full " />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{info.row.original.phone}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : null}
+            </div>
           </div>
         ),
         footer: (info) => info.column.id,
