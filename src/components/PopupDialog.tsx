@@ -51,7 +51,7 @@ export function PopupDialog({
             >
               <Dialog.Panel
                 className={cn(
-                  "relative w-full max-w-2xl transform overflow-visible rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all",
+                  "relative w-full max-w-4xl transform overflow-visible rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all",
                   containerClassName,
                 )}
               >

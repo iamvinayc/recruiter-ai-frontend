@@ -7,8 +7,9 @@ import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { axiosApi } from "@/api/api";
 import { Combobox } from "@/components/Combobox";
 import { Input } from "@/components/common/Input";
-import { ROUTES } from "@/routes/routes";
+import { DatePickerWithRange } from "@/components/DateRangePicker";
 import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
+import { ROUTES } from "@/routes/routes";
 
 dayjs.extend(customParseFormat);
 
@@ -61,7 +62,7 @@ export function DepartmentLocationScrapeFromSearch({
     <div className="mb-2">
       <div className=" dark:border-strokedark rounded-sm border border-sky-300 bg-white p-4 shadow-default">
         <h2 className="text-xl font-bold uppercase text-stone-700">Filters</h2>
-        <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="mt-2 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           {/* <SkillSelector
             selectedItem={selectedDepartment}
             setSelectedItem={setSelectedDepartment}
@@ -71,45 +72,19 @@ export function DepartmentLocationScrapeFromSearch({
             setSelectedItems={setSelectedDepartment}
           />
           <Combobox
-            className="h-[43px]"
+            className="h-[40px]"
             label="Location"
             items={locationListQuery.data || []}
             selectedValue={selectedLocation}
             setSelectedValue={setSelectedLocation}
           />
 
-          <Input
-            label="Scraped From"
-            type="date"
-            value={
-              selectedScrapeForm
-                ? dayjs(selectedScrapeForm, "DD-MM-YYYY").format("YYYY-MM-DD")
-                : selectedScrapeForm
-            }
-            onChange={(e) => {
-              setSelectedScrapeForm(
-                dayjs(e.currentTarget.value).format("DD-MM-YYYY"),
-              );
-            }}
-          />
-          <Input
-            label="Scraped To"
-            type="date"
-            min={
-              selectedScrapeForm
-                ? dayjs(selectedScrapeForm, "DD-MM-YYYY").format("YYYY-MM-DD")
-                : selectedScrapeForm
-            }
-            value={
-              selectedScrapeTo
-                ? dayjs(selectedScrapeTo, "DD-MM-YYYY").format("YYYY-MM-DD")
-                : selectedScrapeTo
-            }
-            onChange={(e) => {
-              setSelectedScrapeTo(
-                dayjs(e.currentTarget.value).format("DD-MM-YYYY"),
-              );
-            }}
+          <DatePickerWithRange
+            title="Scraped Date Range"
+            selectedFromDate={selectedScrapeForm}
+            selectedToDate={selectedScrapeTo}
+            setSelectedFromDate={setSelectedScrapeForm}
+            setSelectedToDate={setSelectedScrapeTo}
           />
           <Input
             label={searchTitle}
@@ -120,43 +95,43 @@ export function DepartmentLocationScrapeFromSearch({
               setSelectedSearch(e.currentTarget.value);
             }}
           />
-        </div>
-
-        <div className="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
-          <button
-            onClick={() => {
-              setTypedParams({
-                skill: "",
-                location: "",
-                scrape_from: "",
-                scrape_to: "",
-                search: "",
-              });
-            }}
-            className="rounded-none bg-red-600 px-14 py-2 font-medium text-white hover:opacity-90 focus:ring active:scale-95"
-          >
-            Reset
-          </button>
-          <button
-            onClick={() => {
-              if (
-                department === selectedDepartment &&
-                location == selectedLocation
-              ) {
-                onSearch();
-              }
-              setTypedParams({
-                skill: selectedDepartment,
-                location: selectedLocation,
-                scrape_from: selectedScrapeForm,
-                scrape_to: selectedScrapeTo,
-                search: selectedSearch,
-              });
-            }}
-            className="rounded-none bg-green-500 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
-          >
-            Start Scrape
-          </button>
+          <div className="flex  flex-nowrap items-end gap-2">
+            <button
+              onClick={() => {
+                setTypedParams({
+                  skill: "",
+                  location: "",
+                  scrape_from: "",
+                  scrape_to: "",
+                  search: "",
+                });
+                setSelectedDepartment("");
+              }}
+              className="rounded-none bg-red-600 px-4 py-2 font-medium text-white hover:opacity-90 focus:ring active:scale-95"
+            >
+              Reset
+            </button>
+            <button
+              onClick={() => {
+                if (
+                  department === selectedDepartment &&
+                  location == selectedLocation
+                ) {
+                  onSearch();
+                }
+                setTypedParams({
+                  skill: selectedDepartment,
+                  location: selectedLocation,
+                  scrape_from: selectedScrapeForm,
+                  scrape_to: selectedScrapeTo,
+                  search: selectedSearch,
+                });
+              }}
+              className="rounded-none bg-green-500 px-2 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
+            >
+              Start Scrape
+            </button>
+          </div>
         </div>
       </div>
     </div>

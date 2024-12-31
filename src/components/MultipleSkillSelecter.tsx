@@ -11,10 +11,12 @@ export function MultipleSkillSelector({
   selectedItems = "",
   setSelectedItems,
   error,
+  className,
 }: {
   selectedItems: string;
   setSelectedItems: React.Dispatch<React.SetStateAction<string>>;
   error?: string;
+  className?: string;
 }) {
   const [selected, setSelected] = useState<Item>({ name: "" });
   const [query, setQuery] = useState("");
@@ -35,7 +37,7 @@ export function MultipleSkillSelector({
   const selectedIds = selectedItems.split(",").filter(Boolean);
 
   return (
-    <div className=" ">
+    <div className={className}>
       <label className="mb-2.5 ml-4 block font-medium text-black dark:text-white">
         Skills
       </label>

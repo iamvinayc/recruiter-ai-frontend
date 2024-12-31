@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FieldPath, FieldValues, UseFormRegister } from "react-hook-form";
 
+import clsx from "clsx";
 import { SearchIcon } from "lucide-react";
 import { cn } from "../../utils";
 
@@ -134,11 +135,13 @@ export function DebouncedInput({
   value: initialValue,
   onChange,
   debounce = 500,
+  fullWidth = false,
   ...props
 }: {
   value: string | number;
   onChange: (value: string | number) => void;
   debounce?: number;
+  fullWidth?: boolean;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
   const [value, setValue] = useState(initialValue);
 
@@ -161,7 +164,7 @@ export function DebouncedInput({
   // };
 
   return (
-    <div className="relative inline-block">
+    <div className={clsx("relative inline-block", fullWidth && "flex-1")}>
       <input
         {...props}
         value={value}
@@ -185,18 +188,24 @@ export const DebouncedSearchInput = ({
   value,
   onChange,
   className,
+  parentClassName,
 }: {
   placeholder: string;
   value: string;
   onChange: (val: string) => void;
   className?: string;
+  parentClassName?: string;
 }) => {
   return (
     <div
-      className={` flex items-center justify-center gap-2 rounded-none border border-slate-200 px-2 py-2 shadow-sm sm:justify-start md:justify-start `}
+      className={clsx(
+        ` flex items-center justify-center gap-2 rounded-none border border-slate-200 px-2 py-1 shadow-sm sm:justify-start md:justify-start `,
+        parentClassName,
+      )}
     >
       <SearchIcon size={20} />
       <DebouncedInput
+        fullWidth
         className={` field-sizing w-52 text-base outline-none ${className} `}
         type="search"
         placeholder={placeholder}

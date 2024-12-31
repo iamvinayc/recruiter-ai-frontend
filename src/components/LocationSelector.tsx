@@ -16,11 +16,13 @@ export function LocationSelector({
   setSelected,
   error,
   showCreateIfNotFound,
+  className,
 }: {
   selected: Item;
   setSelected: React.Dispatch<React.SetStateAction<Item>>;
   error?: string;
   showCreateIfNotFound?: boolean;
+  className?: string;
 }) {
   const { btnRef, inpRef } = useAutoOpenOnMount();
   // const [selected, setSelected] = useState<Item>({ name: "" });
@@ -57,8 +59,8 @@ export function LocationSelector({
               ?.includes(query?.toLowerCase()?.replace(/\s+/g, "")),
         );
   return (
-    <div className=" ">
-      <label className="mb-2.5 block font-medium text-black dark:text-white px-3">
+    <div className={className}>
+      <label className="mb-2.5 block px-3 font-medium text-black dark:text-white">
         Location
       </label>
       <Combobox
@@ -70,7 +72,7 @@ export function LocationSelector({
         }}
       >
         <div className="relative  ">
-          <div className="relative w-full cursor-default space-y-2 divide-y divide-slate-200 overflow-hidden rounded-none border border-slate-200 bg-white p-1 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+          <div className="relative w-full cursor-default space-y-2 divide-y divide-slate-200 overflow-hidden rounded-none border border-slate-200 bg-white p-0.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
             <div className="relative flex items-center">
               <Combobox.Input
                 placeholder="Select a location"

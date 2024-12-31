@@ -1,14 +1,17 @@
+import { sectorsMap } from "@/api/api";
 import { Combobox } from "@/components/Combobox";
 import { Button } from "@/components/common/Button";
-import { Input } from "@/components/common/Input";
+import { DatePickerWithRange } from "@/components/DateRangePicker";
+import {
+  LocationSelector,
+  Item as LocationType,
+} from "@/components/LocationSelector";
+import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
 import { ROUTES } from "@/routes/routes";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useEffect, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
-import { sectorsMap } from "@/api/api";
-import { LocationSelector, Item as LocationType } from "@/components/LocationSelector";
-import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
 
 dayjs.extend(customParseFormat);
 
@@ -23,16 +26,18 @@ export function EmployerReportListFilter({
   onClick?: () => void;
   isEmpty?: boolean;
 }) {
-  const [{ location, from_date, to_date, sector, skill: department }, setTypedParams] = useTypedSearchParams(
-    ROUTES.ADMIN.EMPLOYER_REPORT,
-  );
-  const [selectedLocation, setSelectedLocation] = useState<LocationType>({ name: "" });
+  const [
+    { location, from_date, to_date, sector, skill: department },
+    setTypedParams,
+  ] = useTypedSearchParams(ROUTES.ADMIN.EMPLOYER_REPORT);
+  const [selectedLocation, setSelectedLocation] = useState<LocationType>({
+    name: "",
+  });
   const [selectedFromDate, setSelectedFromDate] = useState("");
   const [selectedToDate, setSelectedToDate] = useState("");
   const [selectedSector, setSelectedSector] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   useState<ListItem | null>(null);
-
 
   useEffect(() => {
     setSelectedLocation(location ? { name: location } : { name: "" });
@@ -73,61 +78,39 @@ export function EmployerReportListFilter({
 
   return (
     <div className="mb-2">
-      <div className="dark:border-strokedark rounded-sm border border-sky-300 bg-white p-4 shadow-default">
+      <div className="dark:border-strokedark space-y-4 rounded-sm border border-sky-300 bg-white p-4 shadow-default">
         <h2 className="text-xl font-bold uppercase text-stone-700">Filter</h2>
-        <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <Input
-            label="From Date"
-            type="date"
-            value={
-              selectedFromDate
-                ? dayjs(selectedFromDate, "DD-MM-YYYY").format("YYYY-MM-DD")
-                : selectedFromDate
-            }
-            onChange={(e) => {
-              setSelectedFromDate(
-                dayjs(e.currentTarget.value).format("DD-MM-YYYY"),
-              );
-            }}
-          />
-          <Input
-            label="To Date"
-            type="date"
-            value={
-              selectedToDate
-                ? dayjs(selectedToDate, "DD-MM-YYYY").format("YYYY-MM-DD")
-                : selectedToDate
-            }
-            min={
-              selectedFromDate
-                ? dayjs(selectedFromDate, "DD-MM-YYYY").format("YYYY-MM-DD")
-                : selectedFromDate
-            }
-            onChange={(e) => {
-              setSelectedToDate(
-                dayjs(e.currentTarget.value).format("DD-MM-YYYY"),
-              );
-            }}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-9">
+          <DatePickerWithRange
+            title="Date Range"
+            className="col-span-2"
+            selectedFromDate={selectedFromDate}
+            selectedToDate={selectedToDate}
+            setSelectedFromDate={setSelectedFromDate}
+            setSelectedToDate={setSelectedToDate}
           />
           <Combobox
-            className="h-[43px]"
+            className="h-[40px]"
+            parentClassName="col-span-2 "
             label="Sector"
             items={sectorsMap}
             selectedValue={selectedSector}
             setSelectedValue={setSelectedSector}
           />
           <LocationSelector
+            className="col-span-2"
             selected={selectedLocation}
             setSelected={setSelectedLocation}
           />
           <MultipleSkillSelector
+            className="col-span-2"
             selectedItems={selectedDepartment}
             setSelectedItems={setSelectedDepartment}
           />
           {isEmpty ? null : (
-            <div className="flex items-end">
+            <div className="flex items-end gap-4">
               <Button
-                className="rounded-none py-2 text-center bg-success"
+                className="rounded-none bg-success px-1.5 py-2 text-center"
                 isLoading={isLoading}
                 onClick={onClick}
               >
@@ -137,17 +120,20 @@ export function EmployerReportListFilter({
           )}
         </div>
 
-        <div className="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
+        <div className="grid w-full justify-end space-x-4 md:flex">
           {isAllEmpty ? null : (
             <button
               onClick={() => {
-                location === "" && from_date === "" && to_date === "" && sector === "" && department === ""
+                location === "" &&
+                from_date === "" &&
+                to_date === "" &&
+                sector === "" &&
+                department === ""
                   ? (setSelectedLocation({ name: "" }),
                     setSelectedFromDate(""),
                     setSelectedToDate(""),
                     setSelectedSector(""),
-                    setSelectedDepartment("")
-                  )
+                    setSelectedDepartment(""))
                   : setTypedParams({
                       location: "",
                       from_date: "",
@@ -156,7 +142,7 @@ export function EmployerReportListFilter({
                       skill: "",
                     });
               }}
-              className="rounded-none bg-red-600 px-14 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
+              className="rounded-none bg-red-600 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
             >
               Reset
             </button>
@@ -176,7 +162,7 @@ export function EmployerReportListFilter({
                     skill: selectedDepartment,
                   });
                 }}
-                className="rounded-none bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
+                className="rounded-none bg-blue-600 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
               >
                 Apply Filter
               </button>
