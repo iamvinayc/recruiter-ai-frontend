@@ -4,7 +4,12 @@ import MapPinIcon from "@heroicons/react/24/outline/MapPinIcon";
 import Squares2X2Icon from "@heroicons/react/24/outline/Squares2X2Icon";
 import UserIcon from "@heroicons/react/24/outline/UserIcon";
 import UsersIcon from "@heroicons/react/24/outline/UsersIcon";
-import { GaugeCircleIcon } from "lucide-react";
+import {
+  FileCheck2Icon,
+  GaugeCircleIcon,
+  GaugeIcon,
+  HandshakeIcon,
+} from "lucide-react";
 import { Outlet } from "react-router-dom";
 
 import { AppSidebar } from "@/components/app-sidebar";
@@ -88,22 +93,40 @@ const SideBarLinks: NavMainItemProps[] = [
   {
     title: "Scoring",
     link: ROUTES.ADMIN.LIST_SCORING.path,
-    icon: <GaugeCircleIcon className="h-4 w-4" />,
+    icon: <GaugeIcon className="h-4 w-4" />,
   },
   {
     title: "Onboarding",
     link: ROUTES.ADMIN.ONBOARDING.path,
-    icon: <GaugeCircleIcon className="h-4 w-4" />,
+    icon: <HandshakeIcon className="h-4 w-4" />,
   },
   {
     title: "Onboarding Reports",
     link: ROUTES.ADMIN.LIST_REPORT.path,
-    icon: <GaugeCircleIcon className="h-4 w-4" />,
+    icon: <FileCheck2Icon className="h-4 w-4" />,
   },
   {
     title: "Candidate Reports",
     link: ROUTES.ADMIN.CANDIDATE_REPORT.path,
-    icon: <GaugeCircleIcon className="h-4 w-4" />,
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-4 w-4"
+      >
+        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+        <path d="M15 18a3 3 0 1 0-6 0" />
+        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z" />
+        <circle cx="12" cy="13" r="2" />
+      </svg>
+    ),
   },
   {
     title: "Employer Reports",

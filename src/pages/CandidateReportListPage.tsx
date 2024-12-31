@@ -82,11 +82,12 @@ export function CandidateReportListPage() {
   });
   const columns = useMemo(
     () => [
-      // columnHelper.display({
-      //   id: "SLNo",
-      //   header: "No",
-      //   cell: (info) => info.row.index + 1,
-      // }),
+      columnHelper.display({
+        id: "SLNo",
+        header: "Candidate ID",
+        size: 70,
+        cell: (info) => info.row.original.id,
+      }),
       columnHelper.accessor("created_at", {
         header: "DATE",
         size: 75,
@@ -406,16 +407,19 @@ export function CandidateReportListPage() {
             <table className="w-full text-left text-sm text-slate-500 rtl:text-right dark:text-slate-400">
               <thead className="bg-slate-50 text-xs uppercase text-slate-700 dark:bg-slate-700 dark:text-slate-400">
                 <tr>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="py-3 pl-6">
+                    Job Id
+                  </th>
+                  <th scope="col" className="py-3 pl-6">
                     Designation
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="py-3 pl-6">
                     Company
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="py-3 pl-6">
                     Score
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-3 pl-6">
                     <span className="sr-only">Action</span>
                   </th>
                 </tr>
@@ -423,18 +427,19 @@ export function CandidateReportListPage() {
               <tbody>
                 {selectedMatchingJobs.map((e) => (
                   <tr
-                    key={e.job_id + e.employer_id}
+                    key={e.job_id + e.candidate_id}
                     className="border-b bg-white hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-600"
                   >
+                    <td className="py-4 pl-6">{e.job_id}</td>
                     <th
                       scope="row"
-                      className="whitespace-nowrap px-6 py-4 font-medium text-slate-900 dark:text-white"
+                      className="whitespace-nowrap py-4 pl-6 font-medium text-slate-900 dark:text-white"
                     >
                       {e.job_title}
                     </th>
-                    <td className="px-6 py-4">{e.employer_name}</td>
-                    <td className="px-6 py-4">{e.score}</td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="py-4 pl-6">{e.employer_name}</td>
+                    <td className="py-4 pl-6">{e.score}</td>
+                    <td className="px-4 pl-6 text-center">
                       <Link
                         target="_blank"
                         to={ROUTES.ADMIN.LIST_SCORING.buildPath(

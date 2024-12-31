@@ -30,6 +30,7 @@ interface ComboboxProps {
   setSelectedValue: React.Dispatch<React.SetStateAction<string>>;
   className?: string;
   filter?: (value: string, search: string) => number;
+  parentClassName?: string;
 }
 export function Combobox({
   label = "",
@@ -39,15 +40,16 @@ export function Combobox({
   setSelectedValue,
   className = "",
   filter,
+  parentClassName,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div>
+        <div className={parentClassName}>
           {label ? (
-            <label className="mb-2.5 block font-medium text-black dark:text-white mx-4">
+            <label className="mx-4 mb-2.5 block font-medium text-black dark:text-white">
               {label}
             </label>
           ) : null}
@@ -66,7 +68,7 @@ export function Combobox({
                   )?.label
                 : placeholder || `Select ${label}...`}{" "}
             </span>
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="ml-2 h-5 w-5 shrink-0 opacity-50" />
           </Button>
         </div>
       </PopoverTrigger>

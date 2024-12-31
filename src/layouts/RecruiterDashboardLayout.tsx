@@ -1,7 +1,7 @@
 import BriefcaseIcon from "@heroicons/react/24/outline/BriefcaseIcon";
 import Squares2X2Icon from "@heroicons/react/24/outline/Squares2X2Icon";
 import UsersIcon from "@heroicons/react/24/outline/UsersIcon";
-import { GaugeCircleIcon } from "lucide-react";
+import { FileCheck2Icon, GaugeIcon } from "lucide-react";
 import { Outlet } from "react-router-dom";
 
 import { AppSidebar } from "@/components/app-sidebar";
@@ -71,16 +71,34 @@ const SideBarLinks = [
   {
     title: "Scoring",
     link: ROUTES.RECRUITER.LIST_SCORING.path,
-    icon: <GaugeCircleIcon className="h-5 w-5" />,
+    icon: <GaugeIcon className="h-5 w-5" />,
   },
   {
     title: "Onboarding",
     link: ROUTES.RECRUITER.ONBOARDING.path,
-    icon: <GaugeCircleIcon className="h-5 w-5" />,
+    icon: <FileCheck2Icon className="h-5 w-5" />,
   },
   {
     title: "Reports",
     link: ROUTES.RECRUITER.LIST_REPORT.path,
-    icon: <GaugeCircleIcon className="h-5 w-5" />,
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-4 w-4"
+      >
+        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+        <path d="M15 18a3 3 0 1 0-6 0" />
+        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z" />
+        <circle cx="12" cy="13" r="2" />
+      </svg>
+    ),
   },
 ];

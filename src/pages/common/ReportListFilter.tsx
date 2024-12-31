@@ -1,15 +1,16 @@
 import { OnboardingStatus, axiosApi, formatOnboardingStatus } from "@/api/api";
 import { Combobox } from "@/components/Combobox";
-import { Input } from "@/components/common/Input";
 import { ROUTES } from "@/routes/routes";
 import { Combobox as HUICombobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
+import { SpinnerIcon } from "@/components/common/SvgIcons";
+import { DatePickerWithRange } from "@/components/DateRangePicker";
+import clsx from "clsx";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { ElementRef, Fragment, useEffect, useRef, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
-import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { useDebounce } from "usehooks-ts";
 
 dayjs.extend(customParseFormat);
@@ -69,7 +70,7 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
     <div className="mb-2">
       <div className="dark:border-strokedark rounded-sm border border-sky-300 bg-white p-4 shadow-default">
         <h2 className="text-xl font-bold uppercase text-stone-700">Filter</h2>
-        <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
           <Example
             selectedEmployer={selectedEmployerName}
             setSelectedEmployer={(e) => {
@@ -77,6 +78,7 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
               setSelectedEmployerName(e);
               if (e) setSelectedEmployer(e.value);
             }}
+            className="h-10"
           />
           {/* <Combobox
             label="Employer"
@@ -102,78 +104,52 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
             }))}
             selectedValue={selectedStatus}
             setSelectedValue={setSelectedStatus}
+            className="h-10"
           />
-          <Input
-            label="From Date"
-            type="date"
-            value={
-              selectedFromDate
-                ? dayjs(selectedFromDate, "DD-MM-YYYY").format("YYYY-MM-DD")
-                : selectedFromDate
-            }
-            onChange={(e) => {
-              setSelectedFromDate(
-                dayjs(e.currentTarget.value).format("DD-MM-YYYY"),
-              );
-            }}
+          <DatePickerWithRange
+            title="Date Range"
+            selectedFromDate={selectedFromDate}
+            selectedToDate={selectedToDate}
+            setSelectedFromDate={setSelectedFromDate}
+            setSelectedToDate={setSelectedToDate}
           />
-          <Input
-            label="To Date"
-            type="date"
-            value={
-              selectedToDate
-                ? dayjs(selectedToDate, "DD-MM-YYYY").format("YYYY-MM-DD")
-                : selectedToDate
-            }
-            min={
-              selectedFromDate
-                ? dayjs(selectedFromDate, "DD-MM-YYYY").format("YYYY-MM-DD")
-                : selectedFromDate
-            }
-            onChange={(e) => {
-              setSelectedToDate(
-                dayjs(e.currentTarget.value).format("DD-MM-YYYY"),
-              );
-            }}
-          />
-        </div>
-
-        <div className="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
-          {isAllEmpty ? null : (
-            <button
-              onClick={() => {
-                setTypedParams({
-                  from_date: "",
-                  status: "",
-                  to_date: "",
-                });
-              }}
-              className="rounded-none bg-red-600 px-14 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
-            >
-              Reset
-            </button>
-          )}
-          {isDirty ? (
-            <>
+          <div className="col-span-1 grid w-full grid-cols-2 items-end  gap-4 md:flex">
+            {isAllEmpty ? null : (
               <button
                 onClick={() => {
-                  if (isNotDirty) {
-                    onSearch();
-                  }
                   setTypedParams({
-                    from_date: selectedFromDate,
-                    to_date: selectedToDate,
-                    status: selectedStatus,
-                    employer: selectedEmployer,
-                    employer_name: selectedEmployerName?.label,
+                    from_date: "",
+                    status: "",
+                    to_date: "",
                   });
                 }}
-                className="rounded-none bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
+                className="col-span-1  rounded-none bg-red-600 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
               >
-                Apply Filter
+                Reset
               </button>
-            </>
-          ) : null}
+            )}
+            {isDirty ? (
+              <>
+                <button
+                  onClick={() => {
+                    if (isNotDirty) {
+                      onSearch();
+                    }
+                    setTypedParams({
+                      from_date: selectedFromDate,
+                      to_date: selectedToDate,
+                      status: selectedStatus,
+                      employer: selectedEmployer,
+                      employer_name: selectedEmployerName?.label,
+                    });
+                  }}
+                  className="col-span-1 rounded-none bg-blue-600 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
+                >
+                  Apply Filter
+                </button>
+              </>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
@@ -187,9 +163,11 @@ interface ListItem {
 function Example({
   selectedEmployer,
   setSelectedEmployer,
+  className,
 }: {
   selectedEmployer: ListItem | null;
   setSelectedEmployer: (e: ListItem | null) => void;
+  className?: string;
 }) {
   const [selected, setSelected] = useState<null | ListItem>();
   const [query, setQuery] = useState("");
@@ -247,7 +225,10 @@ function Example({
               </label>
               <div className="relative w-full cursor-default overflow-hidden rounded-none border bg-white text-left  sm:text-sm">
                 <HUICombobox.Input
-                  className="text-gray-900 w-full  py-2 pl-3 pr-10 text-sm leading-5 "
+                  className={clsx(
+                    "text-gray-900 w-full  py-2 pl-3 pr-10 text-sm leading-5 ",
+                    className,
+                  )}
                   placeholder="Search Company"
                   displayValue={(person: { label: string }) => person?.label}
                   onChange={(event) => {
