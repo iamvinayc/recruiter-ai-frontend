@@ -262,6 +262,38 @@ interface AllApiEndpoints {
         handle: string;
         platform: string;
         sector: string;
+        joining_period?: string | null;
+        package?: string | null;
+      };
+    };
+    response: {
+      data: {
+        id: number;
+      };
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
+  };
+  "data-sourcing/job/{{id}}/": {
+    request: {
+      method: "PUT";
+      params?: undefined;
+      data?: {
+        title: string;
+        description: string;
+        departments: {
+          name: string;
+          description: string;
+        }[];
+        location: {
+          name: string;
+        };
+        sector: string;
+        joining_period: string | null;
+        package: string | null;
+        job_link: string;
+        job_type: string;
       };
     };
     response: {
@@ -479,6 +511,9 @@ interface AllApiEndpoints {
         platform: string;
         sector: string;
         resume_data?: ResumeFileUploadResponse;
+        notice_period?: string | null;
+        visa_details?: string | null;
+        package?: string | null;
       };
     };
     response: {
@@ -521,7 +556,22 @@ interface AllApiEndpoints {
       method: "PUT";
       params?: undefined;
       data?: {
+        name?: string;
+        email?: string;
+        phone?: string;
         description?: string;
+        profile_url?: string;
+        departments?: {
+          name: string;
+          description: string;
+        }[];
+        location?: {
+          name: string;
+        };
+        notice_period?: string | null;
+        visa_details?: string | null;
+        package?: string | null;
+        sector?: string;
         resume_data?: ResumeFileUploadResponse;
       };
     };
@@ -648,6 +698,24 @@ interface AllApiEndpoints {
       data?: undefined;
     };
     response: ListEmployerResponse;
+  };
+  "data-sourcing/employer/{{id}}": {
+    request: {
+      method: "PUT";
+      params?: undefined;
+      data?: {
+        employer_label: string;
+        email: string;
+        phone1?: string;
+        phone2?: string;
+        hr_url?: string;
+      };
+    };
+    response: {
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
   };
   "onboarding/resume_upload/": {
     request: {
@@ -1050,7 +1118,7 @@ interface JobListingResponse {
   previous?: string | null;
 }
 
-interface JobListingResponseData {
+export interface JobListingResponseData {
   id: number;
   employer: Employer;
   departments: Department[];
@@ -1063,6 +1131,8 @@ interface JobListingResponseData {
   job_link: string | null;
   job_type: string;
   sector: string;
+  joining_period: string | null;
+  package: string | null;
 }
 
 interface Department {
@@ -1095,7 +1165,7 @@ interface CandidateListResponse {
   previous?: string | null;
 }
 
-interface CandidateListResponseData {
+export interface CandidateListResponseData {
   id: number;
   departments: Department[];
   location: Location;
@@ -1110,6 +1180,9 @@ interface CandidateListResponseData {
   city: string;
   is_blocked: boolean;
   sector: string;
+  notice_period: string | null;
+  visa_details: string | null;
+  package: string | null;
 }
 
 interface Location {

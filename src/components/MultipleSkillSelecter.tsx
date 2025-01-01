@@ -65,6 +65,7 @@ export function MultipleSkillSelector({
                       >
                         <span>{item.name}</span>
                         <button
+                          type="button"
                           onClick={() =>
                             setSelectedItems(
                               selectedIds

@@ -58,6 +58,7 @@ export function DepartmentSelector({
                   >
                     <span>{name}</span>
                     <button
+                      type="button"
                       onClick={() =>
                         setSelectedItems((prevItems) =>
                           prevItems.filter((_, index) => index !== i),
