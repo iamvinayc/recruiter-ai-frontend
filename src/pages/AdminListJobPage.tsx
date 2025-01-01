@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { NotebookTabs, TrashIcon } from "lucide-react";
+import { NotebookTabs, PencilIcon, TrashIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -20,7 +20,7 @@ import { LocationSelector } from "@/components/LocationSelector";
 import { SectorSelector } from "@/components/SectorSelector";
 import { useLogin } from "@/hooks/useLogin";
 import { useNavigate } from "react-router-dom";
-import { axiosApi } from "../api/api";
+import { axiosApi, JobListingResponseData } from "../api/api";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { LineClamp } from "../components/LineClamp";
 import { PopupDialog } from "../components/PopupDialog";
@@ -51,6 +51,7 @@ export function AdminListJobPage() {
   const showAllSkillProps = useShowAllSkill(null);
   const [searchCompanyName, setSearchCompanyName] = useState("");
   const [searchJobId, setSearchJobId] = useState("");
+  const [editingJobId, setEditingJobId] = useState("");
   const [showUserDetailsId, setShowUserDetailsId] = useState<number | null>(
     null,
   );
@@ -170,9 +171,9 @@ export function AdminListJobPage() {
           jobListQuery.refetch();
         } else if (data.message) {
           toast.error(data.message);
-        } else throw new Error("Some error ocurred");
+        } else throw new Error("Some error occurred");
       })
-      .catch(() => toast.error("Some error ocurred"));
+      .catch(() => toast.error("Some error occurred"));
   };
   //#endregion
 
@@ -274,6 +275,12 @@ export function AdminListJobPage() {
           return (
             <div className="flex flex-wrap items-center gap-2">
               <button
+                onClick={() => setEditingJobId(info.row.original.id.toString())}
+                className="rounded-none bg-yellow-500 p-3 text-white hover:bg-opacity-70"
+              >
+                <PencilIcon className="h-4 w-4 " />
+              </button>
+              <button
                 className={cn(
                   "rounded-none bg-orange-500 p-3 text-white hover:bg-opacity-70 ",
                 )}
@@ -352,6 +359,9 @@ export function AdminListJobPage() {
 
   const selectedUser = jobListQueryData?.find(
     (e) => e.id === showUserDetailsId,
+  );
+  const editingJob = jobListQueryData?.find(
+    (e) => e.id.toString() === editingJobId.toString(),
   );
 
   return (
@@ -446,7 +456,14 @@ export function AdminListJobPage() {
           </div>
         </div>
       </div>
-      <AddJobPopup isOpen={showAddJobPopup} setIsOpen={setShowAddJobPopup} />
+      <AddJobPopup
+        isOpen={showAddJobPopup || !!editingJobId}
+        setIsOpen={(b) => {
+          setShowAddJobPopup(b);
+          setEditingJobId("");
+        }}
+        initialData={editingJob}
+      />
       <ConfirmationDialog
         subtitle={
           <>
@@ -481,6 +498,8 @@ export function AdminListJobPage() {
                   ["Job Type", selectedUser?.job_type],
                   ["Location", selectedUser?.location?.name],
                   ["Sector", selectedUser?.sector || "N/A"],
+                  ["Joining Period", selectedUser?.joining_period || "N/A"],
+                  ["Package", selectedUser?.package || "N/A"],
                 ] as const
               ).map(([key, value]) => (
                 <div key={key} className="space-y-1">
@@ -578,9 +597,11 @@ interface Person {
 //#region Add Job Popup
 const AddJobPopup = ({
   isOpen,
+  initialData,
   setIsOpen,
 }: {
   isOpen: boolean;
+  initialData: JobListingResponseData | undefined;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { isRecruiter } = useLogin();
@@ -596,19 +617,31 @@ const AddJobPopup = ({
     defaultValues: {
       department: [],
       city: "",
-    },
-  });
-  const resetForm = () => {
-    reset({
-      city: "",
-      department: [],
       description: "",
       email: "",
       employer_name: "",
+      joining_period: "",
+      package: "",
       phone1: "",
       phone2: "",
-      title: "",
       sector: "",
+      title: "",
+    },
+  });
+
+  const resetForm = () => {
+    reset({
+      department: [],
+      city: "",
+      description: "",
+      email: "",
+      employer_name: "",
+      joining_period: "",
+      package: "",
+      phone1: "",
+      phone2: "",
+      sector: "",
+      title: "",
     });
   };
   const addJobMutation = useMutation({
@@ -637,11 +670,52 @@ const AddJobPopup = ({
           },
           platform: "SYSTEM",
           sector: data.sector,
+          joining_period: initialData?.joining_period ?? null,
+          package: initialData?.package ?? null,
+        },
+      }).then((e) => e.data.isSuccess),
+  });
+  const editJobMutation = useMutation({
+    mutationKey: ["editJobMutation"],
+    mutationFn: (data: z.TypeOf<typeof formSchema>) =>
+      axiosApi({
+        url: makeUrlWithParams("data-sourcing/job/{{id}}/", {
+          id: initialData?.id?.toString() || "",
+        }),
+        method: "PUT",
+        data: {
+          title: data.title,
+          departments: data.department.map((e) => ({
+            name: e.name,
+            description: e.name,
+          })),
+          description: data.description,
+          location: {
+            name: data.city,
+          },
+          sector: data.sector,
+          job_link: initialData?.job_link ?? "",
+          job_type: initialData?.job_type ?? "",
+          joining_period: data?.joining_period || null,
+          package: data?.package || null,
         },
       }).then((e) => e.data.isSuccess),
   });
   const onSubmit = (data: z.TypeOf<typeof formSchema>) => {
     //
+    if (initialData) {
+      editJobMutation
+        .mutateAsync(data)
+        .then((success) => {
+          if (success) {
+            toast.success("Updated Job");
+            setIsOpen(false);
+            resetForm();
+          } else throw new Error("Some error occurred");
+        })
+        .catch(() => toast.error("Some error occurred"));
+      return;
+    }
     addJobMutation
       .mutateAsync(data)
       .then((success) => {
@@ -649,21 +723,40 @@ const AddJobPopup = ({
           toast.success("Added Job");
           resetForm();
           setIsOpen(false);
-        } else throw new Error("Some error ocurred");
+        } else throw new Error("Some error occurred");
       })
-      .catch(() => toast.error("Some error ocurred"));
+      .catch(() => toast.error("Some error occurred"));
   };
 
   useEffect(() => {
-    resetForm();
+    if (initialData) {
+      reset({
+        city: initialData.city,
+        department: initialData.departments.map((e) => ({
+          id: e.id,
+          name: e.name,
+        })),
+        description: initialData.description,
+        email: initialData.employer.email,
+        employer_name: initialData.employer.employer_label,
+        phone1: initialData.employer.phone1,
+        phone2: initialData.employer.phone2 || "",
+        title: initialData.title,
+        sector: initialData.sector,
+        joining_period: initialData.joining_period || "",
+        package: initialData.package || "",
+      });
+    } else {
+      resetForm();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [isOpen, initialData]);
 
   return (
     <PopupDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      title="Add new job"
+      title={initialData ? "Edit Job" : "Add new job"}
       containerClassName="overflow-visible relative"
     >
       <button
@@ -767,7 +860,7 @@ const AddJobPopup = ({
                 )}
               />
             </div>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col gap-y-3">
               {isRecruiter ? (
                 <Controller
                   control={control}
@@ -795,6 +888,20 @@ const AddJobPopup = ({
                   error={errors.city?.message?.replace("city", "location")}
                 />
               )}
+              <Input
+                register={register}
+                label="Joining Period"
+                placeholder="Joining Period"
+                name="joining_period"
+                error={errors.joining_period?.message}
+              />
+              <Input
+                register={register}
+                label="Package"
+                placeholder="Package"
+                name="package"
+                error={errors.package?.message}
+              />
             </div>
           </div>
         </div>
@@ -809,11 +916,10 @@ const AddJobPopup = ({
           </Button>
           <Button
             type="submit"
-            isLoading={addJobMutation.isPending}
-            disabled={addJobMutation.isPending}
+            isLoading={addJobMutation.isPending || editJobMutation.isPending}
             className="py-2"
           >
-            Add Job
+            {initialData ? "Update Job" : "Add Job"}
           </Button>
         </div>
       </form>
@@ -841,6 +947,8 @@ const formSchema = z
       )
       .min(1, "Please Select at-least one skill"),
     city: z.string().min(1, "Please enter a city"),
+    joining_period: z.string().optional(),
+    package: z.string().optional(),
   })
   .refine((data) => data.phone1 !== data.phone2, {
     path: ["phone2"],

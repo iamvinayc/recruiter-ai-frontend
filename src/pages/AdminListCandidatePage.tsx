@@ -25,14 +25,17 @@ import { useLogin } from "@/hooks/useLogin";
 import { ROUTES, SortBy } from "@/routes/routes";
 
 import { downloadCandidatePDF } from "@/lib/downloadCandidatePDF";
-import { ResumeFileUploadResponse, axiosApi } from "../api/api";
+import {
+  CandidateListResponseData,
+  ResumeFileUploadResponse,
+  axiosApi,
+} from "../api/api";
 import { DepartmentSelector } from "../components/DepartmentSelector";
 import { PopupDialog } from "../components/PopupDialog";
 import { Button } from "../components/common/Button";
 import { ChipGroup } from "../components/common/ChipGroup";
 import { DebouncedInput, Input, TextArea } from "../components/common/Input";
 import { cn, emptyArray, makeUrlWithParams, replaceWith } from "../utils";
-import { EditCandidateDialog } from "./AdminListCandidatePage.dialogs";
 import { ConfirmationDialog } from "./common/ConfirmationDialog";
 import { DepartmentLocationScrapeFromSearch } from "./common/DepartmentLocationScrapeFromSearch";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
@@ -336,7 +339,7 @@ export function AdminListCandidatePage() {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setEditingUserId(info.row.original.id)}
-                className="rounded-none bg-[#F6ea00] p-3 text-white hover:bg-opacity-70"
+                className="rounded-none bg-yellow-500 p-3 text-white hover:bg-opacity-70"
               >
                 <Pencil className="h-4 w-4 " />
               </button>
@@ -570,8 +573,12 @@ export function AdminListCandidatePage() {
         </div>
       </div>
       <AddCandidatePopup
-        isOpen={showAddCandidatePopup}
-        setIsOpen={setShowAddCandidatePopup}
+        isOpen={showAddCandidatePopup || !!editingUser}
+        setIsOpen={(b) => {
+          setShowAddCandidatePopup(b);
+          setEditingUserId(-1);
+        }}
+        initialData={editingUser}
       />
       <ConfirmationDialog
         subtitle={
@@ -644,6 +651,9 @@ export function AdminListCandidatePage() {
                     ["Profile url", selectedUser?.profile_url],
                     ["Resume file", selectedUser?.resume_file],
                     ["Platform", selectedUser?.platform],
+                    ["Notice Period", selectedUser?.notice_period || "N/A"],
+                    ["Visa Details", selectedUser?.visa_details || "N/A"],
+                    ["Package", selectedUser?.package || "N/A"],
                   ]
                     .filter((e) => !!e[1])
                     .map(([key, value]) => (
@@ -702,13 +712,13 @@ export function AdminListCandidatePage() {
           </div>
         </div>
       </PopupDialog>
-      <EditCandidateDialog
+      {/* <EditCandidateDialog
         closeDialog={(success) => {
           setEditingUserId(-1);
           if (success) candidateListQuery.refetch();
         }}
         selectedUser={editingUser}
-      />
+      /> */}
       <ShowAllSkill.Dialog dialogProps={showAllSkillProps} />
     </main>
   );
@@ -734,9 +744,11 @@ interface CandidateListItem {
 //#region dialog
 
 const AddCandidatePopup = ({
+  initialData,
   isOpen,
   setIsOpen,
 }: {
+  initialData?: CandidateListResponseData;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -757,6 +769,32 @@ const AddCandidatePopup = ({
       city: "",
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        department: initialData.departments.map((e) => ({
+          id: e.id,
+          name: e.name,
+        })),
+        city: initialData.city,
+        name: initialData.name,
+        description: initialData.description,
+        email: initialData.email,
+        phone: initialData.phone,
+        profile_url: initialData.profile_url,
+        resume_file: initialData.resume_file,
+        sector: initialData.sector,
+        notice_period: initialData.notice_period || "",
+        package: initialData.package || "",
+        visa_details: initialData.visa_details || "",
+      });
+    } else {
+      resetForm();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData, isOpen]);
+
   const resetForm = () => {
     reset({
       department: [],
@@ -768,6 +806,9 @@ const AddCandidatePopup = ({
       profile_url: "",
       resume_file: "",
       sector: "",
+      notice_period: "",
+      package: "",
+      visa_details: "",
     });
     uploadResumeFile.reset();
   };
@@ -799,6 +840,51 @@ const AddCandidatePopup = ({
           platform: "SYSTEM",
           sector: data.sector,
           resume_data: data.resume_data,
+          notice_period: data.notice_period || null,
+          visa_details: data.visa_details || null,
+          package: data.package || null,
+        },
+      }).then((e) => e.data),
+  });
+  const editCandidateMutation = useMutation({
+    mutationKey: ["editCandidateMutation"],
+    mutationFn: (
+      data: z.TypeOf<typeof formSchema> & {
+        resume_data?: ResumeFileUploadResponse;
+      },
+    ) =>
+      axiosApi({
+        url: replaceWith(
+          "data-sourcing/candidate/:id",
+          "data-sourcing/candidate/:id".replace(
+            ":id",
+            initialData?.id?.toString() ?? "",
+          ) + "/",
+        ),
+        method: "PUT",
+        data: {
+          name: data.name,
+          description: data.description,
+          email: data.email,
+          phone: data.phone,
+          profile_url: data.profile_url,
+          departments: data.department.map((e) => ({
+            ...e,
+            description: e.name,
+          })),
+          location: {
+            name: data.city,
+          },
+          sector: data.sector,
+          notice_period: data.notice_period || null,
+          visa_details: data.visa_details || null,
+          package: data.package || null,
+
+          ...(data.resume_data
+            ? {
+                resume_data: data.resume_data,
+              }
+            : {}),
         },
       }).then((e) => e.data),
   });
@@ -836,11 +922,33 @@ const AddCandidatePopup = ({
   });
   const onSubmit = (data: z.TypeOf<typeof formSchema>) => {
     const { resume_file, description, ...formData } = data;
+    console.log(data);
     if (!resume_file && !description) {
       toast.error("Please upload resume or enter description");
       return;
     }
-    //
+    if (initialData) {
+      editCandidateMutation
+        .mutateAsync({
+          ...formData,
+          description: description || undefined,
+          resume_data: uploadResumeFile.data,
+        })
+        .then((data) => {
+          if (data.isSuccess) {
+            toast.success("candidate Edited successfully");
+            resetForm();
+            setIsOpen(false);
+          } else if (data.message) {
+            toast.error(data.message);
+            if (data.message.toLowerCase().includes("email")) {
+              setError("email", { message: JSON.stringify(data.message) });
+            }
+          } else throw new Error("Some error occurred");
+        })
+        .catch(() => toast.error("Some error occurred"));
+      return;
+    }
     addCandidateMutation
       .mutateAsync({
         ...formData,
@@ -862,16 +970,12 @@ const AddCandidatePopup = ({
       .catch(() => toast.error("Some error ocurred"));
   };
 
-  useEffect(() => {
-    resetForm();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
   const [pdfPreviewURL, setPdfPreviewURL] = useState("");
   return (
     <PopupDialog
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      title="Add new candidate"
+      title={initialData ? "Edit Candidate" : "Add new candidate"}
       containerClassName="overflow-visible relative"
     >
       <button
@@ -1005,7 +1109,7 @@ const AddCandidatePopup = ({
                 )}
               />
             </div>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col gap-y-2">
               {isRecruiter ? (
                 <Controller
                   control={control}
@@ -1034,6 +1138,30 @@ const AddCandidatePopup = ({
                   error={errors.city?.message?.replace("city", "location")}
                 />
               )}
+              <Input
+                register={register}
+                name="notice_period"
+                label="Notice Period"
+                placeholder="Notice Period"
+                className="px-3 py-3"
+                error={errors.notice_period?.message}
+              />
+              <Input
+                register={register}
+                name="visa_details"
+                label="Visa Details"
+                placeholder="Visa Details"
+                className="px-3 py-3"
+                error={errors.visa_details?.message}
+              />
+              <Input
+                register={register}
+                name="package"
+                label="Package"
+                placeholder="Package"
+                className="px-3 py-3"
+                error={errors.package?.message}
+              />
             </div>
           </div>
         </div>
@@ -1073,8 +1201,14 @@ const AddCandidatePopup = ({
           >
             Reset
           </Button>
-          <Button type="submit" className="py-2">
-            Add Candidate
+          <Button
+            isLoading={
+              addCandidateMutation.isPending || editCandidateMutation.isPending
+            }
+            type="submit"
+            className="whitespace-nowrap py-2"
+          >
+            {initialData ? "Update Candidate" : "Add Candidate"}
           </Button>
         </div>
       </form>
@@ -1089,7 +1223,7 @@ const formSchema = z.object({
   email: z.string().email(),
   phone: z.string().min(1, "Please enter phone"),
   profile_url: z.string(),
-  resume_file: z.string().optional(),
+  resume_file: z.string().nullable().optional(),
   sector: z.string().min(1, "Please select a sector"),
   department: z
     .array(
@@ -1100,6 +1234,9 @@ const formSchema = z.object({
     )
     .min(1, "Please Select at-least one skill"),
   city: z.string().min(1, "Please enter a city"),
+  notice_period: z.string().optional(),
+  visa_details: z.string().optional(),
+  package: z.string().optional(),
 });
 class CustomError extends Error {
   __name = "CustomError";

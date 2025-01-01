@@ -1,20 +1,28 @@
 import { axiosApi } from "@/api/api";
 import { BlockButton } from "@/components/common/BlockButton";
+import { Button } from "@/components/common/Button";
 import {
   DebouncedInput,
   DebouncedSearchInput,
+  Input,
 } from "@/components/common/Input";
+import { PopupDialog } from "@/components/PopupDialog";
 import { useLogin } from "@/hooks/useLogin";
-import { cn, replaceWith } from "@/utils";
+import { cn, makeUrlWithParams, replaceWith } from "@/utils";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { NotebookTabs } from "lucide-react";
-import { useMemo, useState } from "react";
+import { NotebookTabs, Pencil } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
+import { z } from "zod";
 import { ROUTES } from "../routes/routes";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
@@ -26,7 +34,7 @@ const columnHelper = createColumnHelper<EmployerListItem>();
 export default function EmployerListPage() {
   const [search, setSearch] = useState("");
   const [emailSearch, setEmailSearch] = useState("");
-
+  const [editingEmployerId, setEditingEmployerId] = useState("");
   const [selectedEmployerId, setSelectedEmployerId] = useState<string | null>(
     null,
   );
@@ -184,6 +192,14 @@ export default function EmployerListPage() {
         cell: (info) => (
           <div className="flex items-center space-x-2">
             <button
+              onClick={() =>
+                setEditingEmployerId(info.row.original.id.toString())
+              }
+              className="rounded-none bg-yellow-500 p-3 text-white hover:bg-opacity-70"
+            >
+              <Pencil className="h-4 w-4 " />
+            </button>
+            <button
               className={cn(
                 "rounded-none bg-primary p-3 text-white hover:bg-opacity-70",
               )}
@@ -239,6 +255,9 @@ export default function EmployerListPage() {
     data: employerList,
     getCoreRowModel: getCoreRowModel(),
   });
+  const editingSelectedEmployer = employerList.find(
+    (e) => e.id.toString() === editingEmployerId.toString(),
+  );
   return (
     <main>
       <div className="mx-auto w-full p-4 md:p-6 2xl:p-10">
@@ -294,6 +313,14 @@ export default function EmployerListPage() {
           closeDialog={closeDialog}
         />
       )}
+      <EditCandidatePopup
+        initialData={editingSelectedEmployer}
+        isOpen={!!editingSelectedEmployer}
+        setIsOpen={(b) => {
+          setEditingEmployerId("");
+          if (b) employerListingQuery.refetch();
+        }}
+      />
     </main>
   );
 }
@@ -308,3 +335,177 @@ interface EmployerListItem {
   is_blocked: boolean;
   hr_url: string | null;
 }
+
+//#region
+const defaultValues = {
+  email: "",
+  employer_label: "",
+  hr_url: "",
+  phone1: "",
+  phone2: "",
+};
+const EditCandidatePopup = ({
+  initialData,
+  isOpen,
+  setIsOpen,
+}: {
+  initialData?: EmployerListItem;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    reset,
+    setError,
+  } = useForm<z.TypeOf<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaultValues,
+  });
+
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        email: initialData.email,
+        employer_label: initialData.employer_label,
+        hr_url: initialData.hr_url ?? "",
+        phone1: initialData.phone1,
+        phone2: initialData.phone2,
+      });
+    } else {
+      resetForm();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData, isOpen]);
+
+  const resetForm = () => {
+    reset({ ...defaultValues });
+  };
+  const editEmployerMutation = useMutation({
+    mutationKey: ["editEmployerMutation"],
+    mutationFn: (data: z.TypeOf<typeof formSchema>) =>
+      axiosApi({
+        url: makeUrlWithParams("data-sourcing/employer/{{id}}", {
+          id: initialData?.id.toString() ?? "",
+        }),
+        method: "PUT",
+        data: data,
+      }).then((e) => e.data),
+  });
+
+  const onSubmit = (data: z.TypeOf<typeof formSchema>) => {
+    if (initialData) {
+      editEmployerMutation
+        .mutateAsync(data)
+        .then((data) => {
+          if (data.isSuccess) {
+            toast.success("Company updated successfully");
+            resetForm();
+            setIsOpen(true);
+          } else if (data.message) {
+            toast.error(data.message);
+            if (data.message.toLowerCase().includes("email")) {
+              setError("email", { message: JSON.stringify(data.message) });
+            }
+          } else throw new Error("Some error occurred");
+        })
+        .catch(() => toast.error("Some error occurred"));
+      return;
+    }
+  };
+
+  return (
+    <PopupDialog
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      title="Edit Company"
+      containerClassName="overflow-visible relative"
+    >
+      <button
+        className="absolute right-0 top-0 p-4 outline-none ring-0"
+        onClick={() => setIsOpen(false)}
+      >
+        <XMarkIcon className="h-6 w-6" />
+      </button>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="mb-4 space-y-2 py-4">
+          <div className="flex flex-col gap-6 md:flex-row">
+            <div className="flex flex-1 flex-col">
+              <Input
+                label="Employer"
+                placeholder="Employer"
+                className=" px-3 py-3"
+                register={register}
+                name="employer_label"
+                error={errors.employer_label?.message}
+              />
+            </div>
+            <div className="flex flex-1 flex-col">
+              <Input
+                label="Email"
+                placeholder="Email"
+                className=" px-3 py-3"
+                register={register}
+                name="email"
+                error={errors.email?.message}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-x-6 md:flex-row">
+            <div className="flex flex-1 flex-col gap-2">
+              <Input
+                label="Phone 1"
+                placeholder="Phone 1"
+                type="text"
+                className="px-3 py-3"
+                register={register}
+                name="phone1"
+                error={errors.phone1?.message}
+              />
+              <Input
+                label="Phone 2"
+                placeholder="Phone 2 "
+                className="px-3 py-3"
+                register={register}
+                name="phone2"
+                error={errors.phone2?.message}
+              />
+            </div>
+            <div className="flex flex-1 flex-col gap-2">
+              <Input
+                label="Hr url"
+                placeholder="Hr url"
+                className="px-3 py-3"
+                register={register}
+                name="hr_url"
+                type="url"
+                error={errors.hr_url?.message}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end space-x-2">
+          <p className="text-gray-500 text-sm italic"></p>
+
+          <Button
+            isLoading={editEmployerMutation.isPending}
+            type="submit"
+            className="whitespace-nowrap py-2"
+          >
+            Update Company
+          </Button>
+        </div>
+      </form>
+    </PopupDialog>
+  );
+};
+const formSchema = z.object({
+  employer_label: z.string().min(1),
+  email: z.string().min(1),
+  phone1: z.string().optional(),
+  phone2: z.string().optional(),
+  hr_url: z.string().optional(),
+});
+//#endregion

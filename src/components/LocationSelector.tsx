@@ -224,6 +224,7 @@ export function LocationSelectorMultiple({
                   >
                     <span>{name}</span>
                     <button
+                      type="button"
                       onClick={() =>
                         setSelectedItems((prevItems) =>
                           prevItems.filter((_, index) => index !== i),

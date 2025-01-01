@@ -21,6 +21,7 @@ export function ChipGroup({
         .filter((_, i) => (showMore ? true : i < 2))
         .map(({ id, name }) => (
           <button
+            type="button"
             key={id}
             className={cn(
               " inline-flex  text-ellipsis  rounded-none  bg-purple-600 px-2 py-1 font-medium text-white hover:bg-opacity-90",
@@ -32,6 +33,7 @@ export function ChipGroup({
         ))}
       {items.length > 2 && !showMore ? (
         <button
+          type="button"
           onClick={() => setShowMore(true)}
           className={
             "inline-flex rounded-none border bg-yellow-500 px-2 py-1  font-medium text-white hover:opacity-80"
@@ -42,8 +44,8 @@ export function ChipGroup({
       ) : null}
       {onAdd ? (
         <button
-          onClick={() => onAdd()}
           type="button"
+          onClick={() => onAdd()}
           className="inline-flex rounded-none border bg-black px-2 py-1  font-medium text-white hover:opacity-80"
         >
           {addLabel}
