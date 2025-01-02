@@ -31,16 +31,25 @@ export function DatePickerWithRange({
   btnClassName?: string;
 }) {
   const date =
-    selectedFromDate && selectedToDate
+    selectedFromDate || selectedToDate
       ? {
-          from: dayjs(selectedFromDate, "DD-MM-YYYY").toDate(),
-          to: dayjs(selectedToDate, "DD-MM-YYYY").toDate(),
+          from: selectedFromDate
+            ? dayjs(selectedFromDate, "DD-MM-YYYY").toDate()
+            : undefined,
+          to: selectedToDate
+            ? dayjs(selectedToDate, "DD-MM-YYYY").toDate()
+            : undefined,
         }
       : undefined;
   const setDate: SelectRangeEventHandler = (dateRange) => {
+    console.log("setDate: ", dateRange);
     if (dateRange) {
-      setSelectedFromDate(dayjs(dateRange.from).format("DD-MM-YYYY"));
-      setSelectedToDate(dayjs(dateRange.to).format("DD-MM-YYYY"));
+      if (dateRange.from !== undefined) {
+        setSelectedFromDate(dayjs(dateRange.from).format("DD-MM-YYYY"));
+      }
+      if (dateRange.to !== undefined) {
+        setSelectedToDate(dayjs(dateRange.to).format("DD-MM-YYYY"));
+      }
     } else {
       setSelectedFromDate("");
       setSelectedToDate("");

@@ -1,18 +1,23 @@
+import { sectorsMap } from "@/api/api";
 import { Combobox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import clsx from "clsx";
 import { Fragment, useState } from "react";
 import { emptyArray } from "../utils";
 import { useAutoOpenOnMount } from "./common/useAutoOpenOnMount";
-import { sectorsMap } from "@/api/api";
 
 export function SectorSelector({
   selectedItem,
   setSelectedItem,
   error,
+  labelClassName,
+  className,
 }: {
   selectedItem: string;
   setSelectedItem: (item: string) => void;
   error?: string;
+  labelClassName?: string;
+  className?: string;
 }) {
   const [query, setQuery] = useState("");
 
@@ -28,13 +33,23 @@ export function SectorSelector({
 
   return (
     <div>
-      <label className="mb-2.5 ml-4 mt-2 block font-medium text-black dark:text-white">
+      <label
+        className={clsx(
+          "mb-2.5 ml-4 mt-2 block font-medium text-black dark:text-white",
+          labelClassName,
+        )}
+      >
         Sector
       </label>
 
       <Combobox value={selectedItem} onChange={setSelectedItem}>
         <div className="relative">
-          <div className="relative w-full cursor-default space-y-2 divide-y divide-slate-200 overflow-hidden rounded-none border border-slate-200 bg-white p-1.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+          <div
+            className={clsx(
+              "relative w-full cursor-default space-y-2 overflow-hidden rounded-none border border-slate-200 bg-white p-1.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm",
+              className,
+            )}
+          >
             <Combobox.Input
               placeholder="Search Sector"
               className="text-gray-900 w-full border-none py-2 pl-3 pr-10 text-sm leading-5 focus:ring-0"

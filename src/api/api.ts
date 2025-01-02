@@ -207,6 +207,7 @@ interface AllApiEndpoints {
         non_matched_jobs?: string;
         employer_name?: string;
         job_id?: string;
+        sector?: string;
       };
       data?: undefined;
     };
@@ -324,6 +325,7 @@ interface AllApiEndpoints {
         responded_candidates?: string;
         non_matched_candidates?: string;
         final_followedup_candidates?: string;
+        sector?: string;
       };
       data?: undefined;
     };
@@ -821,6 +823,8 @@ interface AllApiEndpoints {
       params?: {
         page?: number;
         page_size?: number;
+        name?: string;
+        date?: string;
       };
       data?: undefined;
     };

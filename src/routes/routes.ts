@@ -48,6 +48,7 @@ export const ROUTES = {
           today_scrapped_jobs: string().default(""),
           responded_jobs: string().default(""),
           non_matched_jobs: string().default(""),
+          sector: string().default(""),
         },
       }),
       LIST_CANDIDATE: route("list-candidate", {
@@ -69,6 +70,7 @@ export const ROUTES = {
           responded_candidates: string().default(""),
           non_matched_candidates: string().default(""),
           final_followedup_candidates: string().default(""),
+          sector: string().default(""),
         },
       }),
       LIST_SCORING: route("list-scoring", {

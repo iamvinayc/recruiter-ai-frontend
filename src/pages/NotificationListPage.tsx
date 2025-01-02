@@ -1,10 +1,11 @@
 import { axiosApi } from "@/api/api";
 import { PopupDialog } from "@/components/PopupDialog";
+import { DebouncedInput } from "@/components/common/Input";
 import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { useLogin } from "@/hooks/useLogin";
 import { queryClient } from "@/routes";
 import { ROUTES } from "@/routes/routes";
-import { cn, makeUrlWithParams } from "@/utils";
+import { cn, makeUrlWithParams, replaceWith } from "@/utils";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import {
   createColumnHelper,
@@ -13,7 +14,7 @@ import {
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { EyeIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
@@ -28,15 +29,19 @@ export function NotificationListPage() {
     useTypedSearchParams(ROUTES.ADMIN.LIST_NOTIFICATION);
   const setShowDetailsId = (id: string) =>
     setTypeParams({ notification_id: id });
+  const [filterName, setFilterName] = useState("");
+  const [filterDate, setFilterDate] = useState("");
 
   const reportListingQuery = useInfiniteQuery({
-    queryKey: ["notificationListPage"],
+    queryKey: ["notificationListPage", filterName, filterDate],
     queryFn: async ({ pageParam }) =>
       axiosApi({
-        url: (pageParam || "notification/") as "notification/",
+        url: replaceWith("notification/", pageParam || "notification/"),
         method: "GET",
         params: {
           page_size: 25,
+          name: filterName,
+          date: filterDate,
         },
       }).then((e) => e.data),
     getNextPageParam(lastPage) {
@@ -92,7 +97,18 @@ export function NotificationListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("name", {
-        header: "NAME",
+        header: () => (
+          <div>
+            <div>NAME</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="text"
+              placeholder="Search by name"
+              value=""
+              onChange={(e) => setFilterName(e.toString())}
+            />
+          </div>
+        ),
         cell: (info) => (
           <div className="max-w-[200px] truncate" title={info.getValue()}>
             {info.getValue()}
@@ -114,7 +130,28 @@ export function NotificationListPage() {
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("date", {
-        header: "DATE",
+        size: 40,
+        header: () => (
+          <div>
+            <div>DATE</div>
+            <DebouncedInput
+              className="mt-2 border border-slate-200 px-2 py-1 text-xs shadow-sm"
+              type="date"
+              placeholder="Filter by date"
+              value=""
+              onChange={(val) => {
+                if (val) {
+                  console.log("onChange::", val);
+                  // 2025-01-14
+                  const dt = dayjs(val, "YYYY-MM-DD");
+                  if (dt.isValid()) {
+                    setFilterDate(dt.format("DD-MM-YYYY"));
+                  }
+                }
+              }}
+            />
+          </div>
+        ),
         cell: (info) => {
           return (
             <div className="flex items-center space-x-3 truncate">
@@ -126,6 +163,7 @@ export function NotificationListPage() {
       columnHelper.display({
         id: "Action",
         header: "ACTION",
+        size: 140,
         cell: (info) => {
           const isLoading =
             readNotificationsMutation.variables?.id === info.row.original.id &&
@@ -191,6 +229,19 @@ export function NotificationListPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             List Notification
           </h2>
+
+          {filterName || filterDate ? (
+            <button
+              onClick={() => {
+                setFilterName("");
+                setFilterDate("");
+              }}
+              type="button"
+              className="rounded-none bg-red-500 px-6 py-2 text-white hover:bg-opacity-70"
+            >
+              Reset Filter
+            </button>
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
@@ -209,7 +260,9 @@ export function NotificationListPage() {
               }}
             >
               <Table
+                applyWidth
                 table={table}
+                forceAuto
                 loader={
                   <TableLoader
                     colSpan={columns.length}

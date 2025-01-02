@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FieldPath, FieldValues, UseFormRegister } from "react-hook-form";
@@ -144,12 +144,17 @@ export function DebouncedInput({
   fullWidth?: boolean;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
   const [value, setValue] = useState(initialValue);
+  const isFirstRun = useRef(true);
 
   useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
 
   useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
     const timeout = setTimeout(() => {
       onChange(value);
     }, debounce);

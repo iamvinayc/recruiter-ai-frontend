@@ -13,6 +13,7 @@ export function Table<T>({
   thClassName,
   tdClassName,
   applyWidth,
+  forceAuto,
 }: {
   table: ITable<T>;
   loader: JSX.Element;
@@ -22,6 +23,7 @@ export function Table<T>({
   thClassName?: string;
   tdClassName?: string;
   applyWidth?: boolean;
+  forceAuto?: boolean;
 }) {
   return (
     <table
@@ -39,7 +41,13 @@ export function Table<T>({
                 )}
                 key={header.id}
                 style={{
-                  width: applyWidth ? `${header.getSize()}px` : undefined,
+                  width: applyWidth
+                    ? forceAuto
+                      ? header.getSize() != 150
+                        ? `${header.getSize()}px`
+                        : "auto"
+                      : `${header.getSize()}px`
+                    : undefined,
                 }}
               >
                 {header.isPlaceholder

@@ -6,6 +6,10 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 import { SpinnerIcon } from "@/components/common/SvgIcons";
 import { DatePickerWithRange } from "@/components/DateRangePicker";
+import {
+  useDebouncedSearchParam,
+  useIsFilterApplied,
+} from "@/hooks/useDebouncedSearchParam";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -15,68 +19,66 @@ import { useDebounce } from "usehooks-ts";
 
 dayjs.extend(customParseFormat);
 
-export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
-  const [
-    { from_date, status, to_date, employer, employer_name },
-    setTypedParams,
-  ] = useTypedSearchParams(ROUTES.ADMIN.LIST_REPORT);
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedEmployer, setSelectedEmployer] = useState("");
-  const [selectedFromDate, setSelectedFromDate] = useState("");
-  const [selectedToDate, setSelectedToDate] = useState("");
-  const [selectedEmployerName, setSelectedEmployerName] =
-    useState<ListItem | null>(null);
+// eslint-disable-next-line no-empty-pattern
+export function ReportListFilter({}: { onSearch: VoidFunction }) {
+  const [, setTypedParams] = useTypedSearchParams(ROUTES.ADMIN.LIST_REPORT);
+  const [selectedStatus, setSelectedStatus] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_REPORT,
+    "status",
+  );
+  const [selectedEmployer] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_REPORT,
+    "employer",
+  );
+  const [selectedEmployerName] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_REPORT,
+    "employer_name",
+  );
 
-  useEffect(() => {
-    setSelectedStatus(status);
-  }, [status]);
-  useEffect(() => {
-    setSelectedFromDate(from_date);
-  }, [from_date]);
-  useEffect(() => {
-    setSelectedToDate(to_date);
-  }, [to_date]);
-  useEffect(() => {
-    setSelectedEmployer(employer);
-  }, [employer]);
-  useEffect(() => {
-    if (employer) {
-      setSelectedEmployerName({
-        label: employer_name,
-        value: employer,
-      });
-    }
-  }, [employer_name, employer]);
+  const [selectedFromDate, setSelectedFromDate] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_REPORT,
+    "from_date",
+  );
+  const [selectedToDate, setSelectedToDate] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_REPORT,
+    "to_date",
+  );
 
-  const isNotDirty =
-    status === selectedStatus &&
-    from_date == selectedFromDate &&
-    to_date == selectedToDate &&
-    employer == selectedEmployer;
-  const isDirty = !isNotDirty;
-  const isAllEmpty =
-    [
-      status,
-      from_date,
-      to_date,
-      employer,
-      selectedEmployer,
-      selectedFromDate,
-      selectedToDate,
-      selectedStatus,
-    ].filter(Boolean).length == 0;
-
+  const isFilterApplied = useIsFilterApplied(ROUTES.ADMIN.LIST_REPORT, [
+    "from_date",
+    "to_date",
+    "status",
+    "employer",
+    "employer_name",
+  ]);
+  const reset = () => {
+    setTypedParams({});
+  };
   return (
     <div className="mb-2">
       <div className="dark:border-strokedark rounded-sm border border-sky-300 bg-white p-4 shadow-default">
-        <h2 className="text-xl font-bold uppercase text-stone-700">Filter</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold uppercase text-stone-700">Filter</h2>
+          {isFilterApplied && (
+            <span
+              className="cursor-pointer text-sm text-blue-500 underline"
+              onClick={reset}
+            >
+              Clear Filter
+            </span>
+          )}
+        </div>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
           <Example
-            selectedEmployer={selectedEmployerName}
+            selectedEmployer={{
+              label: selectedEmployerName,
+              value: selectedEmployer,
+            }}
             setSelectedEmployer={(e) => {
-              console.log("e", e);
-              setSelectedEmployerName(e);
-              if (e) setSelectedEmployer(e.value);
+              setTypedParams({
+                employer_name: e?.label ?? "",
+                employer: e?.value ?? "",
+              });
             }}
             className="h-10"
           />
@@ -113,43 +115,6 @@ export function ReportListFilter({ onSearch }: { onSearch: VoidFunction }) {
             setSelectedFromDate={setSelectedFromDate}
             setSelectedToDate={setSelectedToDate}
           />
-          <div className="col-span-1 grid w-full grid-cols-2 items-end  gap-4 md:flex">
-            {isAllEmpty ? null : (
-              <button
-                onClick={() => {
-                  setTypedParams({
-                    from_date: "",
-                    status: "",
-                    to_date: "",
-                  });
-                }}
-                className="col-span-1  rounded-none bg-red-600 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
-              >
-                Reset
-              </button>
-            )}
-            {isDirty ? (
-              <>
-                <button
-                  onClick={() => {
-                    if (isNotDirty) {
-                      onSearch();
-                    }
-                    setTypedParams({
-                      from_date: selectedFromDate,
-                      to_date: selectedToDate,
-                      status: selectedStatus,
-                      employer: selectedEmployer,
-                      employer_name: selectedEmployerName?.label,
-                    });
-                  }}
-                  className="col-span-1 rounded-none bg-blue-600 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
-                >
-                  Apply Filter
-                </button>
-              </>
-            ) : null}
-          </div>
         </div>
       </div>
     </div>
@@ -199,11 +164,13 @@ function Example({
       })
       .finally(() => setIsLoading(false));
   }, [searchQuery]);
+
+  const isFirstRender = useRef(true);
   useEffect(() => {
-    if (selected) setSelectedEmployer(selected);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected]);
-  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     setSelected(selectedEmployer);
   }, [selectedEmployer]);
 
