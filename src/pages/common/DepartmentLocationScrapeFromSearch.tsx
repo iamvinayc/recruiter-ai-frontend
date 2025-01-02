@@ -1,51 +1,63 @@
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { useEffect, useState } from "react";
-import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 import { axiosApi } from "@/api/api";
 import { Combobox } from "@/components/Combobox";
 import { Input } from "@/components/common/Input";
 import { DatePickerWithRange } from "@/components/DateRangePicker";
 import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
+import { SectorSelector } from "@/components/SectorSelector";
+import {
+  useDebouncedSearchParam,
+  useIsFilterApplied,
+} from "@/hooks/useDebouncedSearchParam";
 import { ROUTES } from "@/routes/routes";
+import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 dayjs.extend(customParseFormat);
 
 export function DepartmentLocationScrapeFromSearch({
-  onSearch,
   searchTitle,
 }: {
   onSearch: VoidFunction;
   searchTitle: string;
 }) {
-  const [
-    { skill: department, location, scrape_from, scrape_to, search },
-    setTypedParams,
-  ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedScrapeForm, setSelectedScrapeForm] = useState("");
-  const [selectedScrapeTo, setSelectedScrapeTo] = useState("");
-  const [selectedSearch, setSelectedSearch] = useState("");
-  // console.log("department", department, location);
-  useEffect(() => {
-    setSelectedDepartment(department);
-  }, [department]);
-  useEffect(() => {
-    setSelectedLocation(location);
-  }, [location]);
-  useEffect(() => {
-    setSelectedScrapeForm(scrape_from);
-  }, [scrape_from]);
-  useEffect(() => {
-    setSelectedScrapeTo(scrape_to);
-  }, [scrape_to]);
-  useEffect(() => {
-    setSelectedSearch(search);
-  }, [search]);
+  const [, setSearchParams] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
+  const [selectedLocation, setSelectedLocation] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_JOBS,
+    "location",
+  );
 
+  const [selectedDepartment, setSelectedDepartment] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_JOBS,
+    "skill",
+  );
+  const [selectedScrapeForm, setSelectedScrapeForm] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_JOBS,
+    "scrape_from",
+  );
+  const [selectedScrapeTo, setSelectedScrapeTo] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_JOBS,
+    "scrape_to",
+  );
+  const [selectedSearch, setSelectedSearch] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_JOBS,
+    "search",
+  );
+  const [selectedSector, setSelectedSector] = useDebouncedSearchParam(
+    ROUTES.ADMIN.LIST_JOBS,
+    "sector",
+  );
+  const isFilterApplied = useIsFilterApplied(ROUTES.ADMIN.LIST_JOBS, [
+    "skill",
+    "location",
+    "scrape_from",
+    "scrape_to",
+    "search",
+    "id",
+    "sector",
+  ]);
   const locationListQuery = useQuery({
     queryKey: ["AdminListLocationPage"],
     queryFn: async () =>
@@ -57,11 +69,25 @@ export function DepartmentLocationScrapeFromSearch({
       return data.map((e) => ({ value: e.name, label: e.name }));
     },
   });
-
+  const reset = () => {
+    setSearchParams({});
+  };
   return (
     <div className="mb-2">
       <div className=" dark:border-strokedark rounded-sm border border-sky-300 bg-white p-4 shadow-default">
-        <h2 className="text-xl font-bold uppercase text-stone-700">Filters</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold uppercase text-stone-700">
+            Filters
+          </h2>
+          {isFilterApplied && (
+            <span
+              className="cursor-pointer text-sm text-blue-500 underline"
+              onClick={reset}
+            >
+              Clear Filter
+            </span>
+          )}
+        </div>
         <div className="mt-2 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           {/* <SkillSelector
             selectedItem={selectedDepartment}
@@ -95,43 +121,12 @@ export function DepartmentLocationScrapeFromSearch({
               setSelectedSearch(e.currentTarget.value);
             }}
           />
-          <div className="flex  flex-nowrap items-end gap-2">
-            <button
-              onClick={() => {
-                setTypedParams({
-                  skill: "",
-                  location: "",
-                  scrape_from: "",
-                  scrape_to: "",
-                  search: "",
-                });
-                setSelectedDepartment("");
-              }}
-              className="rounded-none bg-red-600 px-4 py-2 font-medium text-white hover:opacity-90 focus:ring active:scale-95"
-            >
-              Reset
-            </button>
-            <button
-              onClick={() => {
-                if (
-                  department === selectedDepartment &&
-                  location == selectedLocation
-                ) {
-                  onSearch();
-                }
-                setTypedParams({
-                  skill: selectedDepartment,
-                  location: selectedLocation,
-                  scrape_from: selectedScrapeForm,
-                  scrape_to: selectedScrapeTo,
-                  search: selectedSearch,
-                });
-              }}
-              className="rounded-none bg-green-500 px-2 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
-            >
-              Start Scrape
-            </button>
-          </div>
+          <SectorSelector
+            labelClassName="mt-0"
+            className="py-[2px]"
+            selectedItem={selectedSector}
+            setSelectedItem={setSelectedSector}
+          />
         </div>
       </div>
     </div>

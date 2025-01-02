@@ -2,21 +2,20 @@ import { sectorsMap } from "@/api/api";
 import { Combobox } from "@/components/Combobox";
 import { Button } from "@/components/common/Button";
 import { DatePickerWithRange } from "@/components/DateRangePicker";
-import {
-  LocationSelector,
-  Item as LocationType,
-} from "@/components/LocationSelector";
+import { LocationSelector } from "@/components/LocationSelector";
 import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
+import {
+  useDebouncedSearchParam,
+  useIsFilterApplied,
+} from "@/hooks/useDebouncedSearchParam";
 import { ROUTES } from "@/routes/routes";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { useEffect, useState } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
 dayjs.extend(customParseFormat);
 
 export function EmployerReportListFilter({
-  onSearch,
   isLoading,
   onClick,
   isEmpty,
@@ -26,64 +25,57 @@ export function EmployerReportListFilter({
   onClick?: () => void;
   isEmpty?: boolean;
 }) {
-  const [
-    { location, from_date, to_date, sector, skill: department },
-    setTypedParams,
-  ] = useTypedSearchParams(ROUTES.ADMIN.EMPLOYER_REPORT);
-  const [selectedLocation, setSelectedLocation] = useState<LocationType>({
-    name: "",
-  });
-  const [selectedFromDate, setSelectedFromDate] = useState("");
-  const [selectedToDate, setSelectedToDate] = useState("");
-  const [selectedSector, setSelectedSector] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  useState<ListItem | null>(null);
+  const [, setTypedParams] = useTypedSearchParams(ROUTES.ADMIN.EMPLOYER_REPORT);
+  const [selectedLocation, setSelectedLocation] = useDebouncedSearchParam(
+    ROUTES.ADMIN.EMPLOYER_REPORT,
+    "location",
+  );
+  const [selectedFromDate, setSelectedFromDate] = useDebouncedSearchParam(
+    ROUTES.ADMIN.EMPLOYER_REPORT,
+    "from_date",
+  );
+  const [selectedToDate, setSelectedToDate] = useDebouncedSearchParam(
+    ROUTES.ADMIN.EMPLOYER_REPORT,
+    "to_date",
+  );
+  const [selectedSector, setSelectedSector] = useDebouncedSearchParam(
+    ROUTES.ADMIN.EMPLOYER_REPORT,
+    "sector",
+  );
+  const [selectedDepartment, setSelectedDepartment] = useDebouncedSearchParam(
+    ROUTES.ADMIN.EMPLOYER_REPORT,
+    "skill",
+  );
 
-  useEffect(() => {
-    setSelectedLocation(location ? { name: location } : { name: "" });
-  }, [location]);
-  useEffect(() => {
-    setSelectedFromDate(from_date);
-  }, [from_date]);
-  useEffect(() => {
-    setSelectedToDate(to_date);
-  }, [to_date]);
-  useEffect(() => {
-    setSelectedSector(sector);
-  }, [sector]);
-  useEffect(() => {
-    setSelectedDepartment(department);
-  }, [department]);
-
-  const isNotDirty =
-    department == selectedDepartment &&
-    location == selectedLocation.name &&
-    from_date == selectedFromDate &&
-    to_date == selectedToDate &&
-    sector == selectedSector;
-  const isDirty = !isNotDirty;
-  const isAllEmpty =
-    [
-      department,
-      location,
-      from_date,
-      to_date,
-      sector,
-      selectedDepartment,
-      selectedLocation.name,
-      selectedFromDate,
-      selectedToDate,
-      selectedSector,
-    ].filter(Boolean).length == 0;
-
+  const isFilterApplied = useIsFilterApplied(ROUTES.ADMIN.EMPLOYER_REPORT, [
+    "skill",
+    "location",
+    "sector",
+    "from_date",
+    "to_date",
+  ]);
+  const reset = () => {
+    setTypedParams({});
+  };
   return (
     <div className="mb-2">
       <div className="dark:border-strokedark space-y-4 rounded-sm border border-sky-300 bg-white p-4 shadow-default">
-        <h2 className="text-xl font-bold uppercase text-stone-700">Filter</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-9">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold uppercase text-stone-700">Filter</h2>
+
+          {isFilterApplied && (
+            <span
+              className="cursor-pointer text-sm text-blue-500 underline"
+              onClick={reset}
+            >
+              Clear Filter
+            </span>
+          )}
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
           <DatePickerWithRange
             title="Date Range"
-            className="col-span-2"
+            className=""
             selectedFromDate={selectedFromDate}
             selectedToDate={selectedToDate}
             setSelectedFromDate={setSelectedFromDate}
@@ -91,19 +83,19 @@ export function EmployerReportListFilter({
           />
           <Combobox
             className="h-[40px]"
-            parentClassName="col-span-2 "
+            parentClassName=" "
             label="Sector"
             items={sectorsMap}
             selectedValue={selectedSector}
             setSelectedValue={setSelectedSector}
           />
           <LocationSelector
-            className="col-span-2"
-            selected={selectedLocation}
-            setSelected={setSelectedLocation}
+            className=""
+            selected={{ name: selectedLocation }}
+            setSelected={(e) => setSelectedLocation(e.name)}
           />
           <MultipleSkillSelector
-            className="col-span-2"
+            className=""
             selectedItems={selectedDepartment}
             setSelectedItems={setSelectedDepartment}
           />
@@ -119,62 +111,7 @@ export function EmployerReportListFilter({
             </div>
           )}
         </div>
-
-        <div className="grid w-full justify-end space-x-4 md:flex">
-          {isAllEmpty ? null : (
-            <button
-              onClick={() => {
-                location === "" &&
-                from_date === "" &&
-                to_date === "" &&
-                sector === "" &&
-                department === ""
-                  ? (setSelectedLocation({ name: "" }),
-                    setSelectedFromDate(""),
-                    setSelectedToDate(""),
-                    setSelectedSector(""),
-                    setSelectedDepartment(""))
-                  : setTypedParams({
-                      location: "",
-                      from_date: "",
-                      to_date: "",
-                      sector: "",
-                      skill: "",
-                    });
-              }}
-              className="rounded-none bg-red-600 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
-            >
-              Reset
-            </button>
-          )}
-          {isDirty ? (
-            <>
-              <button
-                onClick={() => {
-                  if (isNotDirty) {
-                    onSearch();
-                  }
-                  setTypedParams({
-                    location: selectedLocation.name,
-                    from_date: selectedFromDate,
-                    to_date: selectedToDate,
-                    sector: selectedSector,
-                    skill: selectedDepartment,
-                  });
-                }}
-                className="rounded-none bg-blue-600 px-4 py-2 font-medium text-white outline-none hover:opacity-90 focus:ring active:scale-95"
-              >
-                Apply Filter
-              </button>
-            </>
-          ) : null}
-        </div>
       </div>
     </div>
   );
-}
-
-interface ListItem {
-  value: string;
-  label: string;
 }

@@ -72,6 +72,7 @@ export function AdminListJobPage() {
       today_scrapped_jobs,
       responded_jobs,
       non_matched_jobs,
+      sector,
     },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_JOBS);
@@ -109,6 +110,7 @@ export function AdminListJobPage() {
       non_matched_jobs,
       searchCompanyName,
       searchJobId,
+      sector,
     ],
     queryFn: async ({ pageParam }) => {
       return axiosApi({
@@ -139,6 +141,7 @@ export function AdminListJobPage() {
           non_matched_jobs: non_matched_jobs || undefined,
           job_id: searchJobId || undefined,
           employer_name: searchCompanyName || undefined,
+          sector: sector || undefined,
         },
       }).then((e) => e.data);
     },
