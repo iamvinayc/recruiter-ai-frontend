@@ -2,16 +2,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import { SuccessPage } from "@/pages/SuccessPage";
-import { PublicCandidateAddPage } from "@/pages/PublicCandidateAddPage";
+import { CandidateReportListPage } from "@/pages/CandidateReportListPage";
+import ConfigurationListPage from "@/pages/ConfigurationListPage";
 import { EmployerCandidateSubmitPage } from "@/pages/EmployerCandidateSubmitPage";
 import EmployerListPage from "@/pages/EmployerListPage";
+import { EmployerReportListPage } from "@/pages/EmployerReportListPage";
 import { FeedbackPage } from "@/pages/FeedbackPage";
 import { ListScoringPage } from "@/pages/ListScoringPage";
 import { NotificationListPage } from "@/pages/NotificationListPage";
 import OnboardingListPage from "@/pages/OnboardingListPage";
+import { PublicCandidateAddPage } from "@/pages/PublicCandidateAddPage";
 import { QuestionnairePage } from "@/pages/QuestionnairePage";
 import { ReportListPage } from "@/pages/ReportListPage";
+import { SuccessPage } from "@/pages/SuccessPage";
 import EmployerAgreementPage from "@/pages/employer/EmployerAgreementPage";
 import { ProtectPage } from "../components/common/ProtectPage";
 import { AdminDashboardLayout } from "../layouts/AdminDashboardLayout";
@@ -26,8 +29,6 @@ import { ChangePasswordPage } from "../pages/ChangePasswordPage";
 import { ForgotPasswordPage } from "../pages/ForgotPasswordPage";
 import { LoginPage } from "../pages/LoginPage";
 import { ROUTES } from "./routes";
-import { CandidateReportListPage } from "@/pages/CandidateReportListPage";
-import { EmployerReportListPage } from "@/pages/EmployerReportListPage";
 
 export function AppRouter() {
   return (
@@ -93,6 +94,10 @@ export function AppRouter() {
             <Route
               path={ROUTES.ADMIN.LIST_NOTIFICATION.path}
               element={<NotificationListPage />}
+            />
+            <Route
+              path={ROUTES.ADMIN.SCRAPPING_SESSIONS.path}
+              element={<ConfigurationListPage />}
             />
           </Route>
 

@@ -301,3 +301,7 @@ html {
     height: 270px !important;
   }
 }
+
+[data-radix-popper-content-wrapper] {
+  z-index: 100000 !important;
+}

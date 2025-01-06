@@ -26,8 +26,8 @@ export function DatePickerWithRange({
 }: React.HTMLAttributes<HTMLDivElement> & {
   selectedFromDate: string;
   selectedToDate: string;
-  setSelectedToDate: React.Dispatch<React.SetStateAction<string>>;
-  setSelectedFromDate: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedToDate: (dt: string) => void;
+  setSelectedFromDate: (dt: string) => void;
   btnClassName?: string;
 }) {
   const date =

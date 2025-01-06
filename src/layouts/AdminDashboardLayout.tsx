@@ -9,6 +9,7 @@ import {
   GaugeCircleIcon,
   GaugeIcon,
   HandshakeIcon,
+  SettingsIcon,
 } from "lucide-react";
 import { Outlet } from "react-router-dom";
 
@@ -132,5 +133,10 @@ const SideBarLinks: NavMainItemProps[] = [
     title: "Employer Reports",
     link: ROUTES.ADMIN.EMPLOYER_REPORT.path,
     icon: <GaugeCircleIcon className="h-4 w-4" />,
+  },
+  {
+    title: "Scrapping Sessions",
+    link: ROUTES.ADMIN.SCRAPPING_SESSIONS.path,
+    icon: <SettingsIcon className="h-4 w-4" />,
   },
 ];
