@@ -539,25 +539,53 @@ const defaultCandidateFormValues: z.infer<typeof candidateFormSchema> = {
 //#endregion
 
 //#region Job Re-Scoring
-export const JobReScoringDialog = ({ onClose }: { onClose: () => void }) => {
-  const [selectedItems, setSelectedItems] = useState<
+export const ReScoringDialog = ({ onClose }: { onClose: () => void }) => {
+  const [selectedJobs, setSelectedJobs] = useState<
     {
       value: string;
       label: string;
     }[]
   >([]);
-  const [selectedScrapeForm, setSelectedScrapeForm] = useState("");
-  const [selectedScrapeTo, setSelectedScrapeTo] = useState("");
-  const [searchText, setSearchText] = useState("");
+  const [selectedScrapeFormJob, setSelectedScrapeFormJob] = useState("");
+  const [selectedScrapeToJob, setSelectedScrapeToJob] = useState("");
+  const [searchTextJob, setSearchTextJob] = useState("");
+  const [selectedCandidateItems, setSelectedCandidateItems] = useState<
+    {
+      value: string;
+      label: string;
+    }[]
+  >([]);
+  const [selectedScrapeFormCandidate, setSelectedScrapeFormCandidate] =
+    useState("");
+  const [selectedScrapeToCandidate, setSelectedScrapeToCandidate] =
+    useState("");
+  const [searchTextCandidate, setSearchTextCandidate] = useState("");
 
+  const candidateListQuery = useQuery({
+    queryKey: ["candidate-list-rescore", searchTextCandidate],
+    queryFn: async () => {
+      return axiosApi({
+        url: "data-sourcing/candidate/",
+        method: "GET",
+        params: {
+          search: searchTextCandidate,
+        },
+      }).then((e) => e.data.data || []);
+    },
+  });
+  const candidateList =
+    candidateListQuery.data?.map((e) => ({
+      value: e.id.toString(),
+      label: e.name,
+    })) || [];
   const jobListQuery = useQuery({
-    queryKey: ["job-list-rescore", searchText],
+    queryKey: ["job-list-rescore", searchTextJob],
     queryFn: async () => {
       return axiosApi({
         url: "data-sourcing/job/",
         method: "GET",
         params: {
-          search: searchText,
+          search: searchTextJob,
         },
       }).then((e) => e.data.data || []);
     },
@@ -566,20 +594,29 @@ export const JobReScoringDialog = ({ onClose }: { onClose: () => void }) => {
     mutationKey: ["startScrapeMutation-job-rescore"],
     mutationFn: ({
       selectedItems,
-      selectedScrapeForm,
-      selectedScrapeTo,
+      selectedScrapeFormJob,
+      selectedScrapeToJob,
+      selectedCandidateItems,
+      selectedScrapeFormCandidate,
+      selectedScrapeToCandidate,
     }: {
-      selectedScrapeForm: string;
-      selectedScrapeTo: string;
+      selectedScrapeFormJob: string;
+      selectedScrapeToJob: string;
       selectedItems: { value: string; label: string }[];
+      selectedCandidateItems: { value: string; label: string }[];
+      selectedScrapeFormCandidate: string;
+      selectedScrapeToCandidate: string;
     }) => {
       return axiosApi({
         method: "POST",
         url: replaceWith("onboarding/scoring", "onboarding/scoring/"),
         data: {
-          from_date: selectedScrapeForm,
-          to_date: selectedScrapeTo,
+          job_from_date: selectedScrapeFormJob,
+          job_to_date: selectedScrapeToJob,
           job_ids: selectedItems.map((e) => +e.value),
+          candidate_ids: selectedCandidateItems.map((e) => +e.value),
+          candidate_from_date: selectedScrapeFormCandidate,
+          candidate_to_date: selectedScrapeToCandidate,
         },
       }).then((e) => e.data);
     },
@@ -592,10 +629,26 @@ export const JobReScoringDialog = ({ onClose }: { onClose: () => void }) => {
 
   const onSubmit = async () => {
     try {
+      if (
+        selectedJobs.length === 0 &&
+        (!selectedScrapeFormJob || !selectedScrapeToJob)
+      ) {
+        return toast.error("Please select jobs or date range");
+      }
+      if (
+        selectedCandidateItems.length === 0 &&
+        (!selectedScrapeFormCandidate || !selectedScrapeToCandidate)
+      ) {
+        return toast.error("Please select candidates or date range");
+      }
+
       const { isSuccess, message } = await startScrapeMutation.mutateAsync({
-        selectedItems,
-        selectedScrapeForm,
-        selectedScrapeTo,
+        selectedItems: selectedJobs,
+        selectedScrapeFormJob,
+        selectedScrapeToJob,
+        selectedCandidateItems,
+        selectedScrapeFormCandidate,
+        selectedScrapeToCandidate,
       });
       if (isSuccess) {
         toast.success("Re-scoring started");
@@ -609,139 +662,61 @@ export const JobReScoringDialog = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <DatePickerWithRange
-        title="Scraped Date Range"
-        selectedFromDate={selectedScrapeForm}
-        selectedToDate={selectedScrapeTo}
-        setSelectedFromDate={setSelectedScrapeForm}
-        setSelectedToDate={setSelectedScrapeTo}
-      />
-      <div className="">
-        <h1 className="text-md mb-4 font-bold">Jobs</h1>
+    <div className="flex flex-col gap-y-2 pt-4">
+      <h1 className="text-md font-bold">Jobs added :</h1>
+      <div className="space-y-2 px-4">
+        <h1 className="text-md font-medium">Jobs:</h1>
         <MultiSelect
           isPending={jobListQuery.isPending}
           options={jobList}
-          onValueChange={setSelectedItems}
-          setSelectedValues={setSelectedItems}
-          selectedValues={selectedItems}
+          onValueChange={setSelectedJobs}
+          setSelectedValues={setSelectedJobs}
+          selectedValues={selectedJobs}
           placeholder="Search Jobs"
           variant="inverted"
           maxCount={10}
-          searchText={searchText}
-          onSearchTextChange={setSearchText}
+          searchText={searchTextJob}
+          onSearchTextChange={setSearchTextJob}
+        />
+        <div>-- or --</div>
+        <DatePickerWithRange
+          title="Scraped Date Range"
+          selectedFromDate={selectedScrapeFormJob}
+          selectedToDate={selectedScrapeToJob}
+          setSelectedFromDate={setSelectedScrapeFormJob}
+          setSelectedToDate={setSelectedScrapeToJob}
         />
       </div>
-      <div className="flex justify-end" onClick={onSubmit}>
-        <Button isLoading={startScrapeMutation.isPending} className="py-2">
-          Re-Score
-        </Button>
-      </div>
-    </div>
-  );
-};
-//#endregion
-
-//#region Candidate Re-Scoring
-export const CandidateReScoringDialog = ({
-  onClose,
-}: {
-  onClose: () => void;
-}) => {
-  const [selectedItems, setSelectedItems] = useState<
-    {
-      value: string;
-      label: string;
-    }[]
-  >([]);
-  const [selectedScrapeForm, setSelectedScrapeForm] = useState("");
-  const [selectedScrapeTo, setSelectedScrapeTo] = useState("");
-  const [searchText, setSearchText] = useState("");
-
-  const candidateListQuery = useQuery({
-    queryKey: ["candidate-list-rescore", searchText],
-    queryFn: async () => {
-      return axiosApi({
-        url: "data-sourcing/candidate/",
-        method: "GET",
-        params: {
-          search: searchText,
-        },
-      }).then((e) => e.data.data || []);
-    },
-  });
-  const startScrapeMutation = useMutation({
-    mutationKey: ["startScrapeMutation-candidate-rescore"],
-    mutationFn: ({
-      selectedItems,
-      selectedScrapeForm,
-      selectedScrapeTo,
-    }: {
-      selectedScrapeForm: string;
-      selectedScrapeTo: string;
-      selectedItems: { value: string; label: string }[];
-    }) => {
-      return axiosApi({
-        method: "POST",
-        url: replaceWith("onboarding/scoring", "onboarding/scoring/"),
-        data: {
-          from_date: selectedScrapeForm,
-          to_date: selectedScrapeTo,
-          candidate_ids: selectedItems.map((e) => +e.value),
-        },
-      }).then((e) => e.data);
-    },
-  });
-  const candidateList =
-    candidateListQuery.data?.map((e) => ({
-      value: e.id.toString(),
-      label: e.name,
-    })) || [];
-
-  const onSubmit = async () => {
-    try {
-      const { isSuccess, message } = await startScrapeMutation.mutateAsync({
-        selectedItems,
-        selectedScrapeForm,
-        selectedScrapeTo,
-      });
-      if (isSuccess) {
-        toast.success("Re-scoring started");
-        onClose();
-      } else {
-        toast.error(message);
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
-  };
-
-  return (
-    <div className="flex flex-col gap-y-4">
-      <DatePickerWithRange
-        title="Scraped Date Range"
-        selectedFromDate={selectedScrapeForm}
-        selectedToDate={selectedScrapeTo}
-        setSelectedFromDate={setSelectedScrapeForm}
-        setSelectedToDate={setSelectedScrapeTo}
-      />
-      <div className="">
-        <h1 className="text-md mb-4 font-bold">Candidate</h1>
+      <h1 className="text-md font-bold">Candidates added :</h1>
+      <div className="space-y-2 px-4">
+        <h1 className="text-md font-medium">Candidates:</h1>
         <MultiSelect
           isPending={candidateListQuery.isPending}
           options={candidateList}
-          onValueChange={setSelectedItems}
-          setSelectedValues={setSelectedItems}
-          selectedValues={selectedItems}
+          onValueChange={setSelectedCandidateItems}
+          setSelectedValues={setSelectedCandidateItems}
+          selectedValues={selectedCandidateItems}
           placeholder="Search Candidate"
           variant="inverted"
           maxCount={10}
-          searchText={searchText}
-          onSearchTextChange={setSearchText}
+          searchText={searchTextCandidate}
+          onSearchTextChange={setSearchTextCandidate}
+        />
+        <div>-- or --</div>
+        <DatePickerWithRange
+          title="Scraped Date Range"
+          selectedFromDate={selectedScrapeFormCandidate}
+          selectedToDate={selectedScrapeToCandidate}
+          setSelectedFromDate={setSelectedScrapeFormCandidate}
+          setSelectedToDate={setSelectedScrapeToCandidate}
         />
       </div>
-      <div className="flex justify-end" onClick={onSubmit}>
-        <Button isLoading={startScrapeMutation.isPending} className="py-2">
+      <div className="flex justify-end">
+        <Button
+          onClick={onSubmit}
+          isLoading={startScrapeMutation.isPending}
+          className="py-2 disabled:border-slate-600 disabled:bg-slate-500"
+        >
           Re-Score
         </Button>
       </div>
