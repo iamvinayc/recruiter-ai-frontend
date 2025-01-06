@@ -230,7 +230,7 @@ export default function ConfigurationListPage() {
             </TabsList>
             <TabsContent
               value="candidate"
-              className=" max-h-[80vh] overflow-y-auto"
+              className=" max-h-[70vh] overflow-y-auto"
             >
               <CandidateScrapper
                 onClose={() => {
@@ -239,7 +239,7 @@ export default function ConfigurationListPage() {
                 }}
               />
             </TabsContent>
-            <TabsContent value="job" className=" max-h-[80vh] overflow-y-auto">
+            <TabsContent value="job" className=" max-h-[70vh] overflow-y-auto">
               <JobScrapper
                 onClose={() => {
                   setShowStartScrapperDialog(false);
