@@ -489,7 +489,7 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
                           htmlFor={`id-${item.id}`}
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          {item.title}
+                          [{item.id}] {item.title}
                         </label>
                       </div>
                     </div>
@@ -581,28 +581,29 @@ export const ReScoringDialog = ({ onClose }: { onClose: () => void }) => {
   const candidateListQuery = useQuery({
     queryKey: ["candidate-list-rescore", searchTextCandidate],
     queryFn: async () => {
+      const isSearchQueryANumber = /^\d+$/.test(searchTextCandidate.trim());
       return axiosApi({
         url: "data-sourcing/candidate/",
         method: "GET",
         params: {
-          search: searchTextCandidate,
+          candidate_id: isSearchQueryANumber ? +searchTextCandidate : undefined,
+          search: isSearchQueryANumber ? undefined : searchTextCandidate,
         },
       }).then((e) => e.data.data || []);
     },
   });
-  const candidateList =
-    candidateListQuery.data?.map((e) => ({
-      value: e.id.toString(),
-      label: e.name,
-    })) || [];
+
   const jobListQuery = useQuery({
     queryKey: ["job-list-rescore", searchTextJob],
     queryFn: async () => {
+      const isSearchQueryANumber = /^\d+$/.test(searchTextJob.trim());
+
       return axiosApi({
         url: "data-sourcing/job/",
         method: "GET",
         params: {
-          search: searchTextJob,
+          job_id: isSearchQueryANumber ? searchTextJob : undefined,
+          search: isSearchQueryANumber ? undefined : searchTextJob,
         },
       }).then((e) => e.data.data || []);
     },
@@ -641,9 +642,13 @@ export const ReScoringDialog = ({ onClose }: { onClose: () => void }) => {
   const jobList =
     jobListQuery.data?.map((e) => ({
       value: e.id.toString(),
-      label: e.title,
+      label: `[${e.id}] ${e.title}`,
     })) || [];
-
+  const candidateList =
+    candidateListQuery.data?.map((e) => ({
+      value: e.id.toString(),
+      label: `[${e.id}] ${e.name}`,
+    })) || [];
   const onSubmit = async () => {
     try {
       if (
@@ -700,6 +705,7 @@ export const ReScoringDialog = ({ onClose }: { onClose: () => void }) => {
           setSelectedValues={setSelectedJobs}
           selectedValues={selectedJobs}
           placeholder="Search Jobs"
+          inputPlaceholder="Search by Job name/id"
           variant="inverted"
           maxCount={10}
           searchText={searchTextJob}
@@ -724,6 +730,7 @@ export const ReScoringDialog = ({ onClose }: { onClose: () => void }) => {
           setSelectedValues={setSelectedCandidateItems}
           selectedValues={selectedCandidateItems}
           placeholder="Search Candidate"
+          inputPlaceholder="Search by Candidate name/id"
           variant="inverted"
           maxCount={10}
           searchText={searchTextCandidate}

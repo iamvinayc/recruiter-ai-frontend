@@ -135,6 +135,7 @@ interface MultiSelectProps
   isPending?: boolean;
   searchText: string;
   onSearchTextChange: (value: string) => void;
+  inputPlaceholder?: string;
 }
 
 export const MultiSelect = React.forwardRef<
@@ -158,6 +159,7 @@ export const MultiSelect = React.forwardRef<
       selectedValues,
       setSelectedValues,
       onSearchTextChange,
+      inputPlaceholder = "Search...",
       ...props
     },
     ref,
@@ -301,7 +303,7 @@ export const MultiSelect = React.forwardRef<
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto min-w-[60vw] p-0"
+          className="w-auto max-w-[60vw] p-0"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
@@ -313,7 +315,7 @@ export const MultiSelect = React.forwardRef<
                   className="flex-1 py-2 outline-none"
                   value={searchText}
                   onInput={(e) => onSearchTextChange(e.currentTarget.value)}
-                  placeholder="Search..."
+                  placeholder={inputPlaceholder}
                   onKeyDown={handleInputKeyDown}
                 />
               </div>
