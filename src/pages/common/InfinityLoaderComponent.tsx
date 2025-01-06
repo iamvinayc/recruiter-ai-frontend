@@ -8,12 +8,23 @@ export function InfinityLoaderComponent({
   next,
   hasMore,
   height,
+  scrollableTarget = "layout",
+  loader = (
+    <div className="flex items-center justify-center p-4 py-6">
+      <div className="flex items-center space-x-2">
+        <SpinnerIcon className="h-6 w-6 text-black" />
+        <span>Loading....</span>
+      </div>
+    </div>
+  ),
 }: {
   dataLength: number;
   children: JSX.Element;
   next: () => void;
   hasMore: boolean;
   height?: number;
+  scrollableTarget?: string;
+  loader?: React.ReactNode;
 }) {
   return (
     <InfiniteScroll
@@ -21,14 +32,7 @@ export function InfinityLoaderComponent({
       next={next}
       hasMore={hasMore}
       height={height}
-      loader={
-        <div className="flex items-center justify-center p-4 py-6">
-          <div className="flex items-center space-x-2">
-            <SpinnerIcon className="h-6 w-6 text-black" />
-            <span>Loading....</span>
-          </div>
-        </div>
-      }
+      loader={loader}
       endMessage={
         dataLength > 0 ? (
           <div className="flex items-center justify-center p-4 py-6">
@@ -36,7 +40,7 @@ export function InfinityLoaderComponent({
           </div>
         ) : null
       }
-      scrollableTarget="layout"
+      scrollableTarget={scrollableTarget}
     >
       {children}
     </InfiniteScroll>

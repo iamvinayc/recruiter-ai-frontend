@@ -49,6 +49,7 @@ export const ROUTES = {
           responded_jobs: string().default(""),
           non_matched_jobs: string().default(""),
           sector: string().default(""),
+          scraping_session_id: string().default(""),
         },
       }),
       LIST_CANDIDATE: route("list-candidate", {
@@ -71,6 +72,7 @@ export const ROUTES = {
           non_matched_candidates: string().default(""),
           final_followedup_candidates: string().default(""),
           sector: string().default(""),
+          scraping_session_id: string().default(""),
         },
       }),
       LIST_SCORING: route("list-scoring", {
@@ -87,6 +89,9 @@ export const ROUTES = {
           notification_id: string().default(""),
           onboarding_id: string().default(""),
         },
+      }),
+      SCRAPPING_SESSIONS: route("scrapping-sessions", {
+        searchParams: {},
       }),
       LIST_REPORT: route("list-report", {
         searchParams: {
@@ -154,6 +159,7 @@ export const ROUTES = {
           today_scrapped_jobs: string().default(""),
           responded_jobs: string().default(""),
           non_matched_jobs: string().default(""),
+          scraping_session_id: string().default(""),
         },
       }),
       LIST_CANDIDATE: route("list-candidate", {
@@ -175,6 +181,7 @@ export const ROUTES = {
           responded_candidates: string().default(""),
           non_matched_candidates: string().default(""),
           final_followedup_candidates: string().default(""),
+          scraping_session_id: string().default(""),
         },
       }),
       LIST_SCORING: route("list-scoring", {

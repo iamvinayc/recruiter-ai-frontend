@@ -14,9 +14,11 @@ export function Input<
   const { icon, label, containerClassName, error, register, ...rest } = props;
   return (
     <div className={containerClassName}>
-      <label className="mx-4 mb-2.5 block font-medium text-black dark:text-white">
-        {label}
-      </label>
+      {label && (
+        <label className="mx-4 mb-2.5 block font-medium text-black dark:text-white">
+          {label}
+        </label>
+      )}
       <div className="relative">
         <input
           {...rest}

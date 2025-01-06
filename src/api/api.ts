@@ -208,6 +208,8 @@ interface AllApiEndpoints {
         employer_name?: string;
         job_id?: string;
         sector?: string;
+        scraping_session_id?: string;
+        page_size?: number;
       };
       data?: undefined;
     };
@@ -326,6 +328,7 @@ interface AllApiEndpoints {
         non_matched_candidates?: string;
         final_followedup_candidates?: string;
         sector?: string;
+        scraping_session_id?: string;
       };
       data?: undefined;
     };
@@ -373,6 +376,24 @@ interface AllApiEndpoints {
       data?: undefined;
     };
     response: ScoringListResponse;
+  };
+  "onboarding/scoring": {
+    request: {
+      method: "POST";
+      params?: undefined;
+      data?: {
+        job_ids?: number[];
+        candidate_ids?: number[];
+        from_date: string;
+        to_date: string;
+      };
+    };
+    response: {
+      data: object;
+      message: string;
+      isSuccess: boolean;
+      status: number;
+    };
   };
   "onboarding/job/history/{{jobId}}/": {
     request: {
@@ -902,10 +923,70 @@ interface AllApiEndpoints {
     };
     response: SuccessResponse;
   };
+  "scraping/sessions/": {
+    request: {
+      method: "GET";
+      params?: undefined;
+      data?: undefined;
+    };
+    response: ScrappingSessionsResponse;
+  };
+  "scraping/start/": {
+    request: {
+      method: "POST";
+      params?: {
+        scraping_type: "job" | "candidate";
+      };
+      data?: ScrapingJobBody | ScrapingCandidateBody;
+    };
+    response: ScrappingStartResponse;
+  };
 }
 //#endregion
 
 //#region
+interface ScrappingStartResponse {
+  data: Data;
+  message: string;
+  isSuccess: boolean;
+  status: number;
+}
+
+interface Data {
+  scraping_session_id: string;
+}
+type ScrapingJobBody = {
+  platform: string;
+  total_jobs: number;
+  sector: string;
+  job_title: string;
+  location: string;
+  skills: string[];
+};
+interface ScrapingCandidateBody {
+  platform: string;
+  total_candidates: number;
+  sector: string;
+  job_ids: number[];
+}
+interface ScrappingSessionsResponse {
+  data: ScrappingSessionsResponseData[];
+  status: number;
+  is_success: boolean;
+  message: string;
+  next: null;
+  previous: null;
+  count: number;
+}
+
+interface ScrappingSessionsResponseData {
+  session_id: string;
+  scrape_type: "JOB" | "CANDIDATE";
+  status: "IN_PROGRESS" | "COMPLETED";
+  platform: string;
+  count: number;
+  created_at: string;
+}
 
 interface ScoredJobsResponse {
   data: ScoredJobsResponseData[];
