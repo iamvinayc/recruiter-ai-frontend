@@ -155,7 +155,7 @@ export const JobScrapper = ({ onClose }: { onClose: () => void }) => {
           isLoading={startJobScrapperMutation.isPending}
           className="rounded-none border-yellow-600 bg-yellow-500 py-2 text-white"
         >
-          Scap Jobs
+          Scrape Jobs
         </Button>
       </div>
     </form>

@@ -227,6 +227,7 @@ interface AllApiEndpoints {
         common?: string;
         search?: string;
         id?: string;
+        scraping_session_id?: string;
       };
       data?: undefined;
     };
@@ -345,6 +346,7 @@ interface AllApiEndpoints {
         sort?: string;
         common?: string;
         search?: string;
+        scraping_session_id?: string;
       };
       data?: undefined;
     };
