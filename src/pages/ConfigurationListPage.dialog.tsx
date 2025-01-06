@@ -153,7 +153,7 @@ export const JobScrapper = ({ onClose }: { onClose: () => void }) => {
       <div className="flex w-full items-center justify-center gap-4">
         <Button
           type="button"
-          className="rounded-none border-blue-600 bg-blue-500 py-2 text-black"
+          className="rounded-none border-blue-600 bg-blue-500 py-2 text-white"
           onClick={() => reset(defaultJobFormValues)}
         >
           Reset
