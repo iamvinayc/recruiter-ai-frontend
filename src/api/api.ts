@@ -313,6 +313,7 @@ interface AllApiEndpoints {
     request: {
       method: "GET";
       params: {
+        candidate_id?: string | number;
         resume?: string;
         department?: any;
         location?: string;
