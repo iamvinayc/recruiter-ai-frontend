@@ -227,6 +227,7 @@ interface AllApiEndpoints {
         common?: string;
         search?: string;
         id?: string;
+        scraping_session_id?: string;
       };
       data?: undefined;
     };
@@ -345,6 +346,7 @@ interface AllApiEndpoints {
         sort?: string;
         common?: string;
         search?: string;
+        scraping_session_id?: string;
       };
       data?: undefined;
     };
@@ -384,8 +386,10 @@ interface AllApiEndpoints {
       data?: {
         job_ids?: number[];
         candidate_ids?: number[];
-        from_date: string;
-        to_date: string;
+        job_from_date: string;
+        job_to_date: string;
+        candidate_from_date: string;
+        candidate_to_date: string;
       };
     };
     response: {

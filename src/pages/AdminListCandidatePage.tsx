@@ -65,6 +65,7 @@ export function AdminListCandidatePage() {
       non_matched_candidates,
       final_followedup_candidates,
       sector,
+      scraping_session_id,
     },
     setTypeSearch,
   ] = useTypedSearchParams(ROUTES.ADMIN.LIST_CANDIDATE);
@@ -116,6 +117,7 @@ export function AdminListCandidatePage() {
       non_matched_candidates,
       final_followedup_candidates,
       sector,
+      scraping_session_id,
     ],
     queryFn: async ({ pageParam }) =>
       axiosApi({
@@ -148,6 +150,7 @@ export function AdminListCandidatePage() {
           non_matched_candidates: non_matched_candidates || undefined,
           final_followedup_candidates: final_followedup_candidates || undefined,
           sector: sector || undefined,
+          scraping_session_id: scraping_session_id || undefined,
         },
       }).then((e) => e.data),
     getNextPageParam(e) {

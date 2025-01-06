@@ -21,10 +21,9 @@ import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
 import { TableLoader } from "./common/TableLoader";
 import {
-  CandidateReScoringDialog,
   CandidateScrapper,
-  JobReScoringDialog,
   JobScrapper,
+  ReScoringDialog,
 } from "./ConfigurationListPage.dialog";
 
 export default function ConfigurationListPage() {
@@ -256,31 +255,12 @@ export default function ConfigurationListPage() {
           title="Re-Score"
           showXMarkIcon
         >
-          <Tabs defaultValue="candidate" className="mt-4">
-            <TabsList>
-              <TabsTrigger value="candidate">Candidate</TabsTrigger>
-              <TabsTrigger value="job">Job</TabsTrigger>
-            </TabsList>
-            <TabsContent
-              value="candidate"
-              className=" max-h-[80vh] overflow-y-auto"
-            >
-              <CandidateReScoringDialog
-                onClose={() => {
-                  setShowReScoreDialog(false);
-                  onboardingListingQuery.refetch();
-                }}
-              />
-            </TabsContent>
-            <TabsContent value="job" className=" max-h-[80vh] overflow-y-auto">
-              <JobReScoringDialog
-                onClose={() => {
-                  setShowReScoreDialog(false);
-                  onboardingListingQuery.refetch();
-                }}
-              />
-            </TabsContent>
-          </Tabs>
+          <ReScoringDialog
+            onClose={() => {
+              setShowReScoreDialog(false);
+              onboardingListingQuery.refetch();
+            }}
+          />
         </PopupDialog>
       </div>
     </main>

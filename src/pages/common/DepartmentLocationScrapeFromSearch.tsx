@@ -57,6 +57,7 @@ export function DepartmentLocationScrapeFromSearch({
     "search",
     "id",
     "sector",
+    "scraping_session_id",
   ]);
   const locationListQuery = useQuery({
     queryKey: ["AdminListLocationPage"],
