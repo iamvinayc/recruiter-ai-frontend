@@ -218,7 +218,7 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
     }[]
   >([]);
   const isJobFilterApplied = Object.keys(currentSearchParams).length > 0;
-  const jobResult = useInfiniteQuery({
+  const jobSearchResult = useInfiniteQuery({
     queryKey: ["job-search-candidate-search", currentSearchParams],
     queryFn: async ({ pageParam }) => {
       const department =
@@ -233,6 +233,7 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
           to_date: currentSearchParams.endDate,
           //   sector: currentSearchParams.sector,
           page_size: 20,
+          job_id: currentSearchParams.jobId,
         },
       }).then((e) => e.data);
     },
@@ -284,8 +285,9 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
     return () => candidateFrom.reset(defaultCandidateFormValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const jobList = jobResult.data?.pages?.map((e) => e.data).flat() || [];
-  const isUpdateLoading = jobResult.isLoading || jobResult.isRefetching;
+  const jobList = jobSearchResult.data?.pages?.map((e) => e.data).flat() || [];
+  const isUpdateLoading =
+    jobSearchResult.isLoading || jobSearchResult.isRefetching;
   const selectedScrapeForm = jobSearchFrom.watch("startDate");
   const selectedScrapeTo = jobSearchFrom.watch("endDate");
 
@@ -343,6 +345,20 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
               jobSearchFrom.setValue("endDate", dt);
             }}
           />
+          <Controller
+            control={jobSearchFrom.control}
+            name="jobId"
+            render={({ fieldState, field: { value, onChange } }) => (
+              <Input
+                value={value}
+                onInput={(e) => onChange(e.currentTarget.value)}
+                placeholder="Job Id"
+                label="Job Id"
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+
           <div className="flex w-full items-center justify-center">
             <Button
               onClick={() => {
@@ -434,18 +450,18 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
           >
             <InfinityLoaderComponent
               dataLength={jobList.length || 0}
-              hasMore={jobResult.hasNextPage}
+              hasMore={jobSearchResult.hasNextPage}
               next={() => {
-                jobResult.fetchNextPage();
+                jobSearchResult.fetchNextPage();
               }}
               scrollableTarget="scrollLayout"
               loader={
-                jobResult.hasNextPage ? (
+                jobSearchResult.hasNextPage ? (
                   <div className="mb-4 flex items-center justify-center">
                     <Button
-                      isLoading={jobResult.isFetchingNextPage}
+                      isLoading={jobSearchResult.isFetchingNextPage}
                       className="py-2"
-                      onClick={() => jobResult.fetchNextPage()}
+                      onClick={() => jobSearchResult.fetchNextPage()}
                     >
                       Load More
                     </Button>
@@ -497,7 +513,7 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
                 ))}
                 <DivLoader
                   dataList={jobList}
-                  isLoading={jobResult.isLoading}
+                  isLoading={jobSearchResult.isLoading}
                   isUpdateLoading={isUpdateLoading}
                 />
               </div>
@@ -511,6 +527,7 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
 
 const candidateJobSchema = z.object({
   location: z.string().default(""),
+  jobId: z.string().default(""),
   skill: z
     .array(
       z.object({
@@ -529,6 +546,7 @@ const defaultCandidateJobValues: z.infer<typeof candidateJobSchema> = {
   skill: [],
   startDate: "",
   endDate: "",
+  jobId: "",
 };
 
 const candidateFormSchema = z.object({
