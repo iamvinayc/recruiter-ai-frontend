@@ -150,7 +150,14 @@ export const JobScrapper = ({ onClose }: { onClose: () => void }) => {
         )}
       />
 
-      <div className="flex w-full items-center justify-center">
+      <div className="flex w-full items-center justify-center gap-4">
+        <Button
+          type="button"
+          className="rounded-none border-blue-600 bg-blue-500 py-2 text-black"
+          onClick={() => reset(defaultJobFormValues)}
+        >
+          Reset
+        </Button>
         <Button
           isLoading={startJobScrapperMutation.isPending}
           className="rounded-none border-yellow-600 bg-yellow-500 py-2 text-white"
@@ -394,7 +401,17 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
               />
             )}
           />
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center gap-4">
+            <Button
+              type="button"
+              onClick={() => {
+                candidateFrom.reset(defaultCandidateFormValues);
+                setSelectedJobs([]);
+              }}
+              className="rounded-none border-blue-600 bg-blue-500  py-2 text-white"
+            >
+              Reset
+            </Button>
             <Button
               disabled={
                 Object.values(candidateFrom.formState.errors).filter(Boolean)
@@ -661,6 +678,16 @@ export const ReScoringDialog = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
+  const onReset = () => {
+    setSelectedJobs([]);
+    setSelectedScrapeFormJob("");
+    setSelectedScrapeToJob("");
+    setSelectedCandidateItems([]);
+    setSelectedScrapeFormCandidate("");
+    setSelectedScrapeToCandidate("");
+    setSearchTextJob("");
+    setSearchTextCandidate("");
+  };
   return (
     <div className="flex flex-col gap-y-2 pt-4">
       <h1 className="text-md font-bold">Jobs added :</h1>
@@ -711,7 +738,14 @@ export const ReScoringDialog = ({ onClose }: { onClose: () => void }) => {
           setSelectedToDate={setSelectedScrapeToCandidate}
         />
       </div>
-      <div className="flex justify-end">
+      <div className="mt-4 flex justify-end gap-4">
+        <Button
+          onClick={onReset}
+          className="rounded-none border-blue-600 bg-blue-500  py-2 text-white"
+          type="button"
+        >
+          Reset
+        </Button>
         <Button
           onClick={onSubmit}
           isLoading={startScrapeMutation.isPending}
