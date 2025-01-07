@@ -676,8 +676,8 @@ const AddJobPopup = ({
           },
           platform: "SYSTEM",
           sector: data.sector,
-          joining_period: initialData?.joining_period ?? null,
-          package: initialData?.package ?? null,
+          joining_period: data?.joining_period ?? null,
+          package: data?.package ?? null,
         },
       }).then((e) => e.data.isSuccess),
   });
