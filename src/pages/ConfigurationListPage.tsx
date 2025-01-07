@@ -57,6 +57,7 @@ export default function ConfigurationListPage() {
           scrape_type: e.scrape_type,
           status: e.status,
           action: "View",
+          count: e.count,
         })) || [],
     [onboardingListingQuery.data],
   );
@@ -112,39 +113,46 @@ export default function ConfigurationListPage() {
         header: () => <div>Action</div>,
         cell: (info) => (
           <div
-            className="flex justify-between text-blue-500 underline "
+            className={clsx(
+              "flex justify-between  ",
+              info.row.original.count !== 0 && "text-blue-500 underline",
+            )}
             title={info.getValue()}
           >
-            <Link
-              to={match(info.row.original.scrape_type)
-                .with("JOB", () =>
-                  (isRecruiter
-                    ? ROUTES.RECRUITER.LIST_JOBS
-                    : ROUTES.ADMIN.LIST_JOBS
-                  ).buildPath(
-                    {},
-                    { scraping_session_id: info.row.original.id.toString() },
-                  ),
-                )
-                .with("CANDIDATE", () =>
-                  (isRecruiter
-                    ? ROUTES.RECRUITER.LIST_CANDIDATE
-                    : ROUTES.ADMIN.LIST_CANDIDATE
-                  ).buildPath(
-                    {},
-                    { scraping_session_id: info.row.original.id.toString() },
-                  ),
-                )
-                .otherwise(() => "")}
-            >
-              <span>
-                View{" "}
-                {info.row.original?.scrape_type
-                  ?.toLowerCase()
-                  .split("")
-                  .map((e, i) => (i === 0 ? e.toUpperCase() : e))}
-              </span>
-            </Link>
+            {info.row.original.count === 0 ? (
+              "No marches"
+            ) : (
+              <Link
+                to={match(info.row.original.scrape_type)
+                  .with("JOB", () =>
+                    (isRecruiter
+                      ? ROUTES.RECRUITER.LIST_JOBS
+                      : ROUTES.ADMIN.LIST_JOBS
+                    ).buildPath(
+                      {},
+                      { scraping_session_id: info.row.original.id.toString() },
+                    ),
+                  )
+                  .with("CANDIDATE", () =>
+                    (isRecruiter
+                      ? ROUTES.RECRUITER.LIST_CANDIDATE
+                      : ROUTES.ADMIN.LIST_CANDIDATE
+                    ).buildPath(
+                      {},
+                      { scraping_session_id: info.row.original.id.toString() },
+                    ),
+                  )
+                  .otherwise(() => "")}
+              >
+                <span>
+                  View{" "}
+                  {info.row.original?.scrape_type
+                    ?.toLowerCase()
+                    .split("")
+                    .map((e, i) => (i === 0 ? e.toUpperCase() : e))}
+                </span>
+              </Link>
+            )}
           </div>
         ),
       }),
@@ -273,5 +281,6 @@ interface OnboardingList {
   scrape_type: "JOB" | "CANDIDATE";
   status: "IN_PROGRESS" | "COMPLETED";
   action: string;
+  count: number;
 }
 const columnHelper = createColumnHelper<OnboardingList>();
