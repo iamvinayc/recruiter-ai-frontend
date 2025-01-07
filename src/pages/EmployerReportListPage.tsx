@@ -163,7 +163,7 @@ export function EmployerReportListPage() {
           <a
             className="flex w-full max-w-[200px] items-center justify-center gap-2 truncate"
             title={info.getValue()}
-            href={info.row.original.job_link}
+            href={info.getValue()}
             target="_blank"
             rel="noreferrer"
           >
@@ -198,7 +198,7 @@ export function EmployerReportListPage() {
           <a
             className="flex w-full max-w-[200px] items-center justify-center gap-2 truncate"
             title={info.getValue()}
-            href={info.row.original.job_link}
+            href={info.getValue()}
             target="_blank"
             rel="noreferrer"
           >
