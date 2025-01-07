@@ -120,7 +120,7 @@ export default function ConfigurationListPage() {
             title={info.getValue()}
           >
             {info.row.original.count === 0 ? (
-              "No marches"
+              "No Items"
             ) : (
               <Link
                 to={match(info.row.original.scrape_type)
