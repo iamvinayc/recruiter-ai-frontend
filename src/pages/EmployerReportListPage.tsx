@@ -294,12 +294,14 @@ export function EmployerReportListPage() {
                       {
                         jobId: info.row.original.id,
                       },
+                      "hideNav",
                     )
                   : ROUTES.ADMIN.LIST_SCORING.buildPath(
                       {},
                       {
                         jobId: info.row.original.id,
                       },
+                      "hideNav",
                     )
               }
             >

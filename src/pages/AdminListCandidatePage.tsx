@@ -356,7 +356,7 @@ export function AdminListCandidatePage() {
                 <EyeIcon className="h-4 w-4 " />
               </button>
               <button
-                title="Download Resume"
+                title="Download Summery"
                 onClick={() => {
                   downloadCandidatePDF(
                     info.row.original.id,

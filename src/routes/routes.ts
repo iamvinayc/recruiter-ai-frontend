@@ -82,6 +82,7 @@ export const ROUTES = {
           jobId: string().default(""),
           candidateId: string().default(""),
         },
+        hash: ["hideNav" as const],
       }),
       ONBOARDING: route("onboarding", {
         searchParams: {
@@ -190,6 +191,7 @@ export const ROUTES = {
           location: string().default(""),
           jobId: string().default(""),
         },
+        hash: ["hideNav" as const],
       }),
       ONBOARDING: route("onboarding", {
         searchParams: {
