@@ -190,6 +190,7 @@ export const ROUTES = {
           skill: string().default(""),
           location: string().default(""),
           jobId: string().default(""),
+          candidateId: string().default(""),
         },
         hash: ["hideNav" as const],
       }),
