@@ -444,13 +444,25 @@ export function CandidateReportListPage() {
                     <td className="px-4 pl-6 text-center">
                       <Link
                         target="_blank"
-                        to={ROUTES.ADMIN.LIST_SCORING.buildPath(
-                          {},
-                          {
-                            jobId: e.job_id.toString(),
-                            candidateId: e.candidate_id,
-                          },
-                        )}
+                        to={
+                          isRecruiter
+                            ? ROUTES.RECRUITER.LIST_SCORING.buildPath(
+                                {},
+                                {
+                                  jobId: e.job_id.toString(),
+                                  candidateId: e.candidate_id,
+                                },
+                                "hideNav",
+                              )
+                            : ROUTES.ADMIN.LIST_SCORING.buildPath(
+                                {},
+                                {
+                                  jobId: e.job_id.toString(),
+                                  candidateId: e.candidate_id,
+                                },
+                                "hideNav",
+                              )
+                        }
                         className="font-medium text-blue-600 hover:underline dark:text-blue-500"
                       >
                         View

@@ -324,7 +324,7 @@ export function ListScoringPage() {
                 <EyeIcon className="h-5 w-5 " />
               </button>
               <button
-                title="Download Summery"
+                title="Download Summary"
                 onClick={() => {
                   downloadCandidatePDF(
                     info.row.original.candidate_id,
