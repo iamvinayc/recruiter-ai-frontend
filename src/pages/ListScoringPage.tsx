@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -6,7 +6,10 @@ import {
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight, DownloadIcon, EyeIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
+import {
+  useTypedHash,
+  useTypedSearchParams,
+} from "react-router-typesafe-routes/dom";
 
 import { axiosApi } from "@/api/api";
 import { ShowAllSkill, useShowAllSkill } from "@/components/AllSkill";
@@ -20,7 +23,7 @@ import {
 } from "@/components/common/Input";
 import { downloadCandidatePDF } from "@/lib/downloadCandidatePDF";
 import { ROUTES } from "@/routes/routes";
-import { cn, emptyArray, replaceWith } from "@/utils";
+import { cn, emptyArray, makeUrlWithParams, replaceWith } from "@/utils";
 import { Switch } from "@headlessui/react";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
@@ -42,6 +45,7 @@ export function ListScoringPage() {
   const [searchParams, setSearchParams] = useTypedSearchParams(
     ROUTES.ADMIN.LIST_SCORING,
   );
+  const hashParams = useTypedHash(ROUTES.ADMIN.LIST_SCORING);
   const {
     skill: department,
     location,
@@ -97,6 +101,21 @@ export function ListScoringPage() {
     },
     initialPageParam: "",
   });
+
+  const { data: selectedJobData } = useQuery({
+    queryKey: ["single-job", selectedJobId],
+    enabled: !!selectedJobId,
+    queryFn: async () => {
+      return axiosApi({
+        method: "GET",
+        url: makeUrlWithParams("data-sourcing/job/{{jobId}}/", {
+          jobId: selectedJobId,
+        }),
+        params: {},
+      }).then((e) => e.data.data);
+    },
+  });
+  const selectedJob = selectedJobData?.[0];
 
   const listCandidateBasedOnJobQuery = useInfiniteQuery({
     queryKey: [
@@ -305,7 +324,7 @@ export function ListScoringPage() {
                 <EyeIcon className="h-5 w-5 " />
               </button>
               <button
-                title="Download Resume"
+                title="Download Summery"
                 onClick={() => {
                   downloadCandidatePDF(
                     info.row.original.candidate_id,
@@ -377,9 +396,6 @@ export function ListScoringPage() {
     getCoreRowModel: getCoreRowModel(),
     enableFilters: false,
   });
-  const selectedJob = listJobQueryData?.find(
-    (e) => e.id.toString() == selectedJobId.toString(),
-  );
 
   const selectedUser = candidateListQueryData?.find(
     (e) => e.candidate.id == selectedCandidateId,
@@ -391,9 +407,11 @@ export function ListScoringPage() {
           <h2 className="text-title-md2 font-semibold text-black dark:text-white">
             {selectedJobId ? (
               <div className="flex items-center gap-1">
-                <button onClick={() => setSelectedJobId(null)}>
-                  <ChevronLeft className="inline-block h-8 w-8 text-blue-700" />
-                </button>
+                {hashParams === "hideNav" ? null : (
+                  <button onClick={() => setSelectedJobId(null)}>
+                    <ChevronLeft className="inline-block h-8 w-8 text-blue-700" />
+                  </button>
+                )}
                 <span>Candidate score list</span>
               </div>
             ) : (
@@ -491,6 +509,7 @@ export function ListScoringPage() {
           </div>
         </div>
       ) : null}
+
       <div className="flex flex-col gap-5 md:gap-7 2xl:gap-10">
         {selectedJobId ? null : (
           <div
