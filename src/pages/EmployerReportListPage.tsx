@@ -1,4 +1,5 @@
 import { axiosApi } from "@/api/api";
+import { Button } from "@/components/common/Button";
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import { InfinityLoaderComponent } from "./common/InfinityLoaderComponent";
 import { Table } from "./common/Table";
@@ -179,8 +181,10 @@ export function EmployerReportListPage() {
                   fill="#0A66C2"
                 />
               </svg>
-            ) : (
+            ) : info.getValue() ? (
               <ExternalLinkIcon />
+            ) : (
+              "N/A"
             )}
           </a>
         ),
@@ -214,8 +218,10 @@ export function EmployerReportListPage() {
                   fill="#0A66C2"
                 />
               </svg>
-            ) : (
+            ) : info.getValue() ? (
               <ExternalLinkIcon />
+            ) : (
+              "N/A"
             )}
           </a>
         ),
@@ -275,8 +281,39 @@ export function EmployerReportListPage() {
           );
         },
       }),
+      columnHelper.display({
+        header: "Action",
+        size: 110,
+        cell: (info) => {
+          return (
+            <Link
+              to={
+                isRecruiter
+                  ? ROUTES.RECRUITER.LIST_SCORING.buildPath(
+                      {},
+                      {
+                        jobId: info.row.original.id,
+                      },
+                    )
+                  : ROUTES.ADMIN.LIST_SCORING.buildPath(
+                      {},
+                      {
+                        jobId: info.row.original.id,
+                      },
+                    )
+              }
+            >
+              <Button
+                className={cn("rounded-md py-2 text-white focus:outline-none")}
+              >
+                View Matches
+              </Button>
+            </Link>
+          );
+        },
+      }),
     ],
-    [],
+    [isRecruiter],
   );
 
   const employerReportListQuery = useMemo(
@@ -299,6 +336,7 @@ export function EmployerReportListPage() {
         responded: e.responded,
         location: { id: e.location.id, name: e.location.name },
         created_at: e.created_at,
+        id: e.id,
       })) || [],
     [employerReportListQuery],
   );
@@ -416,4 +454,5 @@ export interface EmployerReportListItem {
   platform: string;
   sector: string | null;
   created_at: string;
+  id: string;
 }
