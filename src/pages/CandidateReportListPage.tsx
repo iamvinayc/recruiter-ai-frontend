@@ -162,7 +162,7 @@ export function CandidateReportListPage() {
           <a
             className="flex w-full max-w-[200px] items-center justify-center gap-2 truncate"
             title={info.getValue()}
-            href={info.row.original.profile_url}
+            href={info.getValue()}
             target="_blank"
             rel="noreferrer"
           >
@@ -178,8 +178,10 @@ export function CandidateReportListPage() {
                   fill="#0A66C2"
                 />
               </svg>
-            ) : (
+            ) : info.getValue() ? (
               <ExternalLinkIcon />
+            ) : (
+              "N/A"
             )}
           </a>
         ),

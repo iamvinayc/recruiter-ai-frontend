@@ -188,6 +188,7 @@ export const ROUTES = {
         searchParams: {
           skill: string().default(""),
           location: string().default(""),
+          jobId: string().default(""),
         },
       }),
       ONBOARDING: route("onboarding", {
