@@ -618,7 +618,7 @@ const AddJobPopup = ({
     control,
     reset,
   } = useForm<z.TypeOf<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(initialData ? formEditSchema : formSchema),
     defaultValues,
   });
 
@@ -718,7 +718,6 @@ const AddJobPopup = ({
           name: e.name,
         })),
         description: initialData.description,
-        employer_name: initialData.employer.employer_label,
         title: initialData.title,
         sector: initialData.sector,
         joining_period: initialData.joining_period || "",
@@ -769,6 +768,34 @@ const AddJobPopup = ({
               />
             </div>
           </div>
+          <div className="flex flex-col gap-6 md:flex-row">
+            {initialData ? null : (
+              <>
+                <div className="flex flex-1 flex-col">
+                  <Input
+                    label="Company"
+                    placeholder="Company"
+                    className="px-3 py-3"
+                    register={register}
+                    name="employer_name"
+                    error={errors.employer_name?.message}
+                  />
+                </div>
+                <div className="flex flex-1 flex-col">
+                  <Input
+                    label="Email"
+                    placeholder="Email"
+                    type="email"
+                    className="px-3 py-3"
+                    register={register}
+                    name="email"
+                    error={errors.email?.message}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
           <div className="flex flex-col gap-x-6 md:flex-row">
             <div className="flex flex-1 flex-col gap-2">
               <Input
@@ -779,6 +806,16 @@ const AddJobPopup = ({
                 name="job_type"
                 error={errors.job_type?.message}
               />
+              {initialData ? null : (
+                <Input
+                  label="Contact Number"
+                  placeholder="Contact Number"
+                  className="px-3 py-3"
+                  register={register}
+                  name="phone1"
+                  error={errors.phone1?.message}
+                />
+              )}
             </div>
             <div className="flex flex-1 flex-col gap-2">
               <Input
@@ -789,22 +826,16 @@ const AddJobPopup = ({
                 register={register}
                 error={errors.job_link?.message}
               />
-              {/* <Input
-                label="Contact Number"
-                placeholder="Contact Number"
-                className="px-3 py-3"
-                register={register}
-                name="phone1"
-                error={errors.phone1?.message}
-              /> */}
-              {/* <Input
-                label="Alternate Number"
-                placeholder="Alternate Number"
-                className="px-3 py-3"
-                register={register}
-                name="phone2"
-                error={errors.phone2?.message}
-              /> */}
+              {initialData ? null : (
+                <Input
+                  label="Alternate Number"
+                  placeholder="Alternate Number"
+                  className="px-3 py-3"
+                  register={register}
+                  name="phone2"
+                  error={errors.phone2?.message}
+                />
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-6 md:flex-row">
@@ -935,6 +966,24 @@ const formSchema = z
     path: ["phone2"],
     message: "Alternate number should be different from contact number",
   });
+const formEditSchema = z.object({
+  title: z.string().min(1, "Please enter job title"),
+  description: z.string().min(1, "Please enter description"),
+  sector: z.string().min(1, "Please Select a sector"),
+  department: z
+    .array(
+      z.object({
+        id: z.number().optional(),
+        name: z.string().min(1),
+      }),
+    )
+    .min(1, "Please Select at-least one skill"),
+  city: z.string().min(1, "Please enter a city"),
+  joining_period: z.string().optional(),
+  package: z.string().optional(),
+  job_link: z.string().default(""),
+  job_type: z.string().default(""),
+});
 const defaultValues: z.TypeOf<typeof formSchema> = {
   department: [],
   city: "",
