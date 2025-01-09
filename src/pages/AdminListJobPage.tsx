@@ -19,6 +19,7 @@ import { Combobox } from "@/components/Combobox";
 import { LocationSelector } from "@/components/LocationSelector";
 import { SectorSelector } from "@/components/SectorSelector";
 import { useLogin } from "@/hooks/useLogin";
+import { convertToUrlParams } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { axiosApi, JobListingResponseData } from "../api/api";
 import { DepartmentSelector } from "../components/DepartmentSelector";
@@ -126,9 +127,7 @@ export function AdminListJobPage() {
         ),
         method: "GET",
         params: {
-          department: department
-            ? JSON.stringify(department.split(",").map(Number))
-            : undefined,
+          department: convertToUrlParams(department),
           location: location || undefined,
           from_date: scrape_from || undefined,
           to_date: scrape_to || undefined,
@@ -620,35 +619,11 @@ const AddJobPopup = ({
     reset,
   } = useForm<z.TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      department: [],
-      city: "",
-      description: "",
-      email: "",
-      employer_name: "",
-      joining_period: "",
-      package: "",
-      phone1: "",
-      phone2: "",
-      sector: "",
-      title: "",
-    },
+    defaultValues,
   });
 
   const resetForm = () => {
-    reset({
-      department: [],
-      city: "",
-      description: "",
-      email: "",
-      employer_name: "",
-      joining_period: "",
-      package: "",
-      phone1: "",
-      phone2: "",
-      sector: "",
-      title: "",
-    });
+    reset(defaultValues);
   };
   const addJobMutation = useMutation({
     mutationKey: ["addJob"],
@@ -743,14 +718,13 @@ const AddJobPopup = ({
           name: e.name,
         })),
         description: initialData.description,
-        email: initialData.employer.email,
         employer_name: initialData.employer.employer_label,
-        phone1: initialData.employer.phone1,
-        phone2: initialData.employer.phone2 || "",
         title: initialData.title,
         sector: initialData.sector,
         joining_period: initialData.joining_period || "",
         package: initialData.package || "",
+        job_type: initialData.job_type,
+        job_link: initialData.job_link || "",
       });
     } else {
       resetForm();
@@ -798,40 +772,39 @@ const AddJobPopup = ({
           <div className="flex flex-col gap-x-6 md:flex-row">
             <div className="flex flex-1 flex-col gap-2">
               <Input
-                label="Company"
-                placeholder="Company"
+                label="Job Type"
+                placeholder="Job Type"
                 className="px-3 py-3"
                 register={register}
-                name="employer_name"
-                error={errors.employer_name?.message}
-              />
-              <Input
-                label="Email"
-                placeholder="Email"
-                type="email"
-                className="px-3 py-3"
-                register={register}
-                name="email"
-                error={errors.email?.message}
+                name="job_type"
+                error={errors.job_type?.message}
               />
             </div>
             <div className="flex flex-1 flex-col gap-2">
               <Input
+                label="Job Link"
+                placeholder="Job Link"
+                name="job_link"
+                className="px-3 py-3"
+                register={register}
+                error={errors.job_link?.message}
+              />
+              {/* <Input
                 label="Contact Number"
                 placeholder="Contact Number"
                 className="px-3 py-3"
                 register={register}
                 name="phone1"
                 error={errors.phone1?.message}
-              />
-              <Input
+              /> */}
+              {/* <Input
                 label="Alternate Number"
                 placeholder="Alternate Number"
                 className="px-3 py-3"
                 register={register}
                 name="phone2"
                 error={errors.phone2?.message}
-              />
+              /> */}
             </div>
           </div>
           <div className="flex flex-col gap-6 md:flex-row">
@@ -955,8 +928,25 @@ const formSchema = z
     city: z.string().min(1, "Please enter a city"),
     joining_period: z.string().optional(),
     package: z.string().optional(),
+    job_link: z.string().default(""),
+    job_type: z.string().default(""),
   })
   .refine((data) => data.phone1 !== data.phone2, {
     path: ["phone2"],
     message: "Alternate number should be different from contact number",
   });
+const defaultValues: z.TypeOf<typeof formSchema> = {
+  department: [],
+  city: "",
+  description: "",
+  email: "",
+  employer_name: "",
+  joining_period: "",
+  package: "",
+  phone1: "",
+  phone2: "",
+  sector: "",
+  title: "",
+  job_link: "",
+  job_type: "",
+};

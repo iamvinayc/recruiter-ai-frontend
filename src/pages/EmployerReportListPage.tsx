@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLogin } from "@/hooks/useLogin";
+import { convertToUrlParams } from "@/lib/utils";
 import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
@@ -58,9 +59,7 @@ export function EmployerReportListPage() {
         url: (pageParam || "report/employer/") as "report/employer/",
         method: "GET",
         params: {
-          department: department
-            ? JSON.stringify(department.split(",").map(Number))
-            : undefined,
+          department: convertToUrlParams(department),
           location,
           from_date,
           to_date,
@@ -74,11 +73,12 @@ export function EmployerReportListPage() {
   });
   const columns = useMemo(
     () => [
-      // columnHelper.display({
-      //   id: "SLNo",
-      //   header: "No",
-      //   cell: (info) => info.row.index + 1,
-      // }),
+      columnHelper.display({
+        id: "Id",
+        header: "Job Id",
+        size: 60,
+        cell: (info) => info.row.original.id,
+      }),
       columnHelper.accessor("created_at", {
         header: "DATE",
         cell: (info) => format(info.getValue(), "yyyy-MM-dd"),

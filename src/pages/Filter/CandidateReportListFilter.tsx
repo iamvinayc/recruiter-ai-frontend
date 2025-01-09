@@ -4,11 +4,12 @@ import { Button } from "@/components/common/Button";
 import { DebouncedSearchInput } from "@/components/common/Input";
 import { DatePickerWithRange } from "@/components/DateRangePicker";
 import { LocationSelector } from "@/components/LocationSelector";
-import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
+import { MultipleSkillSelectorItems } from "@/components/MultipleSkillSelecter";
 import {
   useDebouncedSearchParam,
   useIsFilterApplied,
 } from "@/hooks/useDebouncedSearchParam";
+import { safeArrayParse } from "@/lib/utils";
 import { ROUTES } from "@/routes/routes";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -85,10 +86,10 @@ export function CandidateReportListFilter({
             selectedToDate={selectedToDate}
             setSelectedFromDate={setSelectedFromDate}
             setSelectedToDate={setSelectedToDate}
-            className="h-11 "
+            className="h-[42px]"
           />
           <Combobox
-            className=" h-[40px] "
+            className=" h-[42px] "
             parentClassName=""
             label="Sector"
             items={sectorsMap}
@@ -99,13 +100,12 @@ export function CandidateReportListFilter({
             selected={{ name: selectedLocation }}
             setSelected={(e) => setSelectedLocation(e.name)}
           />
-          <MultipleSkillSelector
-            className=""
-            selectedItems={selectedDepartment}
-            setSelectedItems={setSelectedDepartment}
+          <MultipleSkillSelectorItems
+            selectedItems={safeArrayParse(selectedDepartment)}
+            setSelectedItems={(e) => setSelectedDepartment(JSON.stringify(e))}
           />
           <div className="h-full w-full ">
-            <label className="mb-2.5 ml-4 block font-medium text-black dark:text-white">
+            <label className="mb-2.5 block font-medium text-black dark:text-white">
               Candidate Name
             </label>
             <DebouncedSearchInput

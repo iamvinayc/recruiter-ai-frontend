@@ -80,7 +80,7 @@ export function ReportListFilter({}: { onSearch: VoidFunction }) {
                 employer: e?.value ?? "",
               });
             }}
-            className="h-10"
+            className="h-[42px]"
           />
           {/* <Combobox
             label="Employer"
@@ -106,7 +106,7 @@ export function ReportListFilter({}: { onSearch: VoidFunction }) {
             }))}
             selectedValue={selectedStatus}
             setSelectedValue={setSelectedStatus}
-            className="h-10"
+            className="h-[42px]"
           />
           <DatePickerWithRange
             title="Date Range"
@@ -187,10 +187,10 @@ function Example({
         {({ open }) => (
           <>
             <div className="relative ">
-              <label className="mx-3 mb-2.5 block font-medium text-black dark:text-white">
+              <label className="mb-2.5 block font-medium text-black dark:text-white">
                 Company
               </label>
-              <div className="relative w-full cursor-default overflow-hidden rounded-none border bg-white text-left  sm:text-sm">
+              <div className="relative h-[42px] w-full cursor-default overflow-hidden rounded-none border bg-white  text-left sm:text-sm">
                 <HUICombobox.Input
                   className={clsx(
                     "text-gray-900 w-full  py-2 pl-3 pr-10 text-sm leading-5 ",

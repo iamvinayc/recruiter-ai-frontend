@@ -35,7 +35,7 @@ export function SectorSelector({
     <div>
       <label
         className={clsx(
-          "mb-2.5 ml-4 mt-2 block font-medium text-black dark:text-white",
+          "mb-2.5 block font-medium text-black dark:text-white",
           labelClassName,
         )}
       >

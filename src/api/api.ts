@@ -734,9 +734,9 @@ interface AllApiEndpoints {
       data?: {
         employer_label: string;
         email: string;
-        phone1?: string;
-        phone2?: string;
-        hr_url?: string;
+        phone1?: string | null;
+        phone2?: string | null;
+        hr_url?: string | null;
       };
     };
     response: {
