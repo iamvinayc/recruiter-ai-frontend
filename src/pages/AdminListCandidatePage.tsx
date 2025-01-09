@@ -1083,7 +1083,7 @@ const AddCandidatePopup = ({
             </div>
           </div>
           <div className="flex flex-col gap-6 md:flex-row">
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col gap-2">
               <Controller
                 control={control}
                 name="department"
@@ -1112,6 +1112,15 @@ const AddCandidatePopup = ({
                     error={errors.sector?.message}
                   />
                 )}
+              />
+
+              <Input
+                register={register}
+                name="package"
+                label="Package"
+                placeholder="Package"
+                className="px-3 py-3"
+                error={errors.package?.message}
               />
             </div>
             <div className="flex flex-1 flex-col gap-y-2">
@@ -1159,14 +1168,6 @@ const AddCandidatePopup = ({
                 className="px-3 py-3"
                 error={errors.visa_details?.message}
               />
-              <Input
-                register={register}
-                name="package"
-                label="Package"
-                placeholder="Package"
-                className="px-3 py-3"
-                error={errors.package?.message}
-              />
             </div>
           </div>
         </div>
@@ -1188,7 +1189,7 @@ const AddCandidatePopup = ({
           </div>
         )}
 
-        <div className="flex justify-end space-x-2">
+        <div className="flex flex-col justify-end gap-2 md:flex-row">
           <p className="text-gray-500 text-sm italic">
             Disclaimer:- Please update{" "}
             {uploadResumeFile.data ? (
