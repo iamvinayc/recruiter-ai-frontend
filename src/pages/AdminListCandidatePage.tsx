@@ -25,6 +25,7 @@ import { useLogin } from "@/hooks/useLogin";
 import { ROUTES, SortBy } from "@/routes/routes";
 
 import { downloadCandidatePDF } from "@/lib/downloadCandidatePDF";
+import { convertToUrlParams } from "@/lib/utils";
 import {
   CandidateListResponseData,
   ResumeFileUploadResponse,
@@ -132,9 +133,7 @@ export function AdminListCandidatePage() {
         method: "GET",
         params: {
           resume: resume || undefined,
-          department: department
-            ? JSON.stringify(department.split(",").map(Number))
-            : undefined,
+          department: convertToUrlParams(department),
           location: location || undefined,
           from_date: scrape_from || undefined,
           to_date: scrape_to || undefined,

@@ -390,7 +390,13 @@ const EditCandidatePopup = ({
           id: initialData?.id.toString() ?? "",
         }),
         method: "PUT",
-        data: data,
+        data: {
+          email: data.email,
+          employer_label: data.employer_label,
+          hr_url: data.hr_url || null,
+          phone1: data.phone1 || null,
+          phone2: data.phone2 || null,
+        },
       }).then((e) => e.data),
   });
 

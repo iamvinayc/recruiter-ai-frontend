@@ -60,7 +60,7 @@ export function LocationSelector({
         );
   return (
     <div className={className}>
-      <label className="mb-2.5 block px-3 font-medium text-black dark:text-white">
+      <label className="mb-2.5 block font-medium text-black dark:text-white">
         Location
       </label>
       <Combobox

@@ -15,7 +15,7 @@ export function Input<
   return (
     <div className={containerClassName}>
       {label && (
-        <label className="mx-4 mb-2.5 block font-medium text-black dark:text-white">
+        <label className="mb-2.5 block font-medium text-black dark:text-white">
           {label}
         </label>
       )}

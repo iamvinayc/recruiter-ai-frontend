@@ -3,11 +3,12 @@ import { Combobox } from "@/components/Combobox";
 import { Button } from "@/components/common/Button";
 import { DatePickerWithRange } from "@/components/DateRangePicker";
 import { LocationSelector } from "@/components/LocationSelector";
-import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
+import { MultipleSkillSelectorItems } from "@/components/MultipleSkillSelecter";
 import {
   useDebouncedSearchParam,
   useIsFilterApplied,
 } from "@/hooks/useDebouncedSearchParam";
+import { safeArrayParse } from "@/lib/utils";
 import { ROUTES } from "@/routes/routes";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -82,7 +83,7 @@ export function EmployerReportListFilter({
             setSelectedToDate={setSelectedToDate}
           />
           <Combobox
-            className="h-[40px]"
+            className="h-[42px]"
             parentClassName=" "
             label="Sector"
             items={sectorsMap}
@@ -94,10 +95,9 @@ export function EmployerReportListFilter({
             selected={{ name: selectedLocation }}
             setSelected={(e) => setSelectedLocation(e.name)}
           />
-          <MultipleSkillSelector
-            className=""
-            selectedItems={selectedDepartment}
-            setSelectedItems={setSelectedDepartment}
+          <MultipleSkillSelectorItems
+            selectedItems={safeArrayParse(selectedDepartment)}
+            setSelectedItems={(e) => setSelectedDepartment(JSON.stringify(e))}
           />
           {isEmpty ? null : (
             <div className="flex items-end gap-4">

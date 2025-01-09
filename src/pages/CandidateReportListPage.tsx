@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLogin } from "@/hooks/useLogin";
+import { convertToUrlParams } from "@/lib/utils";
 import { ROUTES } from "@/routes/routes";
 import { cn } from "@/utils";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
@@ -60,21 +61,20 @@ export function CandidateReportListPage() {
       sector,
       department,
     ],
-    queryFn: async ({ pageParam }) =>
-      axiosApi({
+    queryFn: async ({ pageParam }) => {
+      return axiosApi({
         url: (pageParam || "report/candidate/") as "report/candidate/",
         method: "GET",
         params: {
-          department: department
-            ? JSON.stringify(department.split(",").map(Number))
-            : undefined,
+          department: convertToUrlParams(department),
           location,
           candidate,
           from_date,
           to_date,
           sector,
         },
-      }).then((e) => e.data),
+      }).then((e) => e.data);
+    },
     getNextPageParam(e) {
       return e.next;
     },

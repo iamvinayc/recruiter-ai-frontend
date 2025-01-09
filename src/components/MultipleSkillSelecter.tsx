@@ -38,7 +38,7 @@ export function MultipleSkillSelector({
 
   return (
     <div className={className}>
-      <label className="mb-2.5 ml-4 block font-medium text-black dark:text-white">
+      <label className="mb-2.5 block font-medium text-black dark:text-white">
         Skills
       </label>
 
@@ -188,7 +188,7 @@ export function MultipleSkillSelectorItems({
 
   return (
     <div className={className}>
-      <label className="mb-2.5 ml-4 block font-medium text-black dark:text-white">
+      <label className="mb-2.5 block font-medium text-black dark:text-white">
         Skills
       </label>
 
@@ -269,43 +269,30 @@ export function MultipleSkillSelectorItems({
             afterLeave={() => setQuery("")}
           >
             <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-              {items.length === 0 && query !== "" ? (
-                <Combobox.Option
-                  className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                      active ? "bg-teal-600 text-white" : "text-gray-900"
-                    }`
-                  }
-                  value={{ name: query }}
-                >
-                  <span className="block truncate  font-normal">
-                    Create "{query}"
-                  </span>
-                </Combobox.Option>
-              ) : (
-                items
-                  .filter(
-                    (e) =>
-                      !selectedItems.some(
-                        (item) => item.id?.toString() === e.id?.toString(),
-                      ),
-                  )
-                  .map((item, i) => (
-                    <Combobox.Option
-                      key={i}
-                      className={({ active }) =>
-                        `relative cursor-default select-none px-4 py-2 ${
-                          active ? "bg-teal-600 text-white" : "text-gray-900"
-                        }`
-                      }
-                      value={item}
-                    >
-                      <span className="block truncate  font-normal ">
-                        {item.name}
-                      </span>
-                    </Combobox.Option>
-                  ))
-              )}
+              {items.length === 0
+                ? null
+                : items
+                    .filter(
+                      (e) =>
+                        !selectedItems.some(
+                          (item) => item.id?.toString() === e.id?.toString(),
+                        ),
+                    )
+                    .map((item, i) => (
+                      <Combobox.Option
+                        key={i}
+                        className={({ active }) =>
+                          `relative cursor-default select-none px-4 py-2 ${
+                            active ? "bg-teal-600 text-white" : "text-gray-900"
+                          }`
+                        }
+                        value={item}
+                      >
+                        <span className="block truncate  font-normal ">
+                          {item.name}
+                        </span>
+                      </Combobox.Option>
+                    ))}
             </Combobox.Options>
           </Transition>
         </div>

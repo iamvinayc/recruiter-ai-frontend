@@ -6,12 +6,13 @@ import { axiosApi } from "@/api/api";
 import { Combobox } from "@/components/Combobox";
 import { Input } from "@/components/common/Input";
 import { DatePickerWithRange } from "@/components/DateRangePicker";
-import { MultipleSkillSelector } from "@/components/MultipleSkillSelecter";
+import { MultipleSkillSelectorItems } from "@/components/MultipleSkillSelecter";
 import { SectorSelector } from "@/components/SectorSelector";
 import {
   useDebouncedSearchParam,
   useIsFilterApplied,
 } from "@/hooks/useDebouncedSearchParam";
+import { safeArrayParse } from "@/lib/utils";
 import { ROUTES } from "@/routes/routes";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 
@@ -94,12 +95,12 @@ export function DepartmentLocationScrapeFromSearch({
             selectedItem={selectedDepartment}
             setSelectedItem={setSelectedDepartment}
           /> */}
-          <MultipleSkillSelector
-            selectedItems={selectedDepartment}
-            setSelectedItems={setSelectedDepartment}
+          <MultipleSkillSelectorItems
+            selectedItems={safeArrayParse(selectedDepartment)}
+            setSelectedItems={(e) => setSelectedDepartment(JSON.stringify(e))}
           />
           <Combobox
-            className="h-[40px]"
+            className="h-[42px]"
             label="Location"
             items={locationListQuery.data || []}
             selectedValue={selectedLocation}
