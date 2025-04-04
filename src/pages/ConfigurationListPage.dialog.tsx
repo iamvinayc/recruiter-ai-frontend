@@ -185,7 +185,7 @@ const jobFormSchema = z.object({
   noOfJobs: z
     .number()
     .min(1, "No of jobs should be at-least 1")
-    .max(10, "No of jobs should be at-most 10"),
+    .max(20, "No of jobs should be at-most 20"),
 });
 const defaultJobFormValues: z.infer<typeof jobFormSchema> = {
   designation: "",
@@ -241,8 +241,8 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
       return e.next?.includes("page_size")
         ? e.next
         : e.next
-        ? e.next + "&page_size=20"
-        : e.next;
+          ? e.next + "&page_size=20"
+          : e.next;
     },
     initialPageParam: "",
   });
@@ -555,7 +555,7 @@ const candidateFormSchema = z.object({
   noOfCandidates: z
     .number()
     .min(1, "No of candidates should be at-least 1")
-    .max(10, "No of candidates should be at-most 10"),
+    .max(20, "No of candidates should be at-most 20"),
   //   jobs: z
   //     .array(
   //       z.object({
