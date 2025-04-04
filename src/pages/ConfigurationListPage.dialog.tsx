@@ -140,7 +140,7 @@ export const JobScrapper = ({ onClose }: { onClose: () => void }) => {
             type="number"
             label="No of jobs"
             min={1}
-            max={10}
+            max={20}
             value={value}
             onInput={(e) => {
               onChange(+e.currentTarget.value);
@@ -408,7 +408,7 @@ export const CandidateScrapper = ({ onClose }: { onClose: () => void }) => {
                 type="number"
                 label="No of candidates"
                 min={1}
-                max={10}
+                max={20}
                 value={value}
                 onInput={(e) => {
                   onChange(+e.currentTarget.value);
